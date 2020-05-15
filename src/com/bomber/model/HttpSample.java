@@ -41,7 +41,7 @@ public class HttpSample extends BaseEntity {
 	@UiConfig(alias = "接口名称", width = "150px")
 	private String name;
 
-	@UiConfig(alias = "地址", width = "400px", cssClass = "input-xxlarge")
+	@UiConfig(alias = "地址", width = "300px", cssClass = "input-xxlarge")
 	private String url;
 
 	@UiConfig(alias = "请求方法", width = "50px")
@@ -50,7 +50,8 @@ public class HttpSample extends BaseEntity {
 	@UiConfig(alias = "请求头", type = "textarea", width = "150px", inputTemplate = HEADER_INPUT_TEMPLATE, excludedFromQuery = true)
 	private List<String> headers;
 
-	@UiConfig(alias = "请求体", hiddenInList = @Hidden(true), type = "textarea", inputTemplate = BODY_INPUT_TEMPLATE, excludedFromQuery = true)
+	@Column(length = 2048)
+	@UiConfig(alias = "请求体", maxlength = 2048, hiddenInList = @Hidden(true), type = "textarea", inputTemplate = BODY_INPUT_TEMPLATE, excludedFromQuery = true)
 	private String body;
 
 	@Transient
@@ -61,7 +62,7 @@ public class HttpSample extends BaseEntity {
 	@UiConfig(hidden = true)
 	private String csvFileFileName;
 
-	@UiConfig(alias = "文件路径", hiddenInList = @Hidden(true), readonly = @Readonly(true), excludedFromQuery = true)
+	@UiConfig(alias = "文件路径", width = "150px", readonly = @Readonly(true), excludedFromQuery = true)
 	private String csvFilePath;
 
 	@UiConfig(alias = "变量名", description = "以','间隔", width = "150px", excludedFromQuery = true)
