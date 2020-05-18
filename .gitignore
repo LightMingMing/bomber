@@ -1,7 +1,9 @@
-lib
-
-classes
+.DS_store
 
 .idea
 
-.DS_store
+classes
+
+lib
+
+target
