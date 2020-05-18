@@ -147,6 +147,8 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 			logger.info("Upload file '{}'", path);
 		}
 
+		httpSample.setVariableNames(StringUtils.trimAllWhitespace(httpSample.getVariableNames()));
+
 		httpSample.setBody(JsonUtils.prettify(httpSample.getBody()));
 
 		httpSampleManager.save(httpSample);
@@ -164,12 +166,14 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		List<Integer> numberOfThreadsList = Arrays.stream(threadGroup.split(", *")).map(Integer::parseInt).sorted()
 				.collect(Collectors.toList());
 
+		int requestCount = 0;
 		httpSample = httpSampleManager.get(httpSample.getId());
 
 		List<SummaryReport> summaryReportList = new ArrayList<>();
 		for (int numberOfThreads : numberOfThreadsList) {
-			TestingPlan testingPlan = new TestingPlan(httpSample, uri.getPath(), numberOfThreads,
-					numberOfThreads * requestsPerThread);
+			int numberOfRequests = numberOfThreads * requestsPerThread;
+			TestingPlan testingPlan = new TestingPlan(httpSample, uri.getPath(), numberOfThreads, numberOfRequests,
+					requestCount += numberOfRequests);
 
 			TestingResult result = bombardierService.execute(testingPlan);
 

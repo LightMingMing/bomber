@@ -1,11 +1,13 @@
 package com.bomber.service;
 
+import org.springframework.util.CollectionUtils;
+
 import com.bomber.model.HttpSample;
 import com.bomber.model.RequestMethod;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.util.CollectionUtils;
 
 @Getter
 @Setter
@@ -30,6 +32,8 @@ public class TestingPlan {
 
 	private String variableNames;
 
+	private int startLine;
+
 	public TestingPlan() {
 	}
 
@@ -38,16 +42,17 @@ public class TestingPlan {
 	}
 
 	public TestingPlan(HttpSample httpSample, int threads, int requests) {
-		this(httpSample, "", threads, requests);
+		this(httpSample, "", threads, requests, 0);
 	}
 
-	public TestingPlan(HttpSample httpSample, String rootPath, int threads, int requests) {
+	public TestingPlan(HttpSample httpSample, String rootPath, int threads, int requests, int startLine) {
 		this.body = httpSample.getBody();
 		this.url = httpSample.getUrl();
 		this.method = httpSample.getMethod();
 		if (httpSample.getVariableNames() != null && httpSample.getCsvFilePath() != null) {
 			this.csvFilePath = rootPath + httpSample.getCsvFilePath();
 			this.variableNames = httpSample.getVariableNames();
+			this.startLine = startLine;
 		}
 		if (!CollectionUtils.isEmpty(httpSample.getHeaders())) {
 			this.headers = String.join(";", httpSample.getHeaders());
