@@ -175,15 +175,20 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 			TestingPlan testingPlan = new TestingPlan(httpSample, uri.getPath(), numberOfThreads, numberOfRequests,
 					requestCount);
 
+			Date startTime = new Date();
 			TestingResult result = bombardierService.execute(testingPlan);
 
 			TestingRecord testingRecord = makeTestingRecord(result);
 			testingRecord.setHttpSample(httpSample);
+			testingRecord.setStartTime(startTime);
+			testingRecord.setEndTime(new Date());
 			testingRecordManager.save(testingRecord);
 
 			summaryReportList.add(new SummaryReport(numberOfThreads, result.getTps()));
 
 			requestCount += numberOfRequests;
+
+			logger.info("{} threads complete {} requests, tps={}", numberOfThreads, numberOfRequests, result.getTps());
 		}
 		addActionMessage(JsonUtils.prettify(JsonUtils.toJson(summaryReportList)));
 

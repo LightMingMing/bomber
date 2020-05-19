@@ -10,6 +10,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.ironrhino.core.metadata.Hidden;
 import org.ironrhino.core.metadata.Readonly;
 import org.ironrhino.core.metadata.Richtable;
@@ -75,7 +76,8 @@ public class HttpSample extends BaseEntity {
 	private Date createDate; // 创建时间
 
 	@JsonIgnore
+	@UpdateTimestamp
 	@Column(insertable = false)
 	@UiConfig(hiddenInList = @Hidden(true), hiddenInInput = @Hidden(true), excludedFromQuery = true)
-	protected Date modifyDate; // 修改时间
+	private Date modifyDate; // 修改时间
 }
