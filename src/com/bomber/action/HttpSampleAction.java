@@ -63,7 +63,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 	@Autowired
 	private BombardierService bombardierService;
 	@Autowired
-	private RestTemplate simpleRestTemplate;
+	private RestTemplate stringMessageRestTemplate;
 	@Autowired
 	private FileStorage fileStorage;
 
@@ -212,7 +212,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 
 			RequestEntity<String> entity = new RequestEntity<>(body, headers, method, uri);
 
-			ResponseEntity<String> result = simpleRestTemplate.exchange(entity, String.class);
+			ResponseEntity<String> result = stringMessageRestTemplate.exchange(entity, String.class);
 
 			addActionMessage(JsonUtils.prettify(result.getBody()));
 		} catch (Exception e) {
