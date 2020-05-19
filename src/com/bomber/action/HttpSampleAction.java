@@ -173,7 +173,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		for (int numberOfThreads : numberOfThreadsList) {
 			int numberOfRequests = numberOfThreads * requestsPerThread;
 			TestingPlan testingPlan = new TestingPlan(httpSample, uri.getPath(), numberOfThreads, numberOfRequests,
-					requestCount += numberOfRequests);
+					requestCount);
 
 			TestingResult result = bombardierService.execute(testingPlan);
 
@@ -182,6 +182,8 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 			testingRecordManager.save(testingRecord);
 
 			summaryReportList.add(new SummaryReport(numberOfThreads, result.getTps()));
+
+			requestCount += numberOfRequests;
 		}
 		addActionMessage(JsonUtils.prettify(JsonUtils.toJson(summaryReportList)));
 
