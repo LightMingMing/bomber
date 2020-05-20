@@ -38,20 +38,22 @@ public class TestingRecord extends BaseEntity {
 
 	private static final String TIME_UNIT_TEMPLATE = "<#if (value > 999)>${(value/1000.0)?string('#.##')}s<#else>${value?string('#')}ms</#if>";
 
+	private static final String CENTER_ATTRIBUTE = "{\"style\":\"text-align: center\"}";
+
 	@JoinColumn(name = "httpSample")
 	@ManyToOne(fetch = FetchType.EAGER)
 	@UiConfig(alias = "Http请求", width = "150px", template = "<#if value?has_content>${value.name}</#if>")
 	private HttpSample httpSample;
 
 	@Min(1)
-	@UiConfig(alias = "并发数", width = "50px", excludedFromQuery = true)
+	@UiConfig(alias = "并发数", width = "50px", excludedFromQuery = true, cellDynamicAttributes = CENTER_ATTRIBUTE)
 	private int numberOfThreads;
 
 	@Min(1)
-	@UiConfig(alias = "请求数", width = "50px", excludedFromQuery = true)
+	@UiConfig(alias = "请求数", width = "50px", excludedFromQuery = true, cellDynamicAttributes = CENTER_ATTRIBUTE)
 	private int numberOfRequests;
 
-	@UiConfig(alias = "TPS", width = "50px", excludedFromQuery = true, description = "每秒请求数")
+	@UiConfig(alias = "TPS", width = "50px", excludedFromQuery = true, description = "每秒请求数", cellDynamicAttributes = CENTER_ATTRIBUTE)
 	private double tps;
 
 	@Column(nullable = false)
@@ -65,31 +67,31 @@ public class TestingRecord extends BaseEntity {
 	private LatencyStats latencyStats;
 
 	@Transient
-	@UiConfig(alias = "平均响应时间", width = "100px", excludedFromQuery = true, hiddenInView = @Hidden(true), template = TIME_UNIT_TEMPLATE)
+	@UiConfig(alias = "平均响应时间", width = "100px", excludedFromQuery = true, hiddenInView = @Hidden(true), template = TIME_UNIT_TEMPLATE, cellDynamicAttributes = CENTER_ATTRIBUTE)
 	private double avg;
 
 	@Transient
-	@UiConfig(alias = "50%", width = "50px", excludedFromQuery = true, hiddenInView = @Hidden(true), template = TIME_UNIT_TEMPLATE)
+	@UiConfig(alias = "50%", width = "50px", excludedFromQuery = true, hiddenInView = @Hidden(true), template = TIME_UNIT_TEMPLATE, cellDynamicAttributes = CENTER_ATTRIBUTE)
 	private double point50;
 
 	@Transient
-	@UiConfig(alias = "75%", width = "50px", excludedFromQuery = true, hiddenInView = @Hidden(true), template = TIME_UNIT_TEMPLATE)
+	@UiConfig(alias = "75%", width = "50px", excludedFromQuery = true, hiddenInView = @Hidden(true), template = TIME_UNIT_TEMPLATE, cellDynamicAttributes = CENTER_ATTRIBUTE)
 	private double point75;
 
 	@Transient
-	@UiConfig(alias = "90%", width = "50px", excludedFromQuery = true, hiddenInView = @Hidden(true), template = TIME_UNIT_TEMPLATE)
+	@UiConfig(alias = "90%", width = "50px", excludedFromQuery = true, hiddenInView = @Hidden(true), template = TIME_UNIT_TEMPLATE, cellDynamicAttributes = CENTER_ATTRIBUTE)
 	private double point90;
 
 	@Transient
-	@UiConfig(alias = "95%", width = "50px", excludedFromQuery = true, hiddenInView = @Hidden(true), template = TIME_UNIT_TEMPLATE)
+	@UiConfig(alias = "95%", width = "50px", excludedFromQuery = true, hiddenInView = @Hidden(true), template = TIME_UNIT_TEMPLATE, cellDynamicAttributes = CENTER_ATTRIBUTE)
 	private double point95;
 
 	@Transient
-	@UiConfig(alias = "99%", width = "50px", excludedFromQuery = true, hiddenInView = @Hidden(true), template = TIME_UNIT_TEMPLATE)
+	@UiConfig(alias = "99%", width = "50px", excludedFromQuery = true, hiddenInView = @Hidden(true), template = TIME_UNIT_TEMPLATE, cellDynamicAttributes = CENTER_ATTRIBUTE)
 	private double point99;
 
 	@Transient
-	@UiConfig(alias = "标准差", width = "80px", excludedFromQuery = true, hiddenInView = @Hidden(true), description = "响应时间离散程度")
+	@UiConfig(alias = "标准差", width = "80px", excludedFromQuery = true, hiddenInView = @Hidden(true), description = "响应时间离散程度", cellDynamicAttributes = CENTER_ATTRIBUTE)
 	private double stdDev;
 
 	@Column(nullable = false)
