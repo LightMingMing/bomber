@@ -31,13 +31,15 @@ import lombok.Setter;
 @Richtable(showQueryForm = true, actionColumnButtons = HttpSample.ACTION_COLUMN_BUTTONS, order = "createDate desc")
 public class HttpSample extends BaseEntity {
 
-	final static String ACTION_COLUMN_BUTTONS = "<@btn view='view'/>"
+	protected static final String ACTION_COLUMN_BUTTONS = "<@btn view='view'/>"
 			+ "<@btn view='input' label='edit' windowoptions='{\"minWidth\":\"750\"}'/> <@btn action='singleShot'/>"
 			+ "<@btn view='benchmark' label='benchmark' windowoptions='{\"minHeight\":\"200\"}'/>"
 			+ "<a href='<@url value='/testingRecord/displayChart?sampleId='/>${(entity.id)!}' target='_blank' class='btn'>chart</a>";
 
-	final static String BODY_INPUT_TEMPLATE = "<textarea id='httpSample-body' name='httpSample.body' "
+	private static final String BODY_INPUT_TEMPLATE = "<textarea id='httpSample-body' name='httpSample.body' "
 			+ "class='input-xxlarge' style='min-height: 200px'>${(entity.body)!}</textarea>";
+
+	private static final long serialVersionUID = 5801606517538547923L;
 
 	@UiConfig(alias = "接口名称", width = "150px")
 	private String name;

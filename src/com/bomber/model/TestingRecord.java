@@ -30,6 +30,8 @@ import lombok.Setter;
 @Richtable(showQueryForm = true, celleditable = false, order = "startTime desc", actionColumnButtons = "<@btn view='view'/>", bottomButtons = "<@btn action='delete' confirm=true/> <@btn class='reload'/> <@btn class='filter'/>")
 public class TestingRecord extends BaseEntity {
 
+	private static final long serialVersionUID = 273435417896067478L;
+
 	private static final String PROGRESS_TEMPLATE = ""
 			+ "<div class='progress' style='white-space:nowrap;height:30px;margin-bottom:0px'>"
 			+ "  <div class='bar bar-success' style='width: ${value*100}%;line-height:30px'><#if (value>0.05)>${value*100}%</#if></div>"

@@ -4,9 +4,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
-public class Percentiles {
+public class Percentiles implements Serializable {
+
+	private static final long serialVersionUID = 3871179245795361638L;
+
 	@JsonProperty("0.5")
 	private double point50;
 
