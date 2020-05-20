@@ -1,6 +1,7 @@
 package com.bomber.action;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -211,6 +212,9 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 				String fieldNames = httpSample.getVariableNames();
 				if (StringUtils.hasLength(filePath) && StringUtils.hasLength(fieldNames)) {
 					try (InputStream inputStream = fileStorage.open(filePath)) {
+						if (inputStream == null) {
+							throw new FileNotFoundException("文件不存在");
+						}
 						Map<String, String> variables = parseFirstLine(inputStream, fieldNames.split(","));
 						body = ValueReplacer.replace(body, variables);
 					}
