@@ -1,7 +1,6 @@
 package com.bomber.service;
 
-import org.springframework.util.CollectionUtils;
-
+import com.bomber.converter.HttpHeaderListConverter;
 import com.bomber.model.HttpSample;
 import com.bomber.model.RequestMethod;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -54,9 +53,7 @@ public class TestingPlan {
 			this.variableNames = httpSample.getVariableNames();
 			this.startLine = startLine;
 		}
-		if (!CollectionUtils.isEmpty(httpSample.getHeaders())) {
-			this.headers = String.join(";", httpSample.getHeaders());
-		}
+		this.headers = HttpHeaderListConverter.convertToString(httpSample.getHeaders());
 		this.numberOfConnections = threads;
 		this.numberOfRequests = requests;
 	}

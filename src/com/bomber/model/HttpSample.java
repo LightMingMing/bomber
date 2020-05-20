@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -17,6 +18,7 @@ import org.ironrhino.core.metadata.Richtable;
 import org.ironrhino.core.metadata.UiConfig;
 import org.ironrhino.core.model.BaseEntity;
 
+import com.bomber.converter.HttpHeaderListConverter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Getter;
@@ -29,12 +31,10 @@ import lombok.Setter;
 @Richtable(showQueryForm = true, actionColumnButtons = HttpSample.ACTION_COLUMN_BUTTONS, order = "createDate desc")
 public class HttpSample extends BaseEntity {
 
-	final static String ACTION_COLUMN_BUTTONS = "<@btn view='view'/><@btn view='input' label='edit'/>"
-			+ "<@btn action='singleShot'/><@btn view='benchmark' label='benchmark' windowoptions='{\"minHeight\":\"200\"}'/>"
+	final static String ACTION_COLUMN_BUTTONS = "<@btn view='view'/>"
+			+ "<@btn view='input' label='edit' windowoptions='{\"minWidth\":\"750\"}'/> <@btn action='singleShot'/>"
+			+ "<@btn view='benchmark' label='benchmark' windowoptions='{\"minHeight\":\"200\"}'/>"
 			+ "<a href='<@url value='/testingRecord/displayChart?sampleId='/>${(entity.id)!}' target='_blank' class='btn'>chart</a>";
-
-	final static String HEADER_INPUT_TEMPLATE = "<textarea id='httpSample-headers' name='httpSample.headers' "
-			+ "class='input-xxlarge' style='height: 50px'>${(entity.headers)!}</textarea>";
 
 	final static String BODY_INPUT_TEMPLATE = "<textarea id='httpSample-body' name='httpSample.body' "
 			+ "class='input-xxlarge' style='min-height: 200px'>${(entity.body)!}</textarea>";
@@ -42,17 +42,18 @@ public class HttpSample extends BaseEntity {
 	@UiConfig(alias = "接口名称", width = "150px")
 	private String name;
 
-	@UiConfig(alias = "地址", width = "300px", cssClass = "input-xxlarge")
+	@UiConfig(alias = "地址", width = "450px", cssClass = "input-xxlarge")
 	private String url;
 
-	@UiConfig(alias = "请求方法", width = "50px")
+	@UiConfig(alias = "请求方法", width = "50px", cellDynamicAttributes = "{\"style\":\"text-align: center\"}")
 	private RequestMethod method;
 
-	@UiConfig(alias = "请求头", type = "textarea", width = "150px", inputTemplate = HEADER_INPUT_TEMPLATE, excludedFromQuery = true)
-	private List<String> headers;
+	@UiConfig(alias = "请求头")
+	@Convert(converter = HttpHeaderListConverter.class)
+	private List<HttpHeader> headers;
 
 	@Column(length = 2048)
-	@UiConfig(alias = "请求体", maxlength = 2048, hiddenInList = @Hidden(true), type = "textarea", inputTemplate = BODY_INPUT_TEMPLATE, excludedFromQuery = true)
+	@UiConfig(alias = "请求体", hiddenInList = @Hidden(true), type = "textarea", inputTemplate = BODY_INPUT_TEMPLATE, excludedFromQuery = true)
 	private String body;
 
 	@Transient

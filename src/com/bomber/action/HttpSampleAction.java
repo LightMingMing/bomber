@@ -34,6 +34,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.bomber.manager.HttpSampleManager;
 import com.bomber.manager.TestingRecordManager;
+import com.bomber.model.HttpHeader;
 import com.bomber.model.HttpSample;
 import com.bomber.model.TestingRecord;
 import com.bomber.service.BombardierService;
@@ -78,12 +79,13 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 	@Getter
 	private int requestsPerThread = 10;
 
-	private static MultiValueMap<String, String> parseHttpHeaders(List<String> httpHeadersInText) {
+	private static MultiValueMap<String, String> convertToHttpHeaders(List<HttpHeader> httpHeaderList) {
+		if (httpHeaderList == null) {
+			return null;
+		}
 		MultiValueMap<String, String> headers = new HttpHeaders();
-		for (String header : httpHeadersInText) {
-			String key = header.substring(0, header.indexOf(':'));
-			String value = header.substring(header.indexOf(':') + 1);
-			headers.add(key, value);
+		for (HttpHeader httpHeader : httpHeaderList) {
+			headers.add(httpHeader.getName(), httpHeader.getValue());
 		}
 		return headers;
 	}
@@ -201,7 +203,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		try {
 			URI uri = URI.create(httpSample.getUrl());
 			HttpMethod method = HttpMethod.valueOf(httpSample.getMethod().name());
-			MultiValueMap<String, String> headers = parseHttpHeaders(httpSample.getHeaders());
+			MultiValueMap<String, String> headers = convertToHttpHeaders(httpSample.getHeaders());
 			String body = httpSample.getBody();
 
 			if (StringUtils.hasLength(body)) {
