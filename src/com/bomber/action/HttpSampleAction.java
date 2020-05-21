@@ -193,6 +193,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		bombingRecord.setRequestsPerThread(requestsPerThread);
 		bombingRecord.setHttpSample(httpSample);
 		bombingRecord.setStartTime(new Date());
+		bombingRecordManager.save(bombingRecord);
 
 		// TODO Async execute
 		for (int numberOfThreads : numberOfThreadsList) {
