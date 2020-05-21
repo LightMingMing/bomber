@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -34,24 +33,25 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 import com.bomber.manager.HttpSampleManager;
-import com.bomber.manager.TestingRecordManager;
+import com.bomber.manager.SummaryReportManager;
 import com.bomber.model.HttpHeader;
 import com.bomber.model.HttpSample;
-import com.bomber.model.TestingRecord;
+import com.bomber.model.SummaryReport;
 import com.bomber.service.BombardierService;
 import com.bomber.service.TestingPlan;
 import com.bomber.service.TestingResult;
 import com.bomber.util.ValueReplacer;
 import com.opensymphony.xwork2.interceptor.annotations.InputConfig;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 @AutoConfig(fileupload = "text/plain, text/csv")
 public class HttpSampleAction extends EntityAction<HttpSample> {
 
-	private final static Logger logger = LoggerFactory.getLogger(HttpSampleAction.class);
+	private static final long serialVersionUID = 6007215319135153063L;
+
+	private static final Logger logger = LoggerFactory.getLogger(HttpSampleAction.class);
 
 	private static String lastThreadGroup = "1, 2, 5, 10, 20, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500";
 
@@ -61,7 +61,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 	@Autowired
 	private HttpSampleManager httpSampleManager;
 	@Autowired
-	private TestingRecordManager testingRecordManager;
+	private SummaryReportManager summaryReportManager;
 	@Autowired
 	private BombardierService bombardierService;
 	@Autowired
@@ -91,8 +91,8 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		return headers;
 	}
 
-	private static TestingRecord makeTestingRecord(TestingResult result) {
-		TestingRecord record = new TestingRecord();
+	private static SummaryReport makeSummaryReport(TestingResult result) {
+		SummaryReport record = new SummaryReport();
 		record.setNumberOfThreads(result.getNumConns());
 		record.setNumberOfRequests(result.getNumReqs());
 		record.setTps(result.getTps());
@@ -172,7 +172,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		int requestCount = 0;
 		httpSample = httpSampleManager.get(httpSample.getId());
 
-		List<SummaryReport> summaryReportList = new ArrayList<>();
+		// TODO Async execute
 		for (int numberOfThreads : numberOfThreadsList) {
 			int numberOfRequests = numberOfThreads * requestsPerThread;
 			TestingPlan testingPlan = new TestingPlan(httpSample, uri.getPath(), numberOfThreads, numberOfRequests,
@@ -181,19 +181,17 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 			Date startTime = new Date();
 			TestingResult result = bombardierService.execute(testingPlan);
 
-			TestingRecord testingRecord = makeTestingRecord(result);
-			testingRecord.setHttpSample(httpSample);
-			testingRecord.setStartTime(startTime);
-			testingRecord.setEndTime(new Date());
-			testingRecordManager.save(testingRecord);
-
-			summaryReportList.add(new SummaryReport(numberOfThreads, result.getTps()));
+			SummaryReport summaryReport = makeSummaryReport(result);
+			summaryReport.setHttpSample(httpSample);
+			summaryReport.setStartTime(startTime);
+			summaryReport.setEndTime(new Date());
+			summaryReportManager.save(summaryReport);
 
 			requestCount += numberOfRequests;
 
 			logger.info("{} threads complete {} requests, tps={}", numberOfThreads, numberOfRequests, result.getTps());
 		}
-		addActionMessage(JsonUtils.prettify(JsonUtils.toJson(summaryReportList)));
+		addActionMessage("Bombing is ongoing!");
 
 		lastThreadGroup = numberOfThreadsList.stream().map(i -> i + "").collect(Collectors.joining(", "));
 		return SUCCESS;
@@ -231,13 +229,5 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 			return ERROR;
 		}
 		return SUCCESS;
-	}
-
-	@Getter
-	@Setter
-	@AllArgsConstructor
-	public static class SummaryReport {
-		private int numberOfThreads;
-		private double tps;
 	}
 }

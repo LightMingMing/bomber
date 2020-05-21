@@ -34,7 +34,7 @@ public class HttpSample extends BaseEntity {
 	protected static final String ACTION_COLUMN_BUTTONS = "<@btn view='view'/>"
 			+ "<@btn view='input' label='edit' windowoptions='{\"minWidth\":\"750\"}'/> <@btn action='singleShot'/>"
 			+ "<@btn view='benchmark' label='benchmark' windowoptions='{\"minHeight\":\"200\"}'/>"
-			+ "<a href='<@url value='/testingRecord/displayChart?sampleId='/>${(entity.id)!}' target='_blank' class='btn'>chart</a>";
+			+ "<a href='<@url value='/summaryReport/displayChart?sampleId='/>${(entity.id)!}' target='_blank' class='btn'>chart</a>";
 
 	private static final String BODY_INPUT_TEMPLATE = "<textarea id='httpSample-body' name='httpSample.body' "
 			+ "class='input-xxlarge' style='min-height: 200px'>${(entity.body)!}</textarea>";

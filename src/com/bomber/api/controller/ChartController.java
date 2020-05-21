@@ -3,6 +3,7 @@ package com.bomber.api.controller;
 import java.util.Comparator;
 import java.util.Date;
 
+import com.bomber.model.SummaryReport;
 import org.apache.http.client.utils.DateUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,9 +15,8 @@ import com.bomber.api.model.ChartType;
 import com.bomber.api.model.XAxis;
 import com.bomber.api.model.YAxis;
 import com.bomber.manager.HttpSampleManager;
-import com.bomber.manager.TestingRecordManager;
+import com.bomber.manager.SummaryReportManager;
 import com.bomber.model.HttpSample;
-import com.bomber.model.TestingRecord;
 
 @RestController
 @RequestMapping("/chart")
@@ -24,15 +24,15 @@ public class ChartController {
 
 	private final HttpSampleManager httpSampleManager;
 
-	private final TestingRecordManager testingRecordManager;
+	private final SummaryReportManager summaryReportManager;
 
-	public ChartController(HttpSampleManager httpSampleManager, TestingRecordManager testingRecordManager) {
+	public ChartController(HttpSampleManager httpSampleManager, SummaryReportManager summaryReportManager) {
 		this.httpSampleManager = httpSampleManager;
-		this.testingRecordManager = testingRecordManager;
+		this.summaryReportManager = summaryReportManager;
 	}
 
-	private static Comparator<TestingRecord> comparingNumberOfThreads() {
-		return Comparator.comparingInt(TestingRecord::getNumberOfThreads);
+	private static Comparator<SummaryReport> comparingNumberOfThreads() {
+		return Comparator.comparingInt(SummaryReport::getNumberOfThreads);
 	}
 
 	private static String subTitleFromDate() {
@@ -58,7 +58,7 @@ public class ChartController {
 		Axis<Double> tps = new Axis<>(name + " TPS");
 		tpsYAxis.add(tps);
 
-		testingRecordManager.listByHttpSample(id).stream().sorted(comparingNumberOfThreads()).forEach(record -> {
+		summaryReportManager.listByHttpSample(id).stream().sorted(comparingNumberOfThreads()).forEach(record -> {
 			xAxis.add(record.getNumberOfThreads());
 			tps.add(record.getTps());
 		});
@@ -81,7 +81,7 @@ public class ChartController {
 		Axis<Double> avg = new Axis<>(name + " AVG", ChartType.LINE);
 		durationYAxis.add(avg);
 
-		testingRecordManager.listByHttpSample(id).stream().sorted(comparingNumberOfThreads()).forEach(record -> {
+		summaryReportManager.listByHttpSample(id).stream().sorted(comparingNumberOfThreads()).forEach(record -> {
 			xAxis.add(record.getNumberOfThreads());
 			avg.add(record.getAvg());
 		});
@@ -107,7 +107,7 @@ public class ChartController {
 		durationYAxis.add(avg);
 		tpsYAxis.add(tps);
 
-		testingRecordManager.listByHttpSample(id).stream().sorted(comparingNumberOfThreads()).forEach(record -> {
+		summaryReportManager.listByHttpSample(id).stream().sorted(comparingNumberOfThreads()).forEach(record -> {
 			xAxis.add(record.getNumberOfThreads());
 			tps.add(record.getTps());
 			avg.add(record.getAvg());
@@ -135,7 +135,7 @@ public class ChartController {
 		Axis<Double> point99 = new Axis<>(name + " 99%", ChartType.LINE);
 		durationYAxis.add(point50, point75, point90, point95, point99);
 
-		testingRecordManager.listByHttpSample(id).stream().sorted(comparingNumberOfThreads()).forEach(record -> {
+		summaryReportManager.listByHttpSample(id).stream().sorted(comparingNumberOfThreads()).forEach(record -> {
 			xAxis.add(record.getNumberOfThreads());
 			point50.add(record.getPoint50());
 			point75.add(record.getPoint75());
@@ -161,7 +161,7 @@ public class ChartController {
 		Axis<Double> errorRate = new Axis<>(name + " 错误率", ChartType.COLUMN);
 		errorRateYAxis.add(errorRate);
 
-		testingRecordManager.listByHttpSample(id).stream().sorted(comparingNumberOfThreads()).forEach(record -> {
+		summaryReportManager.listByHttpSample(id).stream().sorted(comparingNumberOfThreads()).forEach(record -> {
 			xAxis.add(record.getNumberOfThreads());
 			errorRate.add(1 - record.getSuccessRate());
 		});
