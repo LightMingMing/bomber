@@ -14,6 +14,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.bomber.manager.BombingRecordManager;
+import com.bomber.model.BombingRecord;
+import com.bomber.model.BombingStatus;
 import org.ironrhino.core.fs.FileStorage;
 import org.ironrhino.core.metadata.AutoConfig;
 import org.ironrhino.core.struts.EntityAction;
@@ -61,6 +64,8 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 	@Autowired
 	private HttpSampleManager httpSampleManager;
 	@Autowired
+	private BombingRecordManager bombingRecordManager;
+	@Autowired
 	private SummaryReportManager summaryReportManager;
 	@Autowired
 	private BombardierService bombardierService;
@@ -79,6 +84,9 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 	@Setter
 	@Getter
 	private int requestsPerThread = 10;
+	@Getter
+	@Setter
+	private String name;
 
 	private static MultiValueMap<String, String> convertToHttpHeaders(List<HttpHeader> httpHeaderList) {
 		if (httpHeaderList == null) {
@@ -158,19 +166,33 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		return SUCCESS;
 	}
 
-	public String inputTestingPlan() {
+	public String inputBombingPlan() {
 		httpSample = httpSampleManager.get(this.getUid());
-		return "testingPlan";
+		return "bombingPlan";
 	}
 
 	@Transactional
-	@InputConfig(methodName = "inputTestingPlan")
-	public String benchmark() {
+	@InputConfig(methodName = "inputBombingPlan")
+	public String bombing() {
+		if (name == null || "".equals(name)) {
+			addFieldError("name", "name can't be empty");
+			return ERROR;
+		}
+
 		List<Integer> numberOfThreadsList = Arrays.stream(threadGroup.split(", *")).map(Integer::parseInt).sorted()
 				.collect(Collectors.toList());
 
 		int requestCount = 0;
 		httpSample = httpSampleManager.get(httpSample.getId());
+
+		threadGroup = numberOfThreadsList.stream().map(i -> i + "").collect(Collectors.joining(", "));
+
+		BombingRecord bombingRecord = new BombingRecord();
+		bombingRecord.setName(name);
+		bombingRecord.setThreadGroup(threadGroup);
+		bombingRecord.setRequestsPerThread(requestsPerThread);
+		bombingRecord.setHttpSample(httpSample);
+		bombingRecord.setStartTime(new Date());
 
 		// TODO Async execute
 		for (int numberOfThreads : numberOfThreadsList) {
@@ -182,7 +204,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 			TestingResult result = bombardierService.execute(testingPlan);
 
 			SummaryReport summaryReport = makeSummaryReport(result);
-			summaryReport.setHttpSample(httpSample);
+			summaryReport.setBombingRecord(bombingRecord);
 			summaryReport.setStartTime(startTime);
 			summaryReport.setEndTime(new Date());
 			summaryReportManager.save(summaryReport);
@@ -191,9 +213,13 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 
 			logger.info("{} threads complete {} requests, tps={}", numberOfThreads, numberOfRequests, result.getTps());
 		}
+		bombingRecord.setEndTime(new Date());
+		bombingRecord.setStatus(BombingStatus.COMPLETED); // TODO NEW -> RUNNING -> COMPLETED
+		bombingRecordManager.save(bombingRecord);
+
 		addActionMessage("Bombing is ongoing!");
 
-		lastThreadGroup = numberOfThreadsList.stream().map(i -> i + "").collect(Collectors.joining(", "));
+		lastThreadGroup = threadGroup;
 		return SUCCESS;
 	}
 

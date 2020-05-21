@@ -42,10 +42,10 @@ public class SummaryReport extends BaseEntity {
 
 	private static final String CENTER_ATTRIBUTE = "{\"style\":\"text-align: center\"}";
 
-	@JoinColumn(name = "httpSample")
 	@ManyToOne(fetch = FetchType.EAGER)
-	@UiConfig(alias = "Http请求", width = "150px", template = "<#if value?has_content>${value.name}</#if>")
-	private HttpSample httpSample;
+	@JoinColumn(name = "bombingRecordId", nullable = false)
+	@UiConfig(alias = "name", width = "200px", template = "${(value.httpSample.name)!}-${(value.name)!}")
+	private BombingRecord bombingRecord;
 
 	@Min(1)
 	@UiConfig(alias = "并发数", width = "50px", excludedFromQuery = true, cellDynamicAttributes = CENTER_ATTRIBUTE)

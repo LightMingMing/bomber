@@ -33,7 +33,7 @@ public class HttpSample extends BaseEntity {
 
 	protected static final String ACTION_COLUMN_BUTTONS = "<@btn view='view'/>"
 			+ "<@btn view='input' label='edit' windowoptions='{\"minWidth\":\"750\"}'/> <@btn action='singleShot'/>"
-			+ "<@btn view='benchmark' label='benchmark' windowoptions='{\"minHeight\":\"200\"}'/>"
+			+ "<@btn view='bombing' label='bombing' windowoptions='{\"minHeight\":\"200\"}'/>"
 			+ "<a href='<@url value='/summaryReport/displayChart?sampleId='/>${(entity.id)!}' target='_blank' class='btn'>chart</a>";
 
 	private static final String BODY_INPUT_TEMPLATE = "<textarea id='httpSample-body' name='httpSample.body' "
@@ -41,12 +41,15 @@ public class HttpSample extends BaseEntity {
 
 	private static final long serialVersionUID = 5801606517538547923L;
 
+	@Column(nullable = false)
 	@UiConfig(alias = "接口名称", width = "150px")
 	private String name;
 
+	@Column(nullable = false)
 	@UiConfig(alias = "地址", width = "450px", cssClass = "input-xxlarge")
 	private String url;
 
+	@Column(nullable = false)
 	@UiConfig(alias = "请求方法", width = "50px", cellDynamicAttributes = "{\"style\":\"text-align: center\"}")
 	private RequestMethod method;
 
