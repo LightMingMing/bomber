@@ -185,11 +185,9 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		int requestCount = 0;
 		httpSample = httpSampleManager.get(httpSample.getId());
 
-		threadGroup = numberOfThreadsList.stream().map(i -> i + "").collect(Collectors.joining(", "));
-
 		BombingRecord bombingRecord = new BombingRecord();
 		bombingRecord.setName(name);
-		bombingRecord.setThreadGroup(threadGroup);
+		bombingRecord.setThreadGroup(numberOfThreadsList);
 		bombingRecord.setRequestsPerThread(requestsPerThread);
 		bombingRecord.setHttpSample(httpSample);
 		bombingRecord.setStartTime(new Date());
@@ -220,7 +218,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 
 		addActionMessage("Bombing is ongoing!");
 
-		lastThreadGroup = threadGroup;
+		lastThreadGroup = numberOfThreadsList.stream().map(i -> i + "").collect(Collectors.joining(", "));
 		return SUCCESS;
 	}
 

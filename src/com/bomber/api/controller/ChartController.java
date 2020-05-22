@@ -1,9 +1,15 @@
 package com.bomber.api.controller;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-import com.bomber.model.SummaryReport;
 import org.apache.http.client.utils.DateUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,9 +20,12 @@ import com.bomber.api.model.Chart;
 import com.bomber.api.model.ChartType;
 import com.bomber.api.model.XAxis;
 import com.bomber.api.model.YAxis;
+import com.bomber.manager.BombingRecordManager;
 import com.bomber.manager.HttpSampleManager;
 import com.bomber.manager.SummaryReportManager;
+import com.bomber.model.BombingRecord;
 import com.bomber.model.HttpSample;
+import com.bomber.model.SummaryReport;
 
 @RestController
 @RequestMapping("/chart")
@@ -24,10 +33,14 @@ public class ChartController {
 
 	private final HttpSampleManager httpSampleManager;
 
+	private final BombingRecordManager bombingRecordManager;
+
 	private final SummaryReportManager summaryReportManager;
 
-	public ChartController(HttpSampleManager httpSampleManager, SummaryReportManager summaryReportManager) {
+	public ChartController(HttpSampleManager httpSampleManager, BombingRecordManager bombingRecordManager,
+			SummaryReportManager summaryReportManager) {
 		this.httpSampleManager = httpSampleManager;
+		this.bombingRecordManager = bombingRecordManager;
 		this.summaryReportManager = summaryReportManager;
 	}
 
@@ -35,68 +48,27 @@ public class ChartController {
 		return Comparator.comparingInt(SummaryReport::getNumberOfThreads);
 	}
 
-	private static String subTitleFromDate() {
+	private String subTitleFromDate() {
 		return DateUtils.formatDate(new Date(), "yyyy年MM月dd日");
 	}
 
-	private String getSampleName(String id) {
-		HttpSample httpSample;
-		return (httpSample = httpSampleManager.get(id)) == null ? null : httpSample.getName();
-	}
-
-	@GetMapping("/tps")
-	public Chart<Integer, Double> tps(String id) {
-		Chart<Integer, Double> chart = new Chart<>("平均响应时间与并发数变化关系", subTitleFromDate());
-
-		String name = getSampleName(id);
-		if (name == null)
-			return chart;
-
-		XAxis<Integer> xAxis = new XAxis<>("并发数");
-		YAxis<Double> tpsYAxis = new YAxis<>("TPS (r/s)");
-
-		Axis<Double> tps = new Axis<>(name + " TPS");
-		tpsYAxis.add(tps);
-
-		summaryReportManager.listByHttpSample(id).stream().sorted(comparingNumberOfThreads()).forEach(record -> {
-			xAxis.add(record.getNumberOfThreads());
-			tps.add(record.getTps());
-		});
-
-		chart.setAxis(xAxis, tpsYAxis);
-		return chart;
-	}
-
-	@GetMapping("/duration/avg")
-	public Chart<Integer, Double> averageDuration(String id) {
-		Chart<Integer, Double> chart = new Chart<>("平均响应时间与并发数变化关系", subTitleFromDate());
-
-		String name = getSampleName(id);
-		if (name == null)
-			return chart;
-
-		XAxis<Integer> xAxis = new XAxis<>("并发数");
-		YAxis<Double> durationYAxis = new YAxis<>("平均响应时间(ms)");
-
-		Axis<Double> avg = new Axis<>(name + " AVG", ChartType.LINE);
-		durationYAxis.add(avg);
-
-		summaryReportManager.listByHttpSample(id).stream().sorted(comparingNumberOfThreads()).forEach(record -> {
-			xAxis.add(record.getNumberOfThreads());
-			avg.add(record.getAvg());
-		});
-
-		chart.setAxis(xAxis, durationYAxis);
-		return chart;
+	private String title(BombingRecord bombingRecord, String suffix) {
+		return Optional.ofNullable(bombingRecord.getHttpSample()).map(HttpSample::getName)
+				.map(prefix -> prefix + "-" + suffix).orElse(suffix);
 	}
 
 	@GetMapping("/tps-duration")
 	public Chart<Integer, Double> tpsAndAverageDuration(String id) {
-		Chart<Integer, Double> chart = new Chart<>("TPS和平均响应时间与并发数变化关系", subTitleFromDate());
+		BombingRecord bombingRecord = bombingRecordManager.get(id);
 
-		String name = getSampleName(id);
-		if (name == null)
-			return chart;
+		if (bombingRecord == null) {
+			throw new IllegalArgumentException("bombingRecord does not exist");
+		}
+
+		String title = title(bombingRecord, "TPS和平均响应时间与并发数变化关系");
+		Chart<Integer, Double> chart = new Chart<>(title, subTitleFromDate());
+
+		String name = bombingRecord.getName();
 
 		XAxis<Integer> xAxis = new XAxis<>("并发数");
 		YAxis<Double> tpsYAxis = new YAxis<>("TPS (r/s)");
@@ -107,10 +79,10 @@ public class ChartController {
 		durationYAxis.add(avg);
 		tpsYAxis.add(tps);
 
-		summaryReportManager.listByHttpSample(id).stream().sorted(comparingNumberOfThreads()).forEach(record -> {
-			xAxis.add(record.getNumberOfThreads());
-			tps.add(record.getTps());
-			avg.add(record.getAvg());
+		summaryReportManager.listByBombingRecord(id).stream().sorted(comparingNumberOfThreads()).forEach(summary -> {
+			xAxis.add(summary.getNumberOfThreads());
+			tps.add(summary.getTps());
+			avg.add(summary.getAvg());
 		});
 
 		chart.setAxis(xAxis, tpsYAxis, durationYAxis);
@@ -119,11 +91,16 @@ public class ChartController {
 
 	@GetMapping("/duration/stats")
 	public Chart<Integer, Double> durationStats(String id) {
-		Chart<Integer, Double> chart = new Chart<>("响应时间分布", subTitleFromDate());
+		BombingRecord bombingRecord = bombingRecordManager.get(id);
 
-		String name = getSampleName(id);
-		if (name == null)
-			return chart;
+		if (bombingRecord == null) {
+			throw new IllegalArgumentException("bombingRecord does not exist");
+		}
+
+		String title = title(bombingRecord, "响应时间分布");
+		Chart<Integer, Double> chart = new Chart<>(title, subTitleFromDate());
+
+		String name = bombingRecord.getName();
 
 		XAxis<Integer> xAxis = new XAxis<>("并发数");
 		YAxis<Double> durationYAxis = new YAxis<>("响应时间(ms)");
@@ -135,40 +112,62 @@ public class ChartController {
 		Axis<Double> point99 = new Axis<>(name + " 99%", ChartType.LINE);
 		durationYAxis.add(point50, point75, point90, point95, point99);
 
-		summaryReportManager.listByHttpSample(id).stream().sorted(comparingNumberOfThreads()).forEach(record -> {
-			xAxis.add(record.getNumberOfThreads());
-			point50.add(record.getPoint50());
-			point75.add(record.getPoint75());
-			point90.add(record.getPoint90());
-			point95.add(record.getPoint95());
-			point99.add(record.getPoint99());
+		summaryReportManager.listByBombingRecord(id).stream().sorted(comparingNumberOfThreads()).forEach(summary -> {
+			xAxis.add(summary.getNumberOfThreads());
+			point50.add(summary.getPoint50());
+			point75.add(summary.getPoint75());
+			point90.add(summary.getPoint90());
+			point95.add(summary.getPoint95());
+			point99.add(summary.getPoint99());
 		});
 
 		chart.setAxis(xAxis, durationYAxis);
 		return chart;
 	}
 
-	@GetMapping("/failure-rate")
-	public Chart<Integer, Double> failureRate(String id) {
-		Chart<Integer, Double> chart = new Chart<>("错误率", subTitleFromDate());
+	@GetMapping("/compare")
+	public Chart<Integer, Double> compare(String ids) {
+		// TODO polish
+		List<BombingRecord> bombingRecords = bombingRecordManager.get(Arrays.asList(ids.split(", *"))).stream()
+				.filter(Objects::nonNull).collect(Collectors.toList());
 
-		String name = getSampleName(id);
-		if (name == null)
-			return chart;
+		// TODO httpSample name
+		String title = "TPS和平均响应时间与并发数变化关系";
+		Chart<Integer, Double> chart = new Chart<>(title, subTitleFromDate());
+
 		XAxis<Integer> xAxis = new XAxis<>("并发数");
-		YAxis<Double> errorRateYAxis = new YAxis<>("错误率");
+		YAxis<Double> tpsYAxis = new YAxis<>("TPS (r/s)");
+		YAxis<Double> durationYAxis = new YAxis<>("平均响应时间(ms)", true);
 
-		Axis<Double> errorRate = new Axis<>(name + " 错误率", ChartType.COLUMN);
-		errorRateYAxis.add(errorRate);
+		// 交集
+		Set<Integer> threads = bombingRecords.stream().map(BombingRecord::getThreadGroup).map(HashSet::new)
+				.reduce((set1, set2) -> {
+					set1.retainAll(set2);
+					return set1;
+				}).orElse(new HashSet<>());
 
-		summaryReportManager.listByHttpSample(id).stream().sorted(comparingNumberOfThreads()).forEach(record -> {
-			xAxis.add(record.getNumberOfThreads());
-			errorRate.add(1 - record.getSuccessRate());
-		});
+		boolean empty = true;
+		for (BombingRecord bombingRecord : bombingRecords) {
+			Axis<Double> tps = new Axis<>(bombingRecord.getName() + " TPS", ChartType.LINE);
+			Axis<Double> avg = new Axis<>(bombingRecord.getName() + " AVG", ChartType.LINE);
 
-		chart.setXAxis(xAxis);
-		chart.addYAxis(errorRateYAxis);
+			boolean finalEmpty = empty;
+
+			summaryReportManager.listByBombingRecord(bombingRecord.getId()).stream()
+					.filter(summary -> threads.contains(summary.getNumberOfThreads()))
+					.sorted(comparingNumberOfThreads()).forEach(summary -> {
+						if (!finalEmpty) {
+							xAxis.add(summary.getNumberOfThreads());
+						}
+						tps.add(summary.getTps());
+						avg.add(summary.getAvg());
+					});
+			durationYAxis.add(avg);
+			tpsYAxis.add(tps);
+			empty = false;
+		}
+
+		chart.setAxis(xAxis, tpsYAxis, durationYAxis);
 		return chart;
 	}
-
 }
