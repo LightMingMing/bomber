@@ -13,11 +13,11 @@ public class BombingRecordAction extends EntityAction<BombingRecord> {
 
 	@Setter
 	@Getter
-	private String bombingId;
+	private String recordId;
 
 	@Setter
 	@Getter
-	private String bombingIds;
+	private String recordIds;
 
 	public String displayChart() {
 		return "chart";

@@ -15,12 +15,12 @@
 </div>
 <script>
     const chartId = "container"
-    const bombingIds = '${bombingIds!}';
-    console.log("bombingIds=" + bombingIds);
+    const recordIds = '${recordIds!}';
+    console.log("recordIds=" + recordIds);
 
     $.ajax({
         type: 'get',
-        url: '<@url value='/api/chart/compare?ids='/>' + bombingIds,
+        url: '<@url value='/api/chart/compare?ids='/>' + recordIds,
         success: function (chart) {
             displayChart(chartId, chart)
         }

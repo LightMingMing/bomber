@@ -1,6 +1,7 @@
 package com.bomber.model;
 
 import static com.bomber.model.BombingRecord.ACTION_COLUMN_BUTTONS;
+import static com.bomber.model.BombingRecord.BOTTOM_BUTTONS;
 
 import java.util.Date;
 import java.util.List;
@@ -26,11 +27,14 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "bombing_record")
-@Richtable(showQueryForm = true, celleditable = false, order = "startTime desc", actionColumnButtons = ACTION_COLUMN_BUTTONS, bottomButtons = "<@btn action='delete' confirm=true/> <@btn class='reload'/> <@btn class='filter'/>")
+@Richtable(showQueryForm = true, celleditable = false, order = "startTime desc", actionColumnButtons = ACTION_COLUMN_BUTTONS, bottomButtons = BOTTOM_BUTTONS)
 public class BombingRecord extends BaseEntity {
 
 	protected static final String ACTION_COLUMN_BUTTONS = "<@btn view='view'/><@btn view='input' label='edit'/>"
-			+ "<a href='<@url value='/bombingRecord/displayChart?bombingId='/>${(entity.id)!}' target='_blank' class='btn'>chart</a>";
+			+ "<a href='<@url value='/bombingRecord/displayChart?recordId='/>${(entity.id)!}' target='_blank' class='btn'>chart</a>";
+
+	protected static final String BOTTOM_BUTTONS = "<button id='compare' type='button' class='btn' data-shown='selected'>${getText('compare')}</button>"
+			+ "<@btn action='delete' confirm=true/> <@btn class='reload'/> <@btn class='filter'/>";
 
 	private static final String STATUS_TEMPLATE = "<span class='label label-<#if value=='NEW'>info<#elseif value=='RUNNING'>warning<#elseif value=='COMPLETED'>success<#else>error</#if>'>${value}</span>";
 

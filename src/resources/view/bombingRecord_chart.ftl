@@ -21,13 +21,13 @@
 </div>
 <script>
     const chartId = "container"
-    const bombingId = '${bombingId!}';
-    console.log("bombingId=" + bombingId);
+    const recordId = '${recordId!}';
+    console.log("recordId=" + recordId);
 
     $("#tps-duration").click(function () {
         $.ajax({
             type: 'get',
-            url: '<@url value='/api/chart/tps-duration?id='/>' + bombingId,
+            url: '<@url value='/api/chart/tps-duration?id='/>' + recordId,
             success: function (chart) {
                 displayChart(chartId, chart)
             }
@@ -37,7 +37,7 @@
     $("#duration-stats").click(function () {
         $.ajax({
             type: 'get',
-            url: '<@url value='/api/chart/duration/stats?id='/>' + bombingId,
+            url: '<@url value='/api/chart/duration/stats?id='/>' + recordId,
             success: function (chart) {
                 displayChart(chartId, chart)
             }
@@ -46,7 +46,7 @@
 
     $.ajax({
         type: 'get',
-        url: '<@url value='/api/chart/tps-duration?id='/>' + bombingId,
+        url: '<@url value='/api/chart/tps-duration?id='/>' + recordId,
         success: function (chart) {
             displayChart(chartId, chart)
         }
