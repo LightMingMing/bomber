@@ -6,9 +6,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @RequestMapping("/pt")
-@RestApi(apiBaseUrl = "http://localhost:8081/api", restTemplate = "longTimeoutRestTemplate")
+@RestApi(apiBaseUrl = "${bombardier.apiBaseUrl:http://localhost:8081/api}", restTemplate = "longTimeoutRestTemplate")
 public interface BombardierService {
 
 	@PostMapping(headers = "Content-Type=application/json")
-	TestingResult execute(@RequestBody TestingPlan testingPlan);
+	BombardierResponse execute(@RequestBody BombardierRequest bombardierRequest);
+
 }

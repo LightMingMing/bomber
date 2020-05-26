@@ -14,9 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.bomber.manager.BombingRecordManager;
-import com.bomber.model.BombingRecord;
-import com.bomber.model.BombingStatus;
+import com.bomber.engine.BomberEngine;
+import com.bomber.engine.BomberPlan;
 import org.ironrhino.core.fs.FileStorage;
 import org.ironrhino.core.metadata.AutoConfig;
 import org.ironrhino.core.struts.EntityAction;
@@ -36,13 +35,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 import com.bomber.manager.HttpSampleManager;
-import com.bomber.manager.SummaryReportManager;
 import com.bomber.model.HttpHeader;
 import com.bomber.model.HttpSample;
-import com.bomber.model.SummaryReport;
-import com.bomber.service.BombardierService;
-import com.bomber.service.TestingPlan;
-import com.bomber.service.TestingResult;
 import com.bomber.util.ValueReplacer;
 import com.opensymphony.xwork2.interceptor.annotations.InputConfig;
 
@@ -63,14 +57,13 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 
 	@Autowired
 	private HttpSampleManager httpSampleManager;
+
 	@Autowired
-	private BombingRecordManager bombingRecordManager;
-	@Autowired
-	private SummaryReportManager summaryReportManager;
-	@Autowired
-	private BombardierService bombardierService;
+	private BomberEngine bomberEngine;
+
 	@Autowired
 	private RestTemplate stringMessageRestTemplate;
+
 	@Autowired
 	private FileStorage fileStorage;
 
@@ -97,16 +90,6 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 			headers.add(httpHeader.getName(), httpHeader.getValue());
 		}
 		return headers;
-	}
-
-	private static SummaryReport makeSummaryReport(TestingResult result) {
-		SummaryReport record = new SummaryReport();
-		record.setNumberOfThreads(result.getNumConns());
-		record.setNumberOfRequests(result.getNumReqs());
-		record.setTps(result.getTps());
-		record.setStatusStats(result.getStatus());
-		record.setLatencyStats(result.getLatency());
-		return record;
 	}
 
 	private static Map<String, String> parseFirstLine(InputStream inputStream, String[] fieldNames) throws IOException {
@@ -182,39 +165,12 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		List<Integer> numberOfThreadsList = Arrays.stream(threadGroup.split(", *")).map(Integer::parseInt).sorted()
 				.collect(Collectors.toList());
 
-		int requestCount = 0;
-		httpSample = httpSampleManager.get(httpSample.getId());
-
-		BombingRecord bombingRecord = new BombingRecord();
-		bombingRecord.setName(name);
-		bombingRecord.setThreadGroup(numberOfThreadsList);
-		bombingRecord.setRequestsPerThread(requestsPerThread);
-		bombingRecord.setHttpSample(httpSample);
-		bombingRecord.setStartTime(new Date());
-		bombingRecordManager.save(bombingRecord);
-
-		// TODO Async execute
-		for (int numberOfThreads : numberOfThreadsList) {
-			int numberOfRequests = numberOfThreads * requestsPerThread;
-			TestingPlan testingPlan = new TestingPlan(httpSample, uri.getPath(), numberOfThreads, numberOfRequests,
-					requestCount);
-
-			Date startTime = new Date();
-			TestingResult result = bombardierService.execute(testingPlan);
-
-			SummaryReport summaryReport = makeSummaryReport(result);
-			summaryReport.setBombingRecord(bombingRecord);
-			summaryReport.setStartTime(startTime);
-			summaryReport.setEndTime(new Date());
-			summaryReportManager.save(summaryReport);
-
-			requestCount += numberOfRequests;
-
-			logger.info("{} threads complete {} requests, tps={}", numberOfThreads, numberOfRequests, result.getTps());
-		}
-		bombingRecord.setEndTime(new Date());
-		bombingRecord.setStatus(BombingStatus.COMPLETED); // TODO NEW -> RUNNING -> COMPLETED
-		bombingRecordManager.save(bombingRecord);
+		BomberPlan bomberPlan = new BomberPlan();
+		bomberPlan.setSampleId(httpSample.getId());
+		bomberPlan.setName(name);
+		bomberPlan.setRequestsPerThread(requestsPerThread);
+		bomberPlan.setThreadGroup(numberOfThreadsList);
+		bomberEngine.execute(bomberPlan);
 
 		addActionMessage("Bombing is ongoing!");
 

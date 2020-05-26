@@ -1,5 +1,7 @@
 package com.bomber.model;
 
+import static com.bomber.model.BombingRecord.ACTION_COLUMN_BUTTONS;
+
 import java.util.Date;
 import java.util.List;
 
@@ -20,8 +22,6 @@ import org.ironrhino.core.model.BaseEntity;
 import lombok.Getter;
 import lombok.Setter;
 
-import static com.bomber.model.BombingRecord.ACTION_COLUMN_BUTTONS;
-
 @Getter
 @Setter
 @Entity
@@ -31,6 +31,10 @@ public class BombingRecord extends BaseEntity {
 
 	protected static final String ACTION_COLUMN_BUTTONS = "<@btn view='view'/><@btn view='input' label='edit'/>"
 			+ "<a href='<@url value='/bombingRecord/displayChart?bombingId='/>${(entity.id)!}' target='_blank' class='btn'>chart</a>";
+
+	private static final String STATUS_TEMPLATE = "<span class='label label-<#if value=='NEW'>info<#elseif value=='RUNNING'>warning<#elseif value=='COMPLETED'>success<#else>error</#if>'>${value}</span>";
+
+	private static final String CENTER_ATTRIBUTE = "{\"style\":\"text-align: center\"}";
 
 	private static final long serialVersionUID = -7435247147997107193L;
 
@@ -48,10 +52,10 @@ public class BombingRecord extends BaseEntity {
 	private List<Integer> threadGroup;
 
 	@Min(1)
-	@UiConfig(alias = "请求数 / 线程", width = "150px", excludedFromQuery = true, readonly = @Readonly(true))
+	@UiConfig(alias = "请求数 / 线程", width = "150px", excludedFromQuery = true, readonly = @Readonly(true), cellDynamicAttributes = CENTER_ATTRIBUTE)
 	private int requestsPerThread;
 
-	@UiConfig(alias = "状态", width = "150px", readonly = @Readonly(true))
+	@UiConfig(alias = "状态", width = "150px", readonly = @Readonly(true), template = STATUS_TEMPLATE, cellDynamicAttributes = CENTER_ATTRIBUTE)
 	private BombingStatus status;
 
 	@UiConfig(alias = "开始时间", width = "150px", queryWithRange = true, readonly = @Readonly(true))

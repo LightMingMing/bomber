@@ -17,6 +17,7 @@ import org.ironrhino.core.metadata.Readonly;
 import org.ironrhino.core.metadata.Richtable;
 import org.ironrhino.core.metadata.UiConfig;
 import org.ironrhino.core.model.BaseEntity;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.bomber.converter.HttpHeaderListConverter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
