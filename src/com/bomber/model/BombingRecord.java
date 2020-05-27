@@ -27,7 +27,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "bombing_record")
-@Richtable(showQueryForm = true, celleditable = false, order = "startTime desc", actionColumnButtons = ACTION_COLUMN_BUTTONS, bottomButtons = BOTTOM_BUTTONS)
+@Richtable(showQueryForm = true, celleditable = false, downloadable = false, order = "startTime desc", actionColumnButtons = ACTION_COLUMN_BUTTONS, bottomButtons = BOTTOM_BUTTONS)
 public class BombingRecord extends BaseEntity {
 
 	protected static final String ACTION_COLUMN_BUTTONS = "<@btn view='view'/><@btn view='input' label='edit'/>"
@@ -36,7 +36,7 @@ public class BombingRecord extends BaseEntity {
 	protected static final String BOTTOM_BUTTONS = "<button type='button' class='btn' data-shown='selected' onclick=\"redirectTo('<@url value='/bombingRecord/compare?recordIds='/>' + checkedIds())\">${getText('compare')}</button>"
 			+ "<@btn action='delete' confirm=true/> <@btn class='reload'/> <@btn class='filter'/>";
 
-	private static final String STATUS_TEMPLATE = "<span class='label label-<#if value=='NEW'>info<#elseif value=='RUNNING'>warning<#elseif value=='COMPLETED'>success<#else>error</#if>'>${value}</span>";
+	private static final String STATUS_TEMPLATE = "<span class='label label-<#if value.name()=='NEW'>info<#elseif value.name()=='RUNNING'>warning<#elseif value.name()=='COMPLETED'>success<#else>error</#if>'>${value}</span>";
 
 	private static final String CENTER_ATTRIBUTE = "{\"style\":\"text-align: center\"}";
 
@@ -44,11 +44,11 @@ public class BombingRecord extends BaseEntity {
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "httpSampleId", nullable = false)
-	@UiConfig(alias = "HTTP请求", width = "200px", template = "<#if value?has_content>${value.name}</#if>", readonly = @Readonly(true))
+	@UiConfig(alias = "HTTP请求", width = "200px", template = "<#if value?has_content>${value.name}</#if>", readonly = @Readonly(true), shownInPick = true)
 	private HttpSample httpSample;
 
 	@Column(nullable = false)
-	@UiConfig(width = "200px")
+	@UiConfig(alias = "记录名", width = "200px")
 	private String name;
 
 	@Column(nullable = false)

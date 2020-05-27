@@ -42,7 +42,7 @@ public class SummaryReport extends BaseEntity {
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "bombingRecordId", nullable = false)
-	@UiConfig(alias = "记录", width = "200px", template = "${(value.httpSample.name)!}-${(value.name)!}")
+	@UiConfig(alias = "记录名", width = "200px", template = "${(value.httpSample.name)!}-${(value.name)!}", csvTemplate = "${(value.httpSample.name)!} - ${(value.name)!}")
 	private BombingRecord bombingRecord;
 
 	@Min(1)
