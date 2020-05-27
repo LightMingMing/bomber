@@ -31,7 +31,7 @@ import lombok.Setter;
 public class BombingRecord extends BaseEntity {
 
 	protected static final String ACTION_COLUMN_BUTTONS = "<@btn view='view'/><@btn view='input' label='edit'/>"
-			+ "<a href='<@url value='/bombingRecord/displayChart?recordId='/>${(entity.id)!}' target='_blank' class='btn'>chart</a>";
+			+ "<a href='<@url value='/bombingRecord/displayChart?recordId='/>${(entity.id)!}' target='_blank' class='btn'>${getText('chart')}</a>";
 
 	protected static final String BOTTOM_BUTTONS = "<button type='button' class='btn' data-shown='selected' onclick=\"redirectTo('<@url value='/bombingRecord/compare?recordIds='/>' + checkedIds())\">${getText('compare')}</button>"
 			+ "<@btn action='delete' confirm=true/> <@btn class='reload'/> <@btn class='filter'/>";
@@ -44,31 +44,31 @@ public class BombingRecord extends BaseEntity {
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "httpSampleId", nullable = false)
-	@UiConfig(alias = "HTTP请求", width = "200px", template = "<#if value?has_content>${value.name}</#if>", readonly = @Readonly(true), shownInPick = true)
+	@UiConfig(width = "200px", template = "<#if value?has_content>${value.name}</#if>", readonly = @Readonly(true), shownInPick = true)
 	private HttpSample httpSample;
 
 	@Column(nullable = false)
-	@UiConfig(alias = "记录名", width = "200px")
+	@UiConfig(alias = "recordName", width = "200px")
 	private String name;
 
 	@Column(nullable = false)
-	@UiConfig(alias = "线程组", excludedFromQuery = true, readonly = @Readonly(true))
+	@UiConfig(excludedFromQuery = true, readonly = @Readonly(true))
 	private List<Integer> threadGroup;
 
 	@Min(1)
-	@UiConfig(alias = "请求数 / 线程", width = "150px", excludedFromQuery = true, readonly = @Readonly(true), cellDynamicAttributes = CENTER_ATTRIBUTE)
+	@UiConfig(width = "150px", excludedFromQuery = true, readonly = @Readonly(true), cellDynamicAttributes = CENTER_ATTRIBUTE)
 	private int requestsPerThread;
 
-	@UiConfig(alias = "状态", width = "150px", readonly = @Readonly(true), template = STATUS_TEMPLATE, cellDynamicAttributes = CENTER_ATTRIBUTE)
+	@UiConfig(width = "150px", readonly = @Readonly(true), template = STATUS_TEMPLATE, cellDynamicAttributes = CENTER_ATTRIBUTE)
 	private BombingStatus status;
 
-	@UiConfig(alias = "开始时间", width = "150px", queryWithRange = true, readonly = @Readonly(true))
+	@UiConfig(width = "150px", queryWithRange = true, readonly = @Readonly(true))
 	private Date startTime;
 
-	@UiConfig(alias = "结束时间", width = "150px", queryWithRange = true, readonly = @Readonly(true))
+	@UiConfig(width = "150px", queryWithRange = true, readonly = @Readonly(true))
 	private Date endTime;
 
 	@Column(length = 1024)
-	@UiConfig(alias = "备注", type = "textarea", hiddenInList = @Hidden(true), excludedFromQuery = true)
+	@UiConfig(type = "textarea", hiddenInList = @Hidden(true), excludedFromQuery = true)
 	private String remark;
 }

@@ -42,21 +42,21 @@ public class SummaryReport extends BaseEntity {
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "bombingRecordId", nullable = false)
-	@UiConfig(alias = "记录名", width = "200px", template = "${(value.httpSample.name)!}-${(value.name)!}", csvTemplate = "${(value.httpSample.name)!} - ${(value.name)!}")
+	@UiConfig(alias = "recordName", width = "200px", template = "${(value.httpSample.name)!}-${(value.name)!}", csvTemplate = "${(value.httpSample.name)!} - ${(value.name)!}")
 	private BombingRecord bombingRecord;
 
 	@Min(1)
-	@UiConfig(alias = "并发数", width = "50px", excludedFromQuery = true, cellDynamicAttributes = CENTER_ATTRIBUTE)
+	@UiConfig(alias = "threads", width = "80px", excludedFromQuery = true, cellDynamicAttributes = CENTER_ATTRIBUTE)
 	private int numberOfThreads;
 
 	@Min(1)
-	@UiConfig(alias = "请求数", width = "50px", excludedFromQuery = true, cellDynamicAttributes = CENTER_ATTRIBUTE)
+	@UiConfig(alias = "requests", width = "80px", excludedFromQuery = true, cellDynamicAttributes = CENTER_ATTRIBUTE)
 	private int numberOfRequests;
 
-	@UiConfig(alias = "TPS", width = "50px", excludedFromQuery = true, description = "每秒请求数", cellDynamicAttributes = CENTER_ATTRIBUTE)
+	@UiConfig(alias = "TPS", width = "50px", excludedFromQuery = true, cellDynamicAttributes = CENTER_ATTRIBUTE)
 	private double tps;
 
-	@UiConfig(alias = "平均响应时间", width = "100px", excludedFromQuery = true, template = TIME_UNIT_TEMPLATE, cellDynamicAttributes = CENTER_ATTRIBUTE)
+	@UiConfig(width = "100px", excludedFromQuery = true, template = TIME_UNIT_TEMPLATE, cellDynamicAttributes = CENTER_ATTRIBUTE)
 	private double avg;
 
 	@UiConfig(excludedFromQuery = true, hiddenInList = @Hidden(true), template = TIME_UNIT_TEMPLATE)
@@ -77,7 +77,7 @@ public class SummaryReport extends BaseEntity {
 	@UiConfig(alias = "99%", width = "50px", excludedFromQuery = true, template = TIME_UNIT_TEMPLATE, cellDynamicAttributes = CENTER_ATTRIBUTE)
 	private double point99;
 
-	@UiConfig(alias = "标准差", width = "80px", excludedFromQuery = true, description = "响应时间离散程度", cellDynamicAttributes = CENTER_ATTRIBUTE)
+	@UiConfig(width = "80px", excludedFromQuery = true, cellDynamicAttributes = CENTER_ATTRIBUTE)
 	private double stdDev;
 
 	@UiConfig(excludedFromQuery = true, hiddenInList = @Hidden(true))
@@ -107,7 +107,7 @@ public class SummaryReport extends BaseEntity {
 	private Date endTime;
 
 	@Transient
-	@UiConfig(alias = "成功率/失败率", excludedFromQuery = true, hiddenInView = @Hidden(true), template = PROGRESS_TEMPLATE)
+	@UiConfig(excludedFromQuery = true, hiddenInView = @Hidden(true), template = PROGRESS_TEMPLATE)
 	private double successRate;
 
 	public double getSuccessCount() {

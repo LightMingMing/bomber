@@ -42,48 +42,48 @@ public class HttpSample extends BaseEntity {
 	private static final long serialVersionUID = 5801606517538547923L;
 
 	@Column(nullable = false)
-	@UiConfig(alias = "接口名称", width = "150px")
+	@UiConfig(alias = "requestName", width = "150px")
 	private String name;
 
 	@Column(nullable = false)
-	@UiConfig(alias = "地址", width = "450px", cssClass = "input-xxlarge")
+	@UiConfig(cssClass = "input-xxlarge")
 	private String url;
 
 	@Column(nullable = false)
-	@UiConfig(alias = "请求方法", width = "50px", cellDynamicAttributes = "{\"style\":\"text-align: center\"}")
+	@UiConfig(alias = "requestMethod", width = "80px", cellDynamicAttributes = "{\"style\":\"text-align: center\"}")
 	private RequestMethod method;
 
-	@UiConfig(alias = "请求头")
+	@UiConfig(alias = "headers")
 	@Convert(converter = HttpHeaderListConverter.class)
 	private List<HttpHeader> headers;
 
 	@Column(length = 2048)
-	@UiConfig(alias = "请求体", hiddenInList = @Hidden(true), type = "textarea", inputTemplate = BODY_INPUT_TEMPLATE, excludedFromQuery = true)
+	@UiConfig(hiddenInList = @Hidden(true), type = "textarea", inputTemplate = BODY_INPUT_TEMPLATE, excludedFromQuery = true)
 	private String body;
 
 	@Transient
-	@UiConfig(alias = "文件", hiddenInList = @Hidden(true), hiddenInView = @Hidden(true))
+	@UiConfig(alias = "file", hiddenInList = @Hidden(true), hiddenInView = @Hidden(true))
 	private File csvFile;
 
 	@Transient
 	@UiConfig(hidden = true)
 	private String csvFileFileName;
 
-	@UiConfig(alias = "文件路径", width = "150px", readonly = @Readonly(true), excludedFromQuery = true)
+	@UiConfig(alias = "filePath", hiddenInList = @Hidden(true), readonly = @Readonly(true), excludedFromQuery = true)
 	private String csvFilePath;
 
-	@UiConfig(alias = "变量名", description = "以','间隔", width = "150px", excludedFromQuery = true)
+	@UiConfig(alias = "variableNames", hiddenInList = @Hidden(true), description = "separatedByCommas", excludedFromQuery = true)
 	private String variableNames;
 
 	@JsonIgnore
 	@CreationTimestamp
 	@Column(updatable = false)
 	@UiConfig(hiddenInList = @Hidden(true), hiddenInInput = @Hidden(true), excludedFromQuery = true)
-	private Date createDate; // 创建时间
+	private Date createDate;
 
 	@JsonIgnore
 	@UpdateTimestamp
 	@Column(insertable = false)
 	@UiConfig(hiddenInList = @Hidden(true), hiddenInInput = @Hidden(true), excludedFromQuery = true)
-	private Date modifyDate; // 修改时间
+	private Date modifyDate;
 }
