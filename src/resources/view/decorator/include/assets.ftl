@@ -1,2 +1,2 @@
-<script src="<@url value="/assets/scripts/comparebutton.js"/>"
+<script src="<@url value="/assets/scripts/bomber.js"/>"
         type="text/javascript"<#if !head?contains('</script>')> defer</#if>></script>

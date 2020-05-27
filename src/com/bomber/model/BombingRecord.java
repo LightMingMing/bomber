@@ -33,7 +33,7 @@ public class BombingRecord extends BaseEntity {
 	protected static final String ACTION_COLUMN_BUTTONS = "<@btn view='view'/><@btn view='input' label='edit'/>"
 			+ "<a href='<@url value='/bombingRecord/displayChart?recordId='/>${(entity.id)!}' target='_blank' class='btn'>chart</a>";
 
-	protected static final String BOTTOM_BUTTONS = "<button id='compare' type='button' class='btn' data-shown='selected'>${getText('compare')}</button>"
+	protected static final String BOTTOM_BUTTONS = "<button type='button' class='btn' data-shown='selected' onclick=\"redirectTo('<@url value='/bombingRecord/compare?recordIds='/>' + checkedIds())\">${getText('compare')}</button>"
 			+ "<@btn action='delete' confirm=true/> <@btn class='reload'/> <@btn class='filter'/>";
 
 	private static final String STATUS_TEMPLATE = "<span class='label label-<#if value=='NEW'>info<#elseif value=='RUNNING'>warning<#elseif value=='COMPLETED'>success<#else>error</#if>'>${value}</span>";
