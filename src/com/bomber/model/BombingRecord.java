@@ -36,7 +36,10 @@ public class BombingRecord extends BaseEntity {
 	protected static final String BOTTOM_BUTTONS = "<button type='button' class='btn' data-shown='selected' onclick=\"redirectTo('<@url value='/bombingRecord/compare?recordIds='/>' + checkedIds())\">${getText('compare')}</button>"
 			+ "<@btn action='delete' confirm=true/> <@btn class='reload'/> <@btn class='filter'/>";
 
-	private static final String STATUS_TEMPLATE = "<span class='label label-<#if value.name()=='NEW'>info<#elseif value.name()=='RUNNING'>warning<#elseif value.name()=='COMPLETED'>success<#else>error</#if>'>${value}</span>";
+	private static final String STATUS_TEMPLATE = "<span class='label <#switch value.name()>"
+			+ "<#case 'COMPLETED'>label-success<#break>" + "<#case 'FAILURE'>label-important<#break>"
+			+ "<#case 'RUNNING'>label-warning<#break>" + "<#case 'PAUSE'>label-inverse<#break>"
+			+ "<#default>label-info</#switch> '>${value}</span>";
 
 	private static final String CENTER_ATTRIBUTE = "{\"style\":\"text-align: center\"}";
 

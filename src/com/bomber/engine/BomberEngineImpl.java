@@ -2,6 +2,7 @@ package com.bomber.engine;
 
 import static com.bomber.converter.HttpHeaderListConverter.convertToString;
 import static com.bomber.model.BombingStatus.COMPLETED;
+import static com.bomber.model.BombingStatus.FAILURE;
 import static com.bomber.model.BombingStatus.NEW;
 import static com.bomber.model.BombingStatus.RUNNING;
 
@@ -12,6 +13,8 @@ import java.util.concurrent.ExecutorService;
 import com.bomber.service.BombardierRequest;
 import com.bomber.service.BombardierResponse;
 import com.bomber.service.BombardierService;
+import lombok.extern.slf4j.Slf4j;
+import org.ironrhino.rest.RestStatus;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
@@ -26,6 +29,7 @@ import com.bomber.model.BombingRecord;
 import com.bomber.model.HttpSample;
 import com.bomber.model.SummaryReport;
 
+@Slf4j
 @Service
 public class BomberEngineImpl implements BomberEngine {
 
@@ -98,7 +102,31 @@ public class BomberEngineImpl implements BomberEngine {
 			request.setNumberOfConnections(numberOfThreads);
 			request.setNumberOfRequests(numberOfRequests);
 			request.setStartLine(requestCount);
-			BombardierResponse response = bombardierService.execute(request);
+
+			BombardierResponse response;
+			try {
+				response = bombardierService.execute(request);
+			} catch (RestStatus status) {
+				log.error("bombardier execute failed", status);
+				String message = status.getStatus();
+				if (status.getMessage() != null) {
+					message = status.getMessage();
+				} else if (status.getCause() != null && status.getCause().getMessage() != null) {
+					message = status.getCause().getMessage();
+				}
+				record.setStatus(FAILURE);
+				record.setRemark(message);
+				record.setEndTime(new Date());
+				bombingRecordManager.save(record);
+				return;
+			} catch (Exception e) {
+				log.error("bombardier execute failed", e);
+				record.setStatus(FAILURE);
+				record.setEndTime(new Date());
+				record.setRemark(e.getMessage());
+				bombingRecordManager.save(record);
+				return;
+			}
 
 			SummaryReport summaryReport = convertToSummaryReport(response);
 			summaryReport.setBombingRecord(record);
