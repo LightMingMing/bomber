@@ -29,31 +29,35 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "http_sample")
-@Richtable(showQueryForm = true, actionColumnButtons = HttpSample.ACTION_COLUMN_BUTTONS, order = "createDate desc")
+@Richtable(showQueryForm = true, celleditable = false, actionColumnButtons = HttpSample.ACTION_COLUMN_BUTTONS, order = "createDate desc")
 public class HttpSample extends BaseEntity {
 
 	protected static final String ACTION_COLUMN_BUTTONS = "<@btn view='view'/>"
 			+ "<@btn view='input' label='edit' windowoptions='{\"minWidth\":\"750\"}'/> <@btn action='singleShot'/>"
 			+ "<@btn view='bombing' label='bombing' windowoptions='{\"minHeight\":\"200\"}'/>";
 
+	private static final String HEADERS_TEMPLATE = "<#if value?has_content><#list value as header><span style='color:#d73a49;font-weight:bold'>${header.name}:</span> ${header.value}<#sep><br></#list></#if>";
+
 	private static final String BODY_INPUT_TEMPLATE = "<textarea id='httpSample-body' name='httpSample.body' "
 			+ "class='input-xxlarge' style='min-height: 200px'>${(entity.body)!}</textarea>";
+
+	private static final String CODE_ATTRIBUTE = "{\"style\":\"font-family:SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace\"}";
 
 	private static final long serialVersionUID = 5801606517538547923L;
 
 	@Column(nullable = false)
-	@UiConfig(alias = "requestName", width = "150px")
+	@UiConfig(alias = "requestName", width = "200px")
 	private String name;
 
 	@Column(nullable = false)
-	@UiConfig(cssClass = "input-xxlarge")
-	private String url;
-
-	@Column(nullable = false)
-	@UiConfig(alias = "requestMethod", width = "80px", cellDynamicAttributes = "{\"style\":\"text-align: center\"}")
+	@UiConfig(alias = "requestMethod", width = "100px", cellDynamicAttributes = "{\"style\":\"text-align: center\"}")
 	private RequestMethod method;
 
-	@UiConfig(alias = "headers")
+	@Column(nullable = false)
+	@UiConfig(cssClass = "input-xxlarge", cellDynamicAttributes = CODE_ATTRIBUTE)
+	private String url;
+
+	@UiConfig(alias = "headers", width = "250px", listTemplate = HEADERS_TEMPLATE, cellDynamicAttributes = CODE_ATTRIBUTE)
 	@Convert(converter = HttpHeaderListConverter.class)
 	private List<HttpHeader> headers;
 
@@ -72,7 +76,7 @@ public class HttpSample extends BaseEntity {
 	@UiConfig(alias = "filePath", hiddenInList = @Hidden(true), readonly = @Readonly(true), excludedFromQuery = true)
 	private String csvFilePath;
 
-	@UiConfig(alias = "variableNames", hiddenInList = @Hidden(true), description = "separatedByCommas", excludedFromQuery = true)
+	@UiConfig(alias = "variableNames", width = "180px", description = "separatedByCommas", excludedFromQuery = true)
 	private String variableNames;
 
 	@JsonIgnore
