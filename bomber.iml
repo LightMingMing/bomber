@@ -533,58 +533,90 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library">
-      <library name="ironrhino-assets-5.0.3.jar">
+      <library name="ironrhino-assets-5.0.5.jar">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/webapp/WEB-INF/lib/ironrhino-assets-5.0.3.jar!/" />
+          <root url="jar://$MODULE_DIR$/webapp/WEB-INF/lib/ironrhino-assets-5.0.5.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
       </library>
     </orderEntry>
     <orderEntry type="module-library">
-      <library name="ironrhino-core-5.0.3.jar">
+      <library name="ironrhino-common-setting-5.0.5.jar">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/webapp/WEB-INF/lib/ironrhino-core-5.0.3.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="jar://$MODULE_DIR$/lib/ironrhino-core-5.0.3-sources.jar!/" />
-        </SOURCES>
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library name="ironrhino-hibernate-config-5.0.3.jar">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/webapp/WEB-INF/lib/ironrhino-hibernate-config-5.0.3.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="jar://$MODULE_DIR$/lib/ironrhino-hibernate-config-5.0.3-sources.jar!/" />
-        </SOURCES>
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library name="ironrhino-security-5.0.3.jar">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/webapp/WEB-INF/lib/ironrhino-security-5.0.3.jar!/" />
+          <root url="jar://$MODULE_DIR$/webapp/WEB-INF/lib/ironrhino-common-setting-5.0.5.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
       </library>
     </orderEntry>
     <orderEntry type="module-library">
-      <library name="ironrhino-security-config-5.0.3.jar">
+      <library name="ironrhino-common-upload-5.0.5.jar">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/webapp/WEB-INF/lib/ironrhino-security-config-5.0.3.jar!/" />
+          <root url="jar://$MODULE_DIR$/webapp/WEB-INF/lib/ironrhino-common-upload-5.0.5.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
       </library>
     </orderEntry>
     <orderEntry type="module-library">
-      <library name="ironrhino-sitemesh-config-5.0.3.jar">
+      <library name="ironrhino-core-5.0.5.jar">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/webapp/WEB-INF/lib/ironrhino-sitemesh-config-5.0.3.jar!/" />
+          <root url="jar://$MODULE_DIR$/webapp/WEB-INF/lib/ironrhino-core-5.0.5.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="ironrhino-fs-5.0.5.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/webapp/WEB-INF/lib/ironrhino-fs-5.0.5.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="ironrhino-hibernate-config-5.0.5.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/webapp/WEB-INF/lib/ironrhino-hibernate-config-5.0.5.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="ironrhino-rest-5.0.5.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/webapp/WEB-INF/lib/ironrhino-rest-5.0.5.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="ironrhino-security-5.0.5.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/webapp/WEB-INF/lib/ironrhino-security-5.0.5.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="ironrhino-security-config-5.0.5.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/webapp/WEB-INF/lib/ironrhino-security-config-5.0.5.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="ironrhino-sitemesh-config-5.0.5.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/webapp/WEB-INF/lib/ironrhino-sitemesh-config-5.0.5.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -657,15 +689,6 @@
       <library name="jackson-module-parameter-names-2.10.1.jar">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/webapp/WEB-INF/lib/jackson-module-parameter-names-2.10.1.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library name="jaeger-all-1.0.0.jar">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/webapp/WEB-INF/lib/jaeger-all-1.0.0.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -879,18 +902,18 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library">
-      <library name="reactor-core-3.3.1.jar">
+      <library name="reactor-core-3.3.5.jar">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/webapp/WEB-INF/lib/reactor-core-3.3.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/webapp/WEB-INF/lib/reactor-core-3.3.5.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
       </library>
     </orderEntry>
     <orderEntry type="module-library">
-      <library name="reactor-netty-0.9.2.jar">
+      <library name="reactor-netty-0.9.7.jar">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/webapp/WEB-INF/lib/reactor-netty-0.9.2.jar!/" />
+          <root url="jar://$MODULE_DIR$/webapp/WEB-INF/lib/reactor-netty-0.9.7.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -1178,65 +1201,10 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/webapp/WEB-INF/lib/ironrhino-common-dictionary-5.0.3.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="jar://$MODULE_DIR$/lib/ironrhino-common-dictionary-5.0.3-sources.jar!/" />
-        </SOURCES>
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/webapp/WEB-INF/lib/ironrhino-common-setting-5.0.3.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="jar://$MODULE_DIR$/lib/ironrhino-common-setting-5.0.3-sources.jar!/" />
-        </SOURCES>
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/webapp/WEB-INF/lib/ironrhino-common-upload-5.0.3.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="jar://$MODULE_DIR$/lib/ironrhino-common-upload-5.0.3-sources.jar!/" />
-        </SOURCES>
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/webapp/WEB-INF/lib/ironrhino-fs-5.0.3.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="jar://$MODULE_DIR$/lib/ironrhino-fs-5.0.3-sources.jar!/" />
-        </SOURCES>
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/lombok-1.18.2.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/webapp/WEB-INF/lib/ironrhino-rest-5.0.3.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="jar://$MODULE_DIR$/lib/ironrhino-rest-5.0.3-sources.jar!/" />
-        </SOURCES>
       </library>
     </orderEntry>
   </component>
