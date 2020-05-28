@@ -103,6 +103,9 @@ public class BomberEngineImpl implements BomberEngine {
 			request.setNumberOfRequests(numberOfRequests);
 			request.setStartLine(requestCount);
 
+			record.setActiveThreads(numberOfThreads);
+			bombingRecordManager.save(record);
+
 			BombardierResponse response;
 			try {
 				response = bombardierService.execute(request);

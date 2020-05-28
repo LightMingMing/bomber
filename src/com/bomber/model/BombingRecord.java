@@ -36,6 +36,14 @@ public class BombingRecord extends BaseEntity {
 	protected static final String BOTTOM_BUTTONS = "<button type='button' class='btn' data-shown='selected' onclick=\"redirectTo('<@url value='/bombingRecord/compare?recordIds='/>' + checkedIds())\">${getText('compare')}</button>"
 			+ "<@btn action='delete' confirm=true/> <@btn class='reload'/> <@btn class='filter'/>";
 
+	private static final String THREAD_GROUP_TEMPLATE = "<#list value as threads>"
+			+ "<#if (entity.status.name() == 'NEW' || entity.status.name() == 'COMPLETED')><span class='label'>${threads}</span> "
+			+ "<#else><#if (threads == entity.activeThreads)>"
+			+ "<#if (entity.status.name() == 'RUNNING')><span class='label label-warning'>${threads}</span> </#if>"
+			+ "<#if (entity.status.name() == 'FAILURE')><span class='label label-important'>${threads}</span> </#if>"
+			+ "<#if (entity.status.name() == 'PAUSE')><span class='label label-info'>${threads}</span> </#if>"
+			+ "<#else><span class='label'>${threads}</span> </#if></#if></#list>";
+
 	private static final String STATUS_TEMPLATE = "<span class='label <#switch value.name()>"
 			+ "<#case 'COMPLETED'>label-success<#break>" + "<#case 'FAILURE'>label-important<#break>"
 			+ "<#case 'RUNNING'>label-warning<#break>" + "<#case 'PAUSE'>label-inverse<#break>"
@@ -55,8 +63,11 @@ public class BombingRecord extends BaseEntity {
 	private String name;
 
 	@Column(nullable = false)
-	@UiConfig(excludedFromQuery = true, readonly = @Readonly(true))
+	@UiConfig(template = THREAD_GROUP_TEMPLATE, excludedFromQuery = true, readonly = @Readonly(true))
 	private List<Integer> threadGroup;
+
+	@UiConfig(hidden = true, excludedFromQuery = true, readonly = @Readonly(true))
+	private int activeThreads = 0;
 
 	@Min(1)
 	@UiConfig(width = "150px", excludedFromQuery = true, readonly = @Readonly(true), cellDynamicAttributes = CENTER_ATTRIBUTE)
