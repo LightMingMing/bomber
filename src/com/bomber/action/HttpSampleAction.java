@@ -112,19 +112,6 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		}
 	}
 
-	private static String generatePath(String fileName) {
-		int extIndex = fileName.lastIndexOf('.');
-		String prefix, suffix;
-		if (extIndex != -1) {
-			prefix = fileName.substring(0, extIndex);
-			suffix = fileName.substring(extIndex);
-		} else {
-			prefix = fileName;
-			suffix = ".txt";
-		}
-		return prefix + DateUtils.format(new Date(), "yyMMddHHmmss") + suffix;
-	}
-
 	@Override
 	@Transactional
 	public String save() throws Exception {
@@ -134,11 +121,11 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		httpSample = getEntity();
 
 		if (httpSample.getCsvFile() != null) {
-			String path = generatePath(httpSample.getCsvFileFileName());
-			fileStorage.write(httpSample.getCsvFile(), path);
+			String fileName = httpSample.getCsvFileFileName();
+			fileStorage.write(httpSample.getCsvFile(), fileName);
 
-			httpSample.setCsvFilePath(path);
-			logger.info("Upload file '{}'", path);
+			httpSample.setCsvFilePath(fileName);
+			logger.info("Upload file '{}'", fileName);
 		}
 
 		httpSample.setVariableNames(StringUtils.trimAllWhitespace(httpSample.getVariableNames()));

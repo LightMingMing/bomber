@@ -30,23 +30,4 @@ public class BombardierRequest {
 	private String variableNames;
 
 	private int startLine;
-
-	public BombardierRequest() {
-	}
-
-	public BombardierRequest(String url, RequestMethod requestMethod, String headers, String body) {
-		this(url, requestMethod, headers, body, null, null);
-	}
-
-	public BombardierRequest(String url, RequestMethod requestMethod, String headers, String body, String csvFilePath,
-			String variableNames) {
-		this.url = url;
-		this.method = requestMethod;
-		this.headers = headers;
-		this.body = body;
-		if (csvFilePath != null && variableNames != null) {
-			this.csvFilePath = csvFilePath;
-			this.variableNames = variableNames;
-		}
-	}
 }

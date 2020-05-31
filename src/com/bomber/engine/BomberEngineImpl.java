@@ -10,10 +10,6 @@ import java.net.URI;
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
 
-import com.bomber.service.BombardierRequest;
-import com.bomber.service.BombardierResponse;
-import com.bomber.service.BombardierService;
-import lombok.extern.slf4j.Slf4j;
 import org.ironrhino.rest.RestStatus;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
@@ -21,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.springframework.util.StringUtils;
 
 import com.bomber.manager.BombingRecordManager;
 import com.bomber.manager.HttpSampleManager;
@@ -28,6 +25,11 @@ import com.bomber.manager.SummaryReportManager;
 import com.bomber.model.BombingRecord;
 import com.bomber.model.HttpSample;
 import com.bomber.model.SummaryReport;
+import com.bomber.service.BombardierRequest;
+import com.bomber.service.BombardierResponse;
+import com.bomber.service.BombardierService;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
@@ -54,6 +56,35 @@ public class BomberEngineImpl implements BomberEngine {
 		this.summaryReportManager = summaryReportManager;
 		this.bombardierService = bombardierService;
 		this.bombingExecutor = bombingExecutor;
+	}
+
+	protected static SummaryReport convertToSummaryReport(BombardierResponse response) {
+		SummaryReport record = new SummaryReport();
+		record.setNumberOfThreads(response.getNumConns());
+		record.setNumberOfRequests(response.getNumReqs());
+
+		BombardierResponse.StatusStats status = response.getStatus();
+		record.setReq1xx(status.getReq1xx());
+		record.setReq2xx(status.getReq2xx());
+		record.setReq3xx(status.getReq3xx());
+		record.setReq4xx(status.getReq4xx());
+		record.setReq5xx(status.getReq5xx());
+		record.setOther(status.getOther());
+
+		BombardierResponse.LatencyStats latency = response.getLatency();
+		record.setAvg(latency.getAvg());
+		record.setMax(latency.getMax());
+		record.setStdDev(latency.getStdDev());
+
+		BombardierResponse.Percentiles percentiles = latency.getPercentiles();
+		record.setPoint50(percentiles.getPoint50());
+		record.setPoint75(percentiles.getPoint75());
+		record.setPoint90(percentiles.getPoint90());
+		record.setPoint95(percentiles.getPoint95());
+		record.setPoint99(percentiles.getPoint99());
+
+		record.setTps(response.getTps());
+		return record;
 	}
 
 	@Override
@@ -92,23 +123,27 @@ public class BomberEngineImpl implements BomberEngine {
 		bombingRecordManager.save(record);
 
 		int requestCount = 0;
-		BombardierRequest request = new BombardierRequest(httpSample.getUrl(), httpSample.getMethod(),
-				convertToString(httpSample.getHeaders()), httpSample.getBody(),
-				uri.getPath() + httpSample.getCsvFilePath(), httpSample.getVariableNames());
 
 		for (int numberOfThreads : bomberPlan.getThreadGroup()) {
-			Date startTime = new Date();
 			int numberOfRequests = numberOfThreads * bomberPlan.getRequestsPerThread();
-			request.setNumberOfConnections(numberOfThreads);
-			request.setNumberOfRequests(numberOfRequests);
-			request.setStartLine(requestCount);
 
 			record.setActiveThreads(numberOfThreads);
 			bombingRecordManager.save(record);
 
-			BombardierResponse response;
 			try {
-				response = bombardierService.execute(request);
+				BombardierRequest request = convertToBombardierRequest(httpSample);
+				request.setNumberOfConnections(numberOfThreads);
+				request.setNumberOfRequests(numberOfRequests);
+				request.setStartLine(requestCount);
+
+				Date startTime = new Date();
+				BombardierResponse response = bombardierService.execute(request);
+
+				SummaryReport summaryReport = convertToSummaryReport(response);
+				summaryReport.setStartTime(startTime);
+				summaryReport.setEndTime(new Date());
+				summaryReport.setBombingRecord(record);
+				summaryReportManager.save(summaryReport);
 			} catch (RestStatus status) {
 				log.error("bombardier execute failed", status);
 				String message = status.getStatus();
@@ -130,13 +165,6 @@ public class BomberEngineImpl implements BomberEngine {
 				bombingRecordManager.save(record);
 				return;
 			}
-
-			SummaryReport summaryReport = convertToSummaryReport(response);
-			summaryReport.setBombingRecord(record);
-			summaryReport.setStartTime(startTime);
-			summaryReport.setEndTime(new Date());
-			summaryReportManager.save(summaryReport);
-
 			requestCount += numberOfRequests;
 		}
 
@@ -145,32 +173,17 @@ public class BomberEngineImpl implements BomberEngine {
 		bombingRecordManager.save(record);
 	}
 
-	protected static SummaryReport convertToSummaryReport(BombardierResponse response) {
-		SummaryReport record = new SummaryReport();
-		record.setNumberOfThreads(response.getNumConns());
-		record.setNumberOfRequests(response.getNumReqs());
-
-		BombardierResponse.StatusStats status = response.getStatus();
-		record.setReq1xx(status.getReq1xx());
-		record.setReq2xx(status.getReq2xx());
-		record.setReq3xx(status.getReq3xx());
-		record.setReq4xx(status.getReq4xx());
-		record.setReq5xx(status.getReq5xx());
-		record.setOther(status.getOther());
-
-		BombardierResponse.LatencyStats latency = response.getLatency();
-		record.setAvg(latency.getAvg());
-		record.setMax(latency.getMax());
-		record.setStdDev(latency.getStdDev());
-
-		BombardierResponse.Percentiles percentiles = latency.getPercentiles();
-		record.setPoint50(percentiles.getPoint50());
-		record.setPoint75(percentiles.getPoint75());
-		record.setPoint90(percentiles.getPoint90());
-		record.setPoint95(percentiles.getPoint95());
-		record.setPoint99(percentiles.getPoint99());
-
-		record.setTps(response.getTps());
-		return record;
+	protected BombardierRequest convertToBombardierRequest(HttpSample sample) {
+		BombardierRequest request = new BombardierRequest();
+		request.setUrl(sample.getUrl());
+		request.setMethod(sample.getMethod());
+		request.setBody(sample.getBody());
+		request.setHeaders(convertToString(sample.getHeaders()));
+		if (StringUtils.hasLength(sample.getCsvFilePath()) && StringUtils.hasLength(sample.getVariableNames())) {
+			request.setCsvFilePath(uri.getPath() + sample.getCsvFilePath());
+			request.setVariableNames(sample.getVariableNames());
+		}
+		return request;
 	}
+
 }
