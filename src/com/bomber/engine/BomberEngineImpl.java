@@ -3,7 +3,7 @@ package com.bomber.engine;
 import static com.bomber.converter.HttpHeaderListConverter.convertToString;
 import static com.bomber.model.BombingStatus.COMPLETED;
 import static com.bomber.model.BombingStatus.FAILURE;
-import static com.bomber.model.BombingStatus.NEW;
+import static com.bomber.model.BombingStatus.READY;
 import static com.bomber.model.BombingStatus.PAUSE;
 import static com.bomber.model.BombingStatus.RUNNING;
 
@@ -106,7 +106,7 @@ public class BomberEngineImpl implements BomberEngine {
 		record.setRequestsPerThread(ctx.getRequestsPerThread());
 		record.setHttpSample(httpSample);
 		record.setStartTime(new Date());
-		record.setStatus(NEW);
+		record.setStatus(READY);
 
 		bombingRecordManager.save(record);
 		ctx.setId(record.getId());
