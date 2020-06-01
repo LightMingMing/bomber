@@ -2,6 +2,10 @@ package com.bomber.engine;
 
 public interface BomberEngine {
 
-	void execute(BomberPlan bomberPlan);
+	void execute(BomberContext ctx);
+
+	void continueExecute(String ctxId);
+
+	void pauseExecute(String ctxId);
 
 }

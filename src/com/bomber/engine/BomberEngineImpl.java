@@ -4,10 +4,12 @@ import static com.bomber.converter.HttpHeaderListConverter.convertToString;
 import static com.bomber.model.BombingStatus.COMPLETED;
 import static com.bomber.model.BombingStatus.FAILURE;
 import static com.bomber.model.BombingStatus.NEW;
+import static com.bomber.model.BombingStatus.PAUSE;
 import static com.bomber.model.BombingStatus.RUNNING;
 
 import java.net.URI;
 import java.util.Date;
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 
 import org.ironrhino.rest.RestStatus;
@@ -45,16 +47,19 @@ public class BomberEngineImpl implements BomberEngine {
 
 	private final BombardierService bombardierService;
 
+	private final BomberContextRegistry registry;
+
 	@Value("${fileStorage.uri:file:///${app.context}/assets/}")
 	protected URI uri;
 
 	public BomberEngineImpl(HttpSampleManager httpSampleManager, BombingRecordManager bombingRecordManager,
 			SummaryReportManager summaryReportManager, BombardierService bombardierService,
-			ExecutorService bombingExecutor) {
+			BomberContextRegistry registry, ExecutorService bombingExecutor) {
 		this.httpSampleManager = httpSampleManager;
 		this.bombingRecordManager = bombingRecordManager;
 		this.summaryReportManager = summaryReportManager;
 		this.bombardierService = bombardierService;
+		this.registry = registry;
 		this.bombingExecutor = bombingExecutor;
 	}
 
@@ -89,45 +94,90 @@ public class BomberEngineImpl implements BomberEngine {
 
 	@Override
 	@Transactional
-	public void execute(@NonNull BomberPlan bomberPlan) {
-		HttpSample httpSample = httpSampleManager.get(bomberPlan.getSampleId());
+	public void execute(@NonNull BomberContext ctx) {
+		HttpSample httpSample = httpSampleManager.get(ctx.getSampleId());
 		if (httpSample == null) {
 			throw new IllegalArgumentException("httpSample does not exist");
 		}
 
 		BombingRecord record = new BombingRecord();
-		record.setName(bomberPlan.getName());
-		record.setThreadGroup(bomberPlan.getThreadGroup());
-		record.setRequestsPerThread(bomberPlan.getRequestsPerThread());
+		record.setName(ctx.getName());
+		record.setThreadGroup(ctx.getThreadGroup());
+		record.setRequestsPerThread(ctx.getRequestsPerThread());
 		record.setHttpSample(httpSample);
 		record.setStartTime(new Date());
 		record.setStatus(NEW);
 
 		bombingRecordManager.save(record);
-
-		String recordId = record.getId();
+		ctx.setId(record.getId());
 
 		TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
 			@Override
 			public void afterCommit() {
-				bombingExecutor.execute(() -> doExecute(recordId, bomberPlan));
+				bombingExecutor.execute(() -> {
+					registry.registerBomberContext(ctx);
+					try {
+						doExecute(ctx);
+					} finally {
+						registry.unregisterBomberContext(ctx);
+					}
+				});
 			}
 		});
 	}
 
-	public void doExecute(String recordId, BomberPlan bomberPlan) {
-		HttpSample httpSample = httpSampleManager.get(bomberPlan.getSampleId());
+	@Override
+	public void pauseExecute(String ctxId) {
+		Optional.ofNullable(registry.get(ctxId)).ifPresent(BomberContext::pause);
+	}
 
-		BombingRecord record = bombingRecordManager.get(recordId);
+	@Override
+	@Transactional(readOnly = true)
+	public void continueExecute(String ctxId) {
+		BombingRecord record = bombingRecordManager.get(ctxId);
+		if (record == null || record.getStatus() != PAUSE) {
+			return;
+		}
+		BomberContext ctx = new BomberContext(ctxId);
+		ctx.setSampleId(record.getHttpSample().getId());
+		ctx.setName(record.getName());
+		ctx.setThreadGroup(record.getThreadGroup());
+		ctx.setRequestsPerThread(record.getRequestsPerThread());
+		ctx.setActiveThreads(record.getActiveThreads());
+		bombingExecutor.execute(() -> {
+			registry.registerBomberContext(ctx);
+			try {
+				doExecute(ctx);
+			} finally {
+				registry.unregisterBomberContext(ctx);
+			}
+		});
+	}
+
+	private void doExecute(BomberContext ctx) {
+		HttpSample httpSample = httpSampleManager.get(ctx.getSampleId());
+
+		BombingRecord record = bombingRecordManager.get(ctx.getId());
 		record.setStatus(RUNNING);
 		bombingRecordManager.save(record);
 
 		int requestCount = 0;
 
-		for (int numberOfThreads : bomberPlan.getThreadGroup()) {
-			int numberOfRequests = numberOfThreads * bomberPlan.getRequestsPerThread();
+		for (int numberOfThreads : ctx.getThreadGroup()) {
+			int numberOfRequests = numberOfThreads * ctx.getRequestsPerThread();
 
+			if (numberOfThreads < ctx.getActiveThreads()) {
+				requestCount += numberOfRequests;
+				continue;
+			}
+
+			ctx.setActiveThreads(numberOfThreads);
 			record.setActiveThreads(numberOfThreads);
+			if (ctx.isPaused()) {
+				record.setStatus(PAUSE);
+				bombingRecordManager.save(record);
+				return;
+			}
 			bombingRecordManager.save(record);
 
 			try {

@@ -8,18 +8,14 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.bomber.engine.BomberEngine;
-import com.bomber.engine.BomberPlan;
 import org.ironrhino.core.fs.FileStorage;
 import org.ironrhino.core.metadata.AutoConfig;
 import org.ironrhino.core.struts.EntityAction;
-import org.ironrhino.core.util.DateUtils;
 import org.ironrhino.core.util.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +30,8 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
+import com.bomber.engine.BomberContext;
+import com.bomber.engine.BomberEngine;
 import com.bomber.manager.HttpSampleManager;
 import com.bomber.model.HttpHeader;
 import com.bomber.model.HttpSample;
@@ -152,12 +150,12 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		List<Integer> numberOfThreadsList = Arrays.stream(threadGroup.split(", *")).map(Integer::parseInt).sorted()
 				.collect(Collectors.toList());
 
-		BomberPlan bomberPlan = new BomberPlan();
-		bomberPlan.setSampleId(httpSample.getId());
-		bomberPlan.setName(name);
-		bomberPlan.setRequestsPerThread(requestsPerThread);
-		bomberPlan.setThreadGroup(numberOfThreadsList);
-		bomberEngine.execute(bomberPlan);
+		BomberContext ctx = new BomberContext();
+		ctx.setSampleId(httpSample.getId());
+		ctx.setName(name);
+		ctx.setRequestsPerThread(requestsPerThread);
+		ctx.setThreadGroup(numberOfThreadsList);
+		bomberEngine.execute(ctx);
 
 		addActionMessage("Bombing is ongoing!");
 

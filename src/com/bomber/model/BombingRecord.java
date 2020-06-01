@@ -31,7 +31,9 @@ import lombok.Setter;
 public class BombingRecord extends BaseEntity {
 
 	protected static final String ACTION_COLUMN_BUTTONS = "<@btn view='view'/><@btn view='input' label='edit'/>"
-			+ "<a href='<@url value='/bombingRecord/displayChart?recordId='/>${(entity.id)!}' target='_blank' class='btn'>${getText('chart')}</a>";
+			+ "<a href='<@url value='/bombingRecord/displayChart?recordId='/>${(entity.id)!}' target='_blank' class='btn'>${getText('chart')}</a>"
+			+ "<#if (entity.status.name() == 'RUNNING')><@btn action='pauseExecute' label='pause'/></#if>"
+			+ "<#if (entity.status.name() == 'PAUSE')><@btn action='continueExecute' label='continue'/></#if>";
 
 	protected static final String BOTTOM_BUTTONS = "<button type='button' class='btn' data-shown='selected' onclick=\"redirectTo('<@url value='/bombingRecord/compare?recordIds='/>' + checkedIds())\">${getText('compare')}</button>"
 			+ "<@btn action='delete' confirm=true/> <@btn class='reload'/> <@btn class='filter'/>";
@@ -41,7 +43,7 @@ public class BombingRecord extends BaseEntity {
 			+ "<#else><#if (threads == entity.activeThreads)>"
 			+ "<#if (entity.status.name() == 'RUNNING')><span class='label label-warning'>${threads}</span> </#if>"
 			+ "<#if (entity.status.name() == 'FAILURE')><span class='label label-important'>${threads}</span> </#if>"
-			+ "<#if (entity.status.name() == 'PAUSE')><span class='label label-info'>${threads}</span> </#if>"
+			+ "<#if (entity.status.name() == 'PAUSE')><span class='label label-inverse'>${threads}</span> </#if>"
 			+ "<#else><span class='label'>${threads}</span> </#if></#if></#list>";
 
 	private static final String STATUS_TEMPLATE = "<span class='label <#switch value.name()>"
