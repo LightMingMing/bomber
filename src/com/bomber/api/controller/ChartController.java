@@ -21,7 +21,6 @@ import com.bomber.api.model.ChartType;
 import com.bomber.api.model.XAxis;
 import com.bomber.api.model.YAxis;
 import com.bomber.manager.BombingRecordManager;
-import com.bomber.manager.HttpSampleManager;
 import com.bomber.manager.SummaryReportManager;
 import com.bomber.model.BombingRecord;
 import com.bomber.model.HttpSample;
@@ -31,15 +30,11 @@ import com.bomber.model.SummaryReport;
 @RequestMapping("/chart")
 public class ChartController {
 
-	private final HttpSampleManager httpSampleManager;
-
 	private final BombingRecordManager bombingRecordManager;
 
 	private final SummaryReportManager summaryReportManager;
 
-	public ChartController(HttpSampleManager httpSampleManager, BombingRecordManager bombingRecordManager,
-			SummaryReportManager summaryReportManager) {
-		this.httpSampleManager = httpSampleManager;
+	public ChartController(BombingRecordManager bombingRecordManager, SummaryReportManager summaryReportManager) {
 		this.bombingRecordManager = bombingRecordManager;
 		this.summaryReportManager = summaryReportManager;
 	}

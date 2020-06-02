@@ -58,6 +58,9 @@ function displayChart(id, chart) {
                     }
                 }
             }]
+        },
+        credits: {
+            enabled: false
         }
     });
 }

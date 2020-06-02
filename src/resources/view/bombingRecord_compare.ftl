@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style></style>
     <script src="<@url value='/assets/scripts/highcharts.js'/>" type="text/javascript"></script>
+    <script src="<@url value='/assets/scripts/series-label.js'/>" type="text/javascript"></script>
     <script src="<@url value='/assets/scripts/displaychart.js'/>" type="text/javascript"></script>
 </head>
 <body>
