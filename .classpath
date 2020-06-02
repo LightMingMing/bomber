@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="src" path="test/src"/>
+	<classpathentry kind="src" output="test/classes" path="test/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/annotations-api-3.0.jar"/>
 	<classpathentry kind="lib" path="lib/closure-compiler.jar"/>
@@ -120,6 +120,5 @@
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/transaction-api-1.1.jar"/>
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/validation-api-2.0.1.jar"/>
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/xwork-core-2.4.16.jar"/>
-	<classpathentry kind="lib" path="lib/lombok-1.18.2.jar"/>
 	<classpathentry kind="output" path="webapp/WEB-INF/classes"/>
 </classpath>
