@@ -39,16 +39,15 @@ public class BombingRecord extends BaseEntity {
 			+ "<@btn action='delete' confirm=true/> <@btn class='reload'/> <@btn class='filter'/>";
 
 	private static final String THREAD_GROUP_TEMPLATE = "<#list value as threads>"
-			+ "<#if (entity.status.name() == 'READY' || entity.status.name() == 'COMPLETED')><span class='label'>${threads}</span><#sep> "
-			+ "<#elseif (threads == entity.activeThreads)>"
-			+ "<#if (entity.status.name() == 'RUNNING')><span class='label label-warning'>${threads}</span><#sep> </#if>"
-			+ "<#if (entity.status.name() == 'FAILURE')><span class='label label-important'>${threads}</span><#sep> </#if>"
-			+ "<#if (entity.status.name() == 'PAUSE')><span class='label label-inverse'>${threads}</span><#sep> </#if>"
-			+ "<#else><span class='label'>${threads}</span><#sep> </#if></#list>";
+			+ "<#if (entity.status.name() == 'COMPLETED' || threads != entity.activeThreads)><span class='label'>${threads}</span><#sep> "
+			+ "<#elseif (entity.status.name() == 'READY')><span class='label label-info'>${threads}</span><#sep> "
+			+ "<#elseif (entity.status.name() == 'RUNNING')><span class='label label-warning'>${threads}</span><#sep> "
+			+ "<#elseif (entity.status.name() == 'PAUSE')><span class='label label-inverse'>${threads}</span><#sep> "
+			+ "<#else><span class='label label-important'>${threads}</span><#sep> </#if></#list>";
 
 	private static final String STATUS_TEMPLATE = "<span class='label <#switch value.name()>"
-			+ "<#case 'COMPLETED'>label-success<#break>" + "<#case 'FAILURE'>label-important<#break>"
-			+ "<#case 'RUNNING'>label-warning<#break>" + "<#case 'PAUSE'>label-inverse<#break>"
+			+ "<#case 'COMPLETED'>label-success<#break><#case 'FAILURE'>label-important<#break>"
+			+ "<#case 'RUNNING'>label-warning<#break><#case 'PAUSE'>label-inverse<#break>"
 			+ "<#default>label-info</#switch> '>${value}</span>";
 
 	private static final String CENTER_ATTRIBUTE = "{\"style\":\"text-align: center\"}";

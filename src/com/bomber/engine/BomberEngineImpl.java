@@ -132,12 +132,15 @@ public class BomberEngineImpl implements BomberEngine {
 	}
 
 	@Override
-	@Transactional(readOnly = true)
+	@Transactional
 	public void continueExecute(String ctxId) {
 		BombingRecord record = bombingRecordManager.get(ctxId);
 		if (record == null || record.getStatus() != PAUSE) {
 			return;
 		}
+		record.setStatus(READY);
+		bombingRecordManager.save(record);
+
 		BomberContext ctx = new BomberContext(ctxId);
 		ctx.setSampleId(record.getHttpSample().getId());
 		ctx.setName(record.getName());
