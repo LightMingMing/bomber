@@ -61,7 +61,7 @@ public class HttpSample extends BaseEntity {
 	@Convert(converter = HttpHeaderListConverter.class)
 	private List<HttpHeader> headers;
 
-	@Column(length = 2048)
+	@Column(length = 10240)
 	@UiConfig(hiddenInList = @Hidden(true), type = "textarea", inputTemplate = BODY_INPUT_TEMPLATE, excludedFromQuery = true)
 	private String body;
 
