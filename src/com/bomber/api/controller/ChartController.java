@@ -141,17 +141,17 @@ public class ChartController {
 					return set1;
 				}).orElse(new HashSet<>());
 
-		boolean empty = true;
+		boolean threadsAdded = false;
 		for (BombingRecord bombingRecord : bombingRecords) {
 			Axis<Double> tps = new Axis<>(bombingRecord.getName() + " TPS", ChartType.LINE);
 			Axis<Double> avg = new Axis<>(bombingRecord.getName() + " AVG", ChartType.LINE);
 
-			boolean finalEmpty = empty;
+			boolean finalThreadsAdded = threadsAdded;
 
 			summaryReportManager.listByBombingRecord(bombingRecord.getId()).stream()
 					.filter(summary -> threads.contains(summary.getNumberOfThreads()))
 					.sorted(comparingNumberOfThreads()).forEach(summary -> {
-						if (!finalEmpty) {
+						if (!finalThreadsAdded) {
 							xAxis.add(summary.getNumberOfThreads());
 						}
 						tps.add(summary.getTps());
@@ -159,7 +159,7 @@ public class ChartController {
 					});
 			durationYAxis.add(avg);
 			tpsYAxis.add(tps);
-			empty = false;
+			threadsAdded = true;
 		}
 
 		chart.setAxis(xAxis, tpsYAxis, durationYAxis);
