@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 public class AxisLabel {
 
-	private static final String DEFAULT_FORMATTER = "{value}";
+	protected static final String DEFAULT_FORMATTER = "{value}";
 
 	private String formatter; // such as '{value} ml', '{value} °C'
 

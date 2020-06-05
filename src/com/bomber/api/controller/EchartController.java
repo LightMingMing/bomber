@@ -1,57 +1,86 @@
 package com.bomber.api.controller;
 
-import com.bomber.api.echart.Position;
-import com.bomber.api.echart.Title;
+import static com.bomber.util.NumberUtils.reserveUpMaxBit;
+
+import java.util.Comparator;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.bomber.api.echart.AxisLabel;
 import com.bomber.api.echart.Chart;
 import com.bomber.api.echart.Legend;
+import com.bomber.api.echart.Position;
 import com.bomber.api.echart.Series;
-import com.bomber.api.echart.SeriesType;
+import com.bomber.api.echart.Title;
 import com.bomber.api.echart.XAxis;
 import com.bomber.api.echart.YAxis;
+import com.bomber.manager.BombingRecordManager;
+import com.bomber.manager.SummaryReportManager;
+import com.bomber.model.BombingRecord;
+import com.bomber.model.SummaryReport;
 
 @RestController
 @RequestMapping("/echart")
 public class EchartController {
 
+	private final BombingRecordManager bombingRecordManager;
+
+	private final SummaryReportManager summaryReportManager;
+
+	public EchartController(BombingRecordManager bombingRecordManager, SummaryReportManager summaryReportManager) {
+		this.bombingRecordManager = bombingRecordManager;
+		this.summaryReportManager = summaryReportManager;
+	}
+
+	private static Comparator<SummaryReport> comparingNumberOfThreads() {
+		return Comparator.comparingInt(SummaryReport::getNumberOfThreads);
+	}
+
 	@GetMapping("/tps-duration")
-	public Chart<Integer, Double> tpsAndAverageDuration() {
+	public Chart<Integer, Double> tpsAndAverageDuration(String id) {
+		BombingRecord bombingRecord = bombingRecordManager.get(id);
+
+		if (bombingRecord == null) {
+			throw new IllegalArgumentException("bombingRecord does not exist");
+		}
+
 		Chart<Integer, Double> chart = new Chart<>();
 
-		Title title = new Title("性能测试结果", "模拟的数据");
+		Title title = new Title(bombingRecord.getHttpSample().getName());
 		chart.setTitle(title);
 
 		Legend legend = new Legend("TPS", "平均响应时间");
 		chart.setLegend(legend);
 
 		XAxis<Integer> xAxis = new XAxis<>("并发数");
-		xAxis.add(1, 2, 4, 8, 10, 15, 20, 24, 40, 50);
 		chart.setXAxis(xAxis);
 
-		YAxis<Double> tps = new YAxis<>("TPS");
-		tps.setMin(0);
-		tps.setMax(100);
-		tps.setInterval(20);
-		tps.setAxisLabel(new AxisLabel("{value}"));
-		Series<Double> series = new Series<>();
-		series.add(0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0);
-		tps.setSeries(series);
+		YAxis tps = new YAxis("TPS", "{value}");
+		YAxis duration = new YAxis("平均响应时间", "{value} ms", Position.RIGHT);
+		chart.addYAxis(tps, duration);
 
-		YAxis<Double> duration = new YAxis<>("平均响应时间", Position.RIGHT);
-		duration.setMin(0);
-		duration.setMin(2);
-		duration.setInterval(0.8);
-		duration.setAxisLabel(new AxisLabel("{value} s"));
-		duration.setPosition(Position.RIGHT);
-		series = new Series<>(SeriesType.BAR);
-		series.add(0.0, 0.2, 0.4, 0.8, 0.9, 0.10, 0.12, 0.14, 0.16, 0.18);
-		duration.setSeries(series);
+		Series<Double> tpsSeries = new Series<>(0);
+		Series<Double> durationSeries = new Series<>(1);
+		summaryReportManager.listByBombingRecord(id).stream().sorted(comparingNumberOfThreads()).forEach(summary -> {
+			xAxis.add(summary.getNumberOfThreads());
+			tpsSeries.add(summary.getTps());
+			durationSeries.add(summary.getAvg());
+		});
+		chart.addSeries(tpsSeries, durationSeries);
+
+		tpsSeries.getData().stream().max(Double::compareTo).ifPresent(max -> {
+			tps.setInterval(reserveUpMaxBit(max / 5));
+			tps.setMax(tps.getInterval() * 5);
+		});
+
+		durationSeries.getData().stream().max(Double::compareTo).ifPresent(max -> {
+			duration.setInterval(reserveUpMaxBit(max / 5));
+			duration.setMax(duration.getInterval() * 5);
+		});
 
 		chart.addYAxis(tps, duration);
+
 		return chart;
 	}
 }

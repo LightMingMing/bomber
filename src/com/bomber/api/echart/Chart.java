@@ -13,7 +13,11 @@ import lombok.Setter;
 public class Chart<X, Y> {
 
 	@JsonProperty("yAxis")
-	private final List<YAxis<Y>> yAxes;
+	private final List<YAxis> yAxes;
+
+	@Getter
+	@JsonProperty("series")
+	private final List<Series<Y>> series;
 
 	@Getter
 	@Setter
@@ -32,6 +36,7 @@ public class Chart<X, Y> {
 
 	public Chart() {
 		this.yAxes = new ArrayList<>();
+		this.series = new ArrayList<>();
 	}
 
 	@JsonIgnore
@@ -44,16 +49,23 @@ public class Chart<X, Y> {
 	}
 
 	@JsonIgnore
-	public List<YAxis<Y>> getYAxes() {
+	public List<YAxis> getYAxes() {
 		return yAxes;
 	}
 
-	public void addYAxis(YAxis<Y> yAxis) {
+	public void addYAxis(YAxis yAxis) {
 		this.yAxes.add(yAxis);
 	}
 
-	@SafeVarargs
-	public final void addYAxis(YAxis<Y>... yAxes) {
+	public void addYAxis(YAxis... yAxes) {
 		this.yAxes.addAll(Arrays.asList(yAxes));
+	}
+
+	public void addSeries(Series<Y> series) {
+		this.series.add(series);
+	}
+	@SafeVarargs
+	public final void addSeries(Series<Y>... series) {
+		this.series.addAll(Arrays.asList(series));
 	}
 }
