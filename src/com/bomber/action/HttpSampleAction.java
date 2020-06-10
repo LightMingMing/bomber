@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.bomber.model.ApplicationInstance;
 import org.ironrhino.core.fs.FileStorage;
 import org.ironrhino.core.metadata.AutoConfig;
 import org.ironrhino.core.struts.EntityAction;
@@ -45,7 +46,9 @@ import com.opensymphony.xwork2.interceptor.annotations.InputConfig;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.web.util.DefaultUriBuilderFactory;
 import org.springframework.web.util.HtmlUtils;
+import org.springframework.web.util.UriBuilder;
 
 @AutoConfig(fileupload = "text/plain, text/csv")
 public class HttpSampleAction extends EntityAction<HttpSample> {
@@ -180,6 +183,13 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 			return ERROR;
 		}
 
+		httpSample = httpSampleManager.get(httpSample.getId());
+		String path = httpSample.getPath();
+		ApplicationInstance app = httpSample.getApplicationInstance();
+		if (app == null || path == null) {
+			throw new IllegalArgumentException("url is deprecated, applicationInstance or path can't be null");
+		}
+
 		if (requestsPerThread > maxRequestsPerThread) {
 			addFieldError("requestsPerThread", "requestsPerThread > " + maxRequestsPerThread);
 			return ERROR;
@@ -204,8 +214,14 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 
 	public String singleShot() {
 		httpSample = httpSampleManager.get(this.getUid());
+		String path = httpSample.getPath();
+		ApplicationInstance app = httpSample.getApplicationInstance();
+		if (app == null || path == null) {
+			throw new IllegalArgumentException("url is deprecated, applicationInstance or path can't be null");
+		}
 		try {
-			URI uri = URI.create(httpSample.getUrl());
+			URI uri = URI.create(app.getProtocol().name() + "://" + app.getHost() + ":" + app.getPort()
+					+ (path.startsWith("/") ? path : "/" + path));
 			HttpMethod method = HttpMethod.valueOf(httpSample.getMethod().name());
 			MultiValueMap<String, String> headers = convertToHttpHeaders(httpSample.getHeaders());
 			String body = httpSample.getBody();

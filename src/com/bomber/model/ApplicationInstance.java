@@ -31,25 +31,25 @@ public class ApplicationInstance extends BaseEntity {
 	private static final String CENTER_ATTRIBUTE = "{\"style\":\"text-align: center\"}";
 
 	@Column(length = 32, nullable = false)
-	@UiConfig(width = "200px", cellDynamicAttributes = CENTER_ATTRIBUTE)
+	@UiConfig(width = "200px", shownInPick = true, cellDynamicAttributes = CENTER_ATTRIBUTE)
 	private String appName;
 
 	@Column(length = 8, nullable = false)
-	@UiConfig(width = "150px", cellDynamicAttributes = CENTER_ATTRIBUTE)
+	@UiConfig(width = "150px", shownInPick = true, cellDynamicAttributes = CENTER_ATTRIBUTE)
 	private Protocol protocol;
 
 	@Column(length = 32, nullable = false)
-	@UiConfig(width = "200px", cellDynamicAttributes = CENTER_ATTRIBUTE)
+	@UiConfig(width = "200px", shownInPick = true, cellDynamicAttributes = CENTER_ATTRIBUTE)
 	private String host;
 
 	@Min(0)
 	@Max(65535)
 	@Column(nullable = false)
-	@UiConfig(width = "150px", cellDynamicAttributes = CENTER_ATTRIBUTE)
+	@UiConfig(width = "150px", shownInPick = true, cellDynamicAttributes = CENTER_ATTRIBUTE)
 	private Integer port;
 
 	@Column(length = 16)
-	@UiConfig(width = "150px", cellDynamicAttributes = CENTER_ATTRIBUTE)
+	@UiConfig(width = "150px", shownInPick = true, cellDynamicAttributes = CENTER_ATTRIBUTE)
 	private Env env;
 
 	@CreationTimestamp

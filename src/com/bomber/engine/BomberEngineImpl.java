@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 
+import com.bomber.model.ApplicationInstance;
 import org.ironrhino.rest.RestStatus;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
@@ -33,6 +34,7 @@ import com.bomber.service.BombardierResponse;
 import com.bomber.service.BombardierService;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.util.DefaultUriBuilderFactory;
 
 @Slf4j
 @Service
@@ -235,7 +237,14 @@ public class BomberEngineImpl implements BomberEngine {
 
 	protected BombardierRequest convertToBombardierRequest(HttpSample sample) {
 		BombardierRequest request = new BombardierRequest();
-		request.setUrl(sample.getUrl());
+		ApplicationInstance app = sample.getApplicationInstance();
+		String path = sample.getPath();
+		if (app != null && path != null) {
+			request.setUrl(app.getProtocol().name() + "://" + app.getHost() + ":" + app.getPort()
+					+ (path.startsWith("/") ? path : "/" + path));
+		} else {
+			request.setUrl(sample.getUrl());
+		}
 		request.setMethod(sample.getMethod());
 		request.setBody(sample.getBody());
 		request.setHeaders(convertToString(sample.getHeaders()));

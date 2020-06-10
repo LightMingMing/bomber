@@ -7,6 +7,9 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -45,6 +48,11 @@ public class HttpSample extends BaseEntity {
 
 	private static final long serialVersionUID = 5801606517538547923L;
 
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "applicationInstanceId", nullable = true) // TODO Temporary
+	@UiConfig(width = "200px", template = "<#if value?has_content>${value.appName}@${value.host}:${value.port}</#if>", shownInPick = true)
+	private ApplicationInstance applicationInstance;
+
 	@Column(nullable = false)
 	@UiConfig(alias = "requestName", width = "200px")
 	private String name;
@@ -53,9 +61,14 @@ public class HttpSample extends BaseEntity {
 	@UiConfig(alias = "requestMethod", width = "100px", cellDynamicAttributes = "{\"style\":\"text-align: center\"}")
 	private RequestMethod method;
 
+	@Deprecated
+	@Column(nullable = false)
+	@UiConfig(cssClass = "input-xxlarge", hiddenInList = @Hidden(true), cellDynamicAttributes = CODE_ATTRIBUTE, description = "deprecated, will be remove in future")
+	private String url;
+
 	@Column(nullable = false)
 	@UiConfig(cssClass = "input-xxlarge", cellDynamicAttributes = CODE_ATTRIBUTE)
-	private String url;
+	private String path;
 
 	@UiConfig(alias = "headers", width = "250px", listTemplate = HEADERS_TEMPLATE, cellDynamicAttributes = CODE_ATTRIBUTE)
 	@Convert(converter = HttpHeaderListConverter.class)
