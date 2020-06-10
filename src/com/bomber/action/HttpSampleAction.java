@@ -6,11 +6,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.ironrhino.core.fs.FileStorage;
@@ -23,11 +25,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import com.bomber.engine.BomberContext;
@@ -40,6 +45,7 @@ import com.opensymphony.xwork2.interceptor.annotations.InputConfig;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.web.util.HtmlUtils;
 
 @AutoConfig(fileupload = "text/plain, text/csv")
 public class HttpSampleAction extends EntityAction<HttpSample> {
@@ -119,6 +125,24 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		}
 	}
 
+	private static String displayResponseEntity(ResponseEntity<String> responseEntity) {
+		MediaType contentType = responseEntity.getHeaders().getContentType();
+		String body = responseEntity.getBody();
+		if (contentType != null && body != null) {
+			if (contentType.includes(MediaType.APPLICATION_JSON)) {
+				return JsonUtils.prettify(body);
+			} else if (contentType.includes(MediaType.TEXT_HTML) || contentType.includes(MediaType.TEXT_XML)) {
+				List<Charset> charsets = responseEntity.getHeaders().getAcceptCharset();
+				String charset = charsets.isEmpty() ? "utf-8" : charsets.get(0).name();
+				return HtmlUtils.htmlEscape(body, charset);
+			} else if (contentType.includes(MediaType.TEXT_PLAIN)) {
+				return body;
+			}
+		}
+		return "<" + responseEntity.getStatusCode().toString() + ' ' + responseEntity.getStatusCode().getReasonPhrase()
+				+ ',' + responseEntity.getHeaders() + '>';
+	}
+
 	@Override
 	@Transactional
 	public String save() throws Exception {
@@ -157,7 +181,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		}
 
 		if (requestsPerThread > maxRequestsPerThread) {
-			addFieldError("name", "requestsPerThread > " + maxRequestsPerThread);
+			addFieldError("requestsPerThread", "requestsPerThread > " + maxRequestsPerThread);
 			return ERROR;
 		}
 
@@ -203,8 +227,11 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 			RequestEntity<String> entity = new RequestEntity<>(body, headers, method, uri);
 
 			ResponseEntity<String> result = stringMessageRestTemplate.exchange(entity, String.class);
-
-			addActionMessage(JsonUtils.prettify(result.getBody()));
+			addActionMessage(displayResponseEntity(result));
+		} catch (HttpClientErrorException e) {
+			// eg. 404 Not Found
+			addActionError(e.getStatusCode().toString());
+			return ERROR;
 		} catch (Exception e) {
 			addActionError(e.getMessage());
 			return ERROR;
