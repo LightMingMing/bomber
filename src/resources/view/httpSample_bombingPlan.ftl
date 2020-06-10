@@ -26,8 +26,9 @@
         <div id="control-group-requests-per-thread" class="control-group">
             <label class="control-label" for="requestsPerThread">${getText('requestsPerThread')}</label>
             <div class="controls">
-                <input type="number" id="requestsPerThread" name="requestsPerThread" maxlength="255" min="1" max="50"
-                       autocomplete="off" value="${requestsPerThread!10}" style="width: 35px">
+                <input type="number" id="requestsPerThread" name="requestsPerThread" maxlength="255" min="1"
+                       max="${maxRequestsPerThread!500}" autocomplete="off" value="${requestsPerThread!10}"
+                       style="width: 40px">
             </div>
         </div>
         <div class="form-actions">

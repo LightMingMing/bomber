@@ -48,7 +48,16 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 
 	private static final Logger logger = LoggerFactory.getLogger(HttpSampleAction.class);
 
+	private static final int MAX_REQUESTS_PRE_THREAD = 500;
+
+	private static final int DEFAULT_REQUESTS_PRE_THREAD = 10;
+
 	private static String lastThreadGroup = "1, 2, 5, 10, 20, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500";
+
+	private static int lastRequestsPerThread = DEFAULT_REQUESTS_PRE_THREAD;
+
+	@Getter
+	private final int maxRequestsPerThread = MAX_REQUESTS_PRE_THREAD;
 
 	@Value("${fileStorage.uri:file:///${app.context}/assets/}")
 	protected URI uri;
@@ -74,7 +83,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 	private String threadGroup = lastThreadGroup;
 	@Setter
 	@Getter
-	private int requestsPerThread = 10;
+	private int requestsPerThread = lastRequestsPerThread;
 	@Getter
 	@Setter
 	private String name;
@@ -147,6 +156,11 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 			return ERROR;
 		}
 
+		if (requestsPerThread > maxRequestsPerThread) {
+			addFieldError("name", "requestsPerThread > " + maxRequestsPerThread);
+			return ERROR;
+		}
+
 		List<Integer> numberOfThreadsList = Arrays.stream(threadGroup.split(", *")).map(Integer::parseInt).sorted()
 				.collect(Collectors.toList());
 
@@ -160,6 +174,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		addActionMessage("Bombing is ongoing!");
 
 		lastThreadGroup = numberOfThreadsList.stream().map(i -> i + "").collect(Collectors.joining(", "));
+		lastRequestsPerThread = requestsPerThread;
 		return SUCCESS;
 	}
 
