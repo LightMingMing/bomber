@@ -39,7 +39,7 @@ public class BombingRecord extends BaseEntity {
 			+ "<@btn action='delete' confirm=true/> <@btn class='reload'/> <@btn class='filter'/>";
 
 	private static final String THREAD_GROUP_TEMPLATE = "<#list value as threads>"
-			+ "<#if (entity.status.name() == 'COMPLETED' || threads != entity.activeThreads)><span class='label'>${threads}</span><#sep> "
+			+ "<#if (entity.status.name() == 'COMPLETED' || threads_index != entity.threadGroupCursor)><span class='label'>${threads}</span><#sep> "
 			+ "<#elseif (entity.status.name() == 'READY')><span class='label label-info'>${threads}</span><#sep> "
 			+ "<#elseif (entity.status.name() == 'RUNNING')><span class='label label-warning'>${threads}</span><#sep> "
 			+ "<#elseif (entity.status.name() == 'PAUSE')><span class='label label-inverse'>${threads}</span><#sep> "
@@ -66,6 +66,9 @@ public class BombingRecord extends BaseEntity {
 	@Column(nullable = false)
 	@UiConfig(template = THREAD_GROUP_TEMPLATE, excludedFromQuery = true, readonly = @Readonly(true))
 	private List<Integer> threadGroup;
+
+	@UiConfig(hidden = true, excludedFromQuery = true, readonly = @Readonly(true))
+	private int threadGroupCursor = 0;
 
 	@UiConfig(hidden = true, excludedFromQuery = true, readonly = @Readonly(true))
 	private int activeThreads = 0;

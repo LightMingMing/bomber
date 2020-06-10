@@ -9,6 +9,7 @@ import static com.bomber.model.BombingStatus.RUNNING;
 
 import java.net.URI;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 
@@ -103,6 +104,7 @@ public class BomberEngineImpl implements BomberEngine {
 		BombingRecord record = new BombingRecord();
 		record.setName(ctx.getName());
 		record.setThreadGroup(ctx.getThreadGroup());
+		record.setThreadGroupCursor(ctx.getThreadGroupCursor());
 		record.setRequestsPerThread(ctx.getRequestsPerThread());
 		record.setHttpSample(httpSample);
 		record.setStartTime(new Date());
@@ -145,6 +147,7 @@ public class BomberEngineImpl implements BomberEngine {
 		ctx.setSampleId(record.getHttpSample().getId());
 		ctx.setName(record.getName());
 		ctx.setThreadGroup(record.getThreadGroup());
+		ctx.setThreadGroupCursor(record.getThreadGroupCursor());
 		ctx.setRequestsPerThread(record.getRequestsPerThread());
 		ctx.setActiveThreads(record.getActiveThreads());
 		bombingExecutor.execute(() -> {
@@ -166,16 +169,20 @@ public class BomberEngineImpl implements BomberEngine {
 
 		int requestCount = 0;
 
-		for (int numberOfThreads : ctx.getThreadGroup()) {
+		List<Integer> threadGroup = ctx.getThreadGroup();
+
+		for (int i = 0; i < ctx.getThreadGroupCursor(); i++) {
+			requestCount += threadGroup.get(i) * ctx.getRequestsPerThread();
+		}
+
+		for (int i = ctx.getThreadGroupCursor(); i < threadGroup.size(); i++) {
+			int numberOfThreads = threadGroup.get(i);
 			int numberOfRequests = numberOfThreads * ctx.getRequestsPerThread();
 
-			if (numberOfThreads < ctx.getActiveThreads()) {
-				requestCount += numberOfRequests;
-				continue;
-			}
-
 			ctx.setActiveThreads(numberOfThreads);
+			ctx.setThreadGroupCursor(i);
 			record.setActiveThreads(numberOfThreads);
+			record.setThreadGroupCursor(i);
 			if (ctx.isPaused()) {
 				record.setStatus(PAUSE);
 				bombingRecordManager.save(record);

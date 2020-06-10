@@ -25,6 +25,10 @@ public class BomberContext {
 
 	@Getter
 	@Setter
+	private int threadGroupCursor;
+
+	@Getter
+	@Setter
 	private int requestsPerThread;
 
 	@Getter
