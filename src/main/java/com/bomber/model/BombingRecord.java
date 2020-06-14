@@ -56,15 +56,15 @@ public class BombingRecord extends BaseEntity {
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "httpSampleId", nullable = false)
-	@UiConfig(width = "200px", template = "<#if value?has_content>${value.name}</#if>", readonly = @Readonly(true), shownInPick = true)
+	@UiConfig(width = "200px", template = "<#if value?has_content>${value.name}</#if>", readonly = @Readonly(true), shownInPick = true, cellDynamicAttributes = CENTER_ATTRIBUTE)
 	private HttpSample httpSample;
 
 	@Column(nullable = false)
-	@UiConfig(alias = "recordName", width = "200px")
+	@UiConfig(alias = "recordName", width = "200px", cellDynamicAttributes = CENTER_ATTRIBUTE)
 	private String name;
 
 	@Column(nullable = false)
-	@UiConfig(template = THREAD_GROUP_TEMPLATE, excludedFromQuery = true, readonly = @Readonly(true))
+	@UiConfig(template = THREAD_GROUP_TEMPLATE, excludedFromQuery = true, readonly = @Readonly(true), cellDynamicAttributes = "{\"style\":\"min-width:200px\"}")
 	private List<Integer> threadGroup;
 
 	@UiConfig(hidden = true, excludedFromQuery = true, readonly = @Readonly(true))

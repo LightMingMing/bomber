@@ -50,11 +50,11 @@ public class HttpSample extends BaseEntity {
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "applicationInstanceId", nullable = true) // TODO Temporary
-	@UiConfig(width = "200px", template = "<#if value?has_content>${value.appName}@${value.host}:${value.port}</#if>", shownInPick = true)
+	@UiConfig(width = "200px", shownInPick = true, cellDynamicAttributes = "{\"style\":\"text-align: center\"}")
 	private ApplicationInstance applicationInstance;
 
 	@Column(nullable = false)
-	@UiConfig(alias = "requestName", width = "200px")
+	@UiConfig(alias = "requestName", width = "200px", cellDynamicAttributes = "{\"style\":\"text-align: center\"}")
 	private String name;
 
 	@Column(nullable = false)
@@ -63,11 +63,11 @@ public class HttpSample extends BaseEntity {
 
 	@Deprecated
 	@Column(nullable = false)
-	@UiConfig(cssClass = "input-xxlarge", hiddenInList = @Hidden(true), cellDynamicAttributes = CODE_ATTRIBUTE, description = "deprecated, will be remove in future")
+	@UiConfig(cssClass = "input-xxlarge", hiddenInList = @Hidden(true), description = "deprecated, will be remove in future")
 	private String url;
 
 	@Column(nullable = false)
-	@UiConfig(cssClass = "input-xxlarge", cellDynamicAttributes = CODE_ATTRIBUTE)
+	@UiConfig(cssClass = "input-xxlarge", shownInPick = true, cellDynamicAttributes = "{\"style\":\"font-family:SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;min-width:200px\"}")
 	private String path;
 
 	@UiConfig(alias = "headers", width = "250px", listTemplate = HEADERS_TEMPLATE, cellDynamicAttributes = CODE_ATTRIBUTE)

@@ -30,13 +30,18 @@ public class ApplicationInstance extends BaseEntity {
 
 	private static final String CENTER_ATTRIBUTE = "{\"style\":\"text-align: center\"}";
 
+	private static final String ENV_TEMPLATE = "<#if value?has_content><spa n class='label <#switch value.name()>"
+			+ "<#case 'test'>label-inverse<#break><#case 'prod'>label-important<#break>"
+			+ "<#case 'bbit'>label-info<#break><#case 'sit'>label-warning<#break>"
+			+ "<#case 'uat'>label-success<#break><#default></#switch> '>${value}</span></#if>";
+
 	@Column(length = 32, nullable = false)
 	@UiConfig(width = "200px", shownInPick = true, cellDynamicAttributes = CENTER_ATTRIBUTE)
 	private String appName;
 
 	@Column(length = 8, nullable = false)
 	@UiConfig(width = "150px", shownInPick = true, cellDynamicAttributes = CENTER_ATTRIBUTE)
-	private Protocol protocol;
+	private Protocol protocol = Protocol.http;
 
 	@Column(length = 32, nullable = false)
 	@UiConfig(width = "200px", shownInPick = true, cellDynamicAttributes = CENTER_ATTRIBUTE)
@@ -49,7 +54,7 @@ public class ApplicationInstance extends BaseEntity {
 	private Integer port;
 
 	@Column(length = 16)
-	@UiConfig(width = "150px", shownInPick = true, cellDynamicAttributes = CENTER_ATTRIBUTE)
+	@UiConfig(width = "150px", shownInPick = true, template = ENV_TEMPLATE, cellDynamicAttributes = CENTER_ATTRIBUTE)
 	private Env env;
 
 	@CreationTimestamp
@@ -59,4 +64,9 @@ public class ApplicationInstance extends BaseEntity {
 
 	@Version
 	private int version = -1;
+
+	@Override
+	public String toString() {
+		return appName + '@' + host + ':' + port + (env == null ? "" : "[" + env + "]");
+	}
 }

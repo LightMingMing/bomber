@@ -42,18 +42,18 @@ public class SummaryReport extends BaseEntity {
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "bombingRecordId", nullable = false)
-	@UiConfig(alias = "recordName", width = "200px", template = "${(value.httpSample.name)!}-${(value.name)!}", csvTemplate = "${(value.httpSample.name)!} - ${(value.name)!}")
+	@UiConfig(alias = "recordName", width = "200px", template = "${(value.httpSample.name)!}-${(value.name)!}", csvTemplate = "${(value.httpSample.name)!} - ${(value.name)!}", cellDynamicAttributes = CENTER_ATTRIBUTE)
 	private BombingRecord bombingRecord;
 
 	@Min(1)
-	@UiConfig(alias = "threads", width = "80px", excludedFromQuery = true, cellDynamicAttributes = CENTER_ATTRIBUTE)
+	@UiConfig(alias = "threads", width = "70px", excludedFromQuery = true, cellDynamicAttributes = CENTER_ATTRIBUTE)
 	private int numberOfThreads;
 
 	@Min(1)
-	@UiConfig(alias = "requests", width = "80px", excludedFromQuery = true, cellDynamicAttributes = CENTER_ATTRIBUTE)
+	@UiConfig(alias = "requests", width = "70px", excludedFromQuery = true, cellDynamicAttributes = CENTER_ATTRIBUTE)
 	private int numberOfRequests;
 
-	@UiConfig(alias = "TPS", width = "50px", excludedFromQuery = true, cellDynamicAttributes = CENTER_ATTRIBUTE)
+	@UiConfig(alias = "TPS", width = "80px", excludedFromQuery = true, cellDynamicAttributes = CENTER_ATTRIBUTE)
 	private double tps;
 
 	@UiConfig(width = "100px", excludedFromQuery = true, template = TIME_UNIT_TEMPLATE, cellDynamicAttributes = CENTER_ATTRIBUTE)
