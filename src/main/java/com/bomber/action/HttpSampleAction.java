@@ -170,6 +170,13 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		return SUCCESS;
 	}
 
+	// shortcut to create
+	public String quickCreate() {
+		httpSample = httpSampleManager.get(this.getUid());
+		httpSample.setId(null);
+		return INPUT;
+	}
+
 	public String inputBombingPlan() {
 		httpSample = httpSampleManager.get(this.getUid());
 		return "bombingPlan";
@@ -177,7 +184,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 
 	@Transactional
 	@InputConfig(methodName = "inputBombingPlan")
-	public String bombing() {
+	public String bomb() {
 		if (name == null || "".equals(name)) {
 			addFieldError("name", "name can't be empty");
 			return ERROR;
