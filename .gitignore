@@ -1,11 +1,15 @@
 .DS_store
 
+.gradle
+
 .idea
 
 *.eml
 
-classes
+*.iml
 
-lib
+build
+
+classes
 
 target
