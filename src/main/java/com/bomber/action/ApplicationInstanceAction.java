@@ -1,11 +1,12 @@
 package com.bomber.action;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.ironrhino.core.metadata.AutoConfig;
 import org.ironrhino.core.struts.EntityAction;
 
 import com.bomber.model.ApplicationInstance;
+
+import lombok.Getter;
+import lombok.Setter;
 
 @AutoConfig
 public class ApplicationInstanceAction extends EntityAction<ApplicationInstance> {

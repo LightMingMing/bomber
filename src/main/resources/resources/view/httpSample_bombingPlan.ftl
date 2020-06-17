@@ -5,7 +5,7 @@
     <title>${httpSample.name} - BombingPlan</title>
 </head>
 <body>
-<form action="<@url value="/${entityName}/bombing"/>" method="post"
+<form action="<@url value="/${entityName}/bomb"/>" method="post"
       class="ajax form-horizontal groupable dontreload" autocomplete="off">
     <fieldset>
         <input type="hidden" id="httpSample_input-httpSample-id" name="httpSample.id" class="id"

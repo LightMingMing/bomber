@@ -12,10 +12,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.bomber.model.ApplicationInstance;
 import org.ironrhino.core.fs.FileStorage;
 import org.ironrhino.core.metadata.AutoConfig;
 import org.ironrhino.core.struts.EntityAction;
@@ -26,7 +24,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -35,10 +32,12 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.HtmlUtils;
 
 import com.bomber.engine.BomberContext;
 import com.bomber.engine.BomberEngine;
 import com.bomber.manager.HttpSampleManager;
+import com.bomber.model.ApplicationInstance;
 import com.bomber.model.HttpHeader;
 import com.bomber.model.HttpSample;
 import com.bomber.util.ValueReplacer;
@@ -46,9 +45,6 @@ import com.opensymphony.xwork2.interceptor.annotations.InputConfig;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.web.util.DefaultUriBuilderFactory;
-import org.springframework.web.util.HtmlUtils;
-import org.springframework.web.util.UriBuilder;
 
 @AutoConfig(fileupload = "text/plain, text/csv")
 public class HttpSampleAction extends EntityAction<HttpSample> {
