@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import org.ironrhino.core.fs.FileStorage;
@@ -55,11 +56,13 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 
 	private static final int MAX_REQUESTS_PRE_THREAD = 500;
 
+	private static final String DEFAULT_THREAD_GROUP = "1, 2, 5, 10, 20, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500";
+
 	private static final int DEFAULT_REQUESTS_PRE_THREAD = 10;
 
-	private static String lastThreadGroup = "1, 2, 5, 10, 20, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500";
+	private static final Map<String, String> threadGroupCache = new ConcurrentHashMap<>(16);
 
-	private static int lastRequestsPerThread = DEFAULT_REQUESTS_PRE_THREAD;
+	private static final Map<String, Integer> requestsPerThreadCache = new ConcurrentHashMap<>(16);
 
 	@Getter
 	private final int maxRequestsPerThread = MAX_REQUESTS_PRE_THREAD;
@@ -85,10 +88,10 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 
 	@Setter
 	@Getter
-	private String threadGroup = lastThreadGroup;
+	private String threadGroup = DEFAULT_THREAD_GROUP;
 	@Setter
 	@Getter
-	private int requestsPerThread = lastRequestsPerThread;
+	private int requestsPerThread = DEFAULT_REQUESTS_PRE_THREAD;
 	@Getter
 	@Setter
 	private String name;
@@ -175,6 +178,8 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 
 	public String inputBombingPlan() {
 		httpSample = httpSampleManager.get(this.getUid());
+		threadGroup = threadGroupCache.getOrDefault(this.getUid(), DEFAULT_THREAD_GROUP);
+		requestsPerThread = requestsPerThreadCache.getOrDefault(this.getUid(), DEFAULT_REQUESTS_PRE_THREAD);
 		return "bombingPlan";
 	}
 
@@ -210,8 +215,9 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 
 		addActionMessage("Bombing is ongoing!");
 
-		lastThreadGroup = numberOfThreadsList.stream().map(i -> i + "").collect(Collectors.joining(", "));
-		lastRequestsPerThread = requestsPerThread;
+		threadGroupCache.put(httpSample.getId(),
+				numberOfThreadsList.stream().map(i -> i + "").collect(Collectors.joining(", ")));
+		requestsPerThreadCache.put(httpSample.getId(), requestsPerThread);
 		return SUCCESS;
 	}
 
