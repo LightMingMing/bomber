@@ -3,8 +3,8 @@ package com.bomber.engine;
 import static com.bomber.converter.HttpHeaderListConverter.convertToString;
 import static com.bomber.model.BombingStatus.COMPLETED;
 import static com.bomber.model.BombingStatus.FAILURE;
-import static com.bomber.model.BombingStatus.READY;
 import static com.bomber.model.BombingStatus.PAUSE;
+import static com.bomber.model.BombingStatus.READY;
 import static com.bomber.model.BombingStatus.RUNNING;
 
 import java.net.URI;
@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 
-import com.bomber.model.ApplicationInstance;
 import org.ironrhino.rest.RestStatus;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
@@ -26,6 +25,7 @@ import org.springframework.util.StringUtils;
 import com.bomber.manager.BombingRecordManager;
 import com.bomber.manager.HttpSampleManager;
 import com.bomber.manager.SummaryReportManager;
+import com.bomber.model.ApplicationInstance;
 import com.bomber.model.BombingRecord;
 import com.bomber.model.HttpSample;
 import com.bomber.model.SummaryReport;
@@ -34,7 +34,6 @@ import com.bomber.service.BombardierResponse;
 import com.bomber.service.BombardierService;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.util.DefaultUriBuilderFactory;
 
 @Slf4j
 @Service
@@ -139,7 +138,7 @@ public class BomberEngineImpl implements BomberEngine {
 	@Transactional
 	public void continueExecute(String ctxId) {
 		BombingRecord record = bombingRecordManager.get(ctxId);
-		if (record == null || record.getStatus() != PAUSE) {
+		if (record == null || (record.getStatus() != PAUSE && record.getStatus() != FAILURE)) {
 			return;
 		}
 		record.setStatus(READY);
