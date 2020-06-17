@@ -30,7 +30,7 @@ public class ApplicationInstance extends BaseEntity {
 
 	private static final String CENTER_ATTRIBUTE = "{\"style\":\"text-align: center\"}";
 
-	private static final String ENV_TEMPLATE = "<#if value?has_content><spa n class='label <#switch value.name()>"
+	private static final String ENV_TEMPLATE = "<#if value?has_content><span class='label <#switch value.name()>"
 			+ "<#case 'test'>label-inverse<#break><#case 'prod'>label-important<#break>"
 			+ "<#case 'bbit'>label-info<#break><#case 'sit'>label-warning<#break>"
 			+ "<#case 'uat'>label-success<#break><#default></#switch> '>${value}</span></#if>";
