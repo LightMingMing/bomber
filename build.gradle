@@ -72,8 +72,12 @@ dependencies {
     compile("commons-net:commons-net:3.6")
 
     compile("io.github.resilience4j:resilience4j-all:1.1.0") {
-        exclude group: "io.github.resilience4j"
-        exclude group: "io.vavr"
+        exclude group: "io.github.resilience4j", module: "resilience4j-circularbuffer"
+        exclude group: "io.github.resilience4j", module: "resilience4j-consumer"
+        exclude group: "io.github.resilience4j", module: "resilience4j-cache"
+        exclude group: "io.github.resilience4j", module: "resilience4j-timelimiter"
+        exclude group: "io.vavr", module: "vavr-match"
+        exclude group: "org.slf4j"
     }
 
     compile("io.lettuce:lettuce-core:5.2.2.RELEASE") {
