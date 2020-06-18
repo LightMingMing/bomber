@@ -194,9 +194,6 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		httpSample = httpSampleManager.get(httpSample.getId());
 		String path = httpSample.getPath();
 		ApplicationInstance app = httpSample.getApplicationInstance();
-		if (app == null || path == null) {
-			throw new IllegalArgumentException("url is deprecated, applicationInstance or path can't be null");
-		}
 
 		if (requestsPerThread > maxRequestsPerThread) {
 			addFieldError("requestsPerThread", "requestsPerThread > " + maxRequestsPerThread);
@@ -225,9 +222,6 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		httpSample = httpSampleManager.get(this.getUid());
 		String path = httpSample.getPath();
 		ApplicationInstance app = httpSample.getApplicationInstance();
-		if (app == null || path == null) {
-			throw new IllegalArgumentException("url is deprecated, applicationInstance or path can't be null");
-		}
 		try {
 			URI uri = URI.create(app.getProtocol().name() + "://" + app.getHost() + ":" + app.getPort()
 					+ (path.startsWith("/") ? path : "/" + path));

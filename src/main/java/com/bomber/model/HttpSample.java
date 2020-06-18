@@ -50,7 +50,7 @@ public class HttpSample extends BaseEntity {
 	private static final long serialVersionUID = 5801606517538547923L;
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "applicationInstanceId", nullable = true) // TODO Temporary
+	@JoinColumn(name = "applicationInstanceId", nullable = false)
 	@UiConfig(width = "200px", shownInPick = true, cellDynamicAttributes = "{\"style\":\"text-align: center\"}")
 	private ApplicationInstance applicationInstance;
 
@@ -61,11 +61,6 @@ public class HttpSample extends BaseEntity {
 	@Column(nullable = false)
 	@UiConfig(alias = "requestMethod", width = "100px", cellDynamicAttributes = "{\"style\":\"text-align: center\"}")
 	private RequestMethod method;
-
-	@Deprecated
-	@Column(nullable = false)
-	@UiConfig(cssClass = "input-xxlarge", hiddenInList = @Hidden(true), description = "deprecated, will be remove in future")
-	private String url;
 
 	@Column(nullable = false)
 	@UiConfig(cssClass = "input-xxlarge", shownInPick = true, cellDynamicAttributes = "{\"style\":\"font-family:SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;min-width:200px\"}")

@@ -235,15 +235,15 @@ public class BomberEngineImpl implements BomberEngine {
 	}
 
 	protected BombardierRequest convertToBombardierRequest(HttpSample sample) {
-		BombardierRequest request = new BombardierRequest();
 		ApplicationInstance app = sample.getApplicationInstance();
-		String path = sample.getPath();
-		if (app != null && path != null) {
-			request.setUrl(app.getProtocol().name() + "://" + app.getHost() + ":" + app.getPort()
-					+ (path.startsWith("/") ? path : "/" + path));
-		} else {
-			request.setUrl(sample.getUrl());
+		if (app == null) {
+			throw new IllegalArgumentException("app can't be null");
 		}
+		String path = sample.getPath();
+
+		BombardierRequest request = new BombardierRequest();
+		request.setUrl(app.getProtocol().name() + "://" + app.getHost() + ":" + app.getPort()
+				+ (path.startsWith("/") ? path : "/" + path));
 		request.setMethod(sample.getMethod());
 		request.setBody(sample.getBody());
 		request.setHeaders(convertToString(sample.getHeaders()));
