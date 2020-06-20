@@ -242,3 +242,8 @@ dependencies {
 
     testCompile("org.springframework:spring-test:${springframeworkVersion}")
 }
+
+task explodedWar(type: Sync) {
+    into "${buildDir}/exploded"
+    with war
+}
