@@ -19,7 +19,7 @@ public class BombardierRequest {
 	@JsonProperty("method")
 	private RequestMethod method;
 
-	private String headers;
+	private String[] headers;
 
 	private String url;
 

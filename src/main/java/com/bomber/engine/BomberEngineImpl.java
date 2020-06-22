@@ -1,6 +1,5 @@
 package com.bomber.engine;
 
-import static com.bomber.converter.HttpHeaderListConverter.convertToString;
 import static com.bomber.model.BombingStatus.COMPLETED;
 import static com.bomber.model.BombingStatus.FAILURE;
 import static com.bomber.model.BombingStatus.PAUSE;
@@ -22,11 +21,13 @@ import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.util.StringUtils;
 
+import com.bomber.converter.HttpHeaderListConverter;
 import com.bomber.manager.BombingRecordManager;
 import com.bomber.manager.HttpSampleManager;
 import com.bomber.manager.SummaryReportManager;
 import com.bomber.model.ApplicationInstance;
 import com.bomber.model.BombingRecord;
+import com.bomber.model.HttpHeader;
 import com.bomber.model.HttpSample;
 import com.bomber.model.SummaryReport;
 import com.bomber.service.BombardierRequest;
@@ -242,11 +243,20 @@ public class BomberEngineImpl implements BomberEngine {
 		String path = sample.getPath();
 
 		BombardierRequest request = new BombardierRequest();
+
 		request.setUrl(app.getProtocol().name() + "://" + app.getHost() + ":" + app.getPort()
 				+ (path.startsWith("/") ? path : "/" + path));
 		request.setMethod(sample.getMethod());
 		request.setBody(sample.getBody());
-		request.setHeaders(convertToString(sample.getHeaders()));
+
+		List<HttpHeader> headerList = sample.getHeaders();
+		if (headerList != null && !headerList.isEmpty()) {
+			String[] headers = new String[headerList.size()];
+			for (int i = 0; i < headerList.size(); i++) {
+				headers[i] = HttpHeaderListConverter.convertToString(headerList.get(i));
+			}
+			request.setHeaders(headers);
+		}
 		if (StringUtils.hasLength(sample.getCsvFilePath()) && StringUtils.hasLength(sample.getVariableNames())) {
 			request.setCsvFilePath(uri.getPath() + sample.getCsvFilePath());
 			request.setVariableNames(sample.getVariableNames());
