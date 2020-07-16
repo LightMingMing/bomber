@@ -95,6 +95,31 @@ public class BomberEngineImpl implements BomberEngine {
 		return record;
 	}
 
+	protected static HttpSampleSnapshot buildHttpSampleSnapshot(HttpSample sample) {
+		ApplicationInstance app = sample.getApplicationInstance();
+
+		String path = sample.getPath();
+
+		HttpSampleSnapshot snapshot = new HttpSampleSnapshot();
+		snapshot.setMethod(sample.getMethod());
+		snapshot.setUrl(app.getUrl() + (path.startsWith("/") ? path : "/" + path));
+		snapshot.setBody(sample.getBody());
+
+		List<HttpHeader> headerList = sample.getHeaders();
+		if (headerList != null && !headerList.isEmpty()) {
+			String[] headers = new String[headerList.size()];
+			for (int i = 0; i < headerList.size(); i++) {
+				headers[i] = HttpHeaderListConverter.convertToString(headerList.get(i));
+			}
+			snapshot.setHeaders(headers);
+		}
+
+		snapshot.setVariableNames(sample.getVariableNames());
+		snapshot.setVariableFilePath(sample.getCsvFilePath());
+
+		return snapshot;
+	}
+
 	@Override
 	@Transactional
 	public void execute(@NonNull BomberContext ctx) {
@@ -114,6 +139,9 @@ public class BomberEngineImpl implements BomberEngine {
 
 		bombingRecordManager.save(record);
 		ctx.setId(record.getId());
+
+		HttpSampleSnapshot snapshot = buildHttpSampleSnapshot(httpSample);
+		ctx.setHttpSampleSnapshot(snapshot);
 
 		TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
 			@Override
@@ -140,8 +168,12 @@ public class BomberEngineImpl implements BomberEngine {
 		record.setStatus(READY);
 		bombingRecordManager.save(record);
 
+		HttpSample httpSample = record.getHttpSample();
+		HttpSampleSnapshot snapshot = buildHttpSampleSnapshot(httpSample);
+
 		BomberContext ctx = new BomberContext(ctxId);
-		ctx.setSampleId(record.getHttpSample().getId());
+		ctx.setSampleId(httpSample.getId());
+		ctx.setHttpSampleSnapshot(snapshot);
 		ctx.setName(record.getName());
 		ctx.setThreadGroup(record.getThreadGroup());
 		ctx.setThreadGroupCursor(record.getThreadGroupCursor());
@@ -169,7 +201,7 @@ public class BomberEngineImpl implements BomberEngine {
 	}
 
 	private void doExecute(BomberContext ctx) {
-		HttpSample httpSample = httpSampleManager.get(ctx.getSampleId());
+		HttpSampleSnapshot httpSampleSnapshot = ctx.getHttpSampleSnapshot();
 
 		BombingRecord record = bombingRecordManager.get(ctx.getId());
 		record.setStatus(RUNNING);
@@ -183,6 +215,7 @@ public class BomberEngineImpl implements BomberEngine {
 			requestCount += threadGroup.get(i) * ctx.getRequestsPerThread();
 		}
 
+		BombardierRequest request = convertToBombardierRequest(httpSampleSnapshot);
 		for (int i = ctx.getThreadGroupCursor(); i < threadGroup.size(); i++) {
 			int numberOfThreads = threadGroup.get(i);
 			int numberOfRequests = numberOfThreads * ctx.getRequestsPerThread();
@@ -199,7 +232,6 @@ public class BomberEngineImpl implements BomberEngine {
 			bombingRecordManager.save(record);
 
 			try {
-				BombardierRequest request = convertToBombardierRequest(httpSample);
 				request.setNumberOfConnections(numberOfThreads);
 				request.setNumberOfRequests(numberOfRequests);
 				request.setStartLine(requestCount);
@@ -241,31 +273,17 @@ public class BomberEngineImpl implements BomberEngine {
 		bombingRecordManager.save(record);
 	}
 
-	protected BombardierRequest convertToBombardierRequest(HttpSample sample) {
-		ApplicationInstance app = sample.getApplicationInstance();
-		if (app == null) {
-			throw new IllegalArgumentException("app can't be null");
-		}
-		String path = sample.getPath();
-
+	protected BombardierRequest convertToBombardierRequest(HttpSampleSnapshot snapshot) {
 		BombardierRequest request = new BombardierRequest();
+		request.setMethod(snapshot.getMethod());
+		request.setUrl(snapshot.getUrl());
+		request.setHeaders(snapshot.getHeaders());
+		request.setBody(snapshot.getBody());
 
-		request.setUrl(app.getProtocol().name() + "://" + app.getHost() + ":" + app.getPort()
-				+ (path.startsWith("/") ? path : "/" + path));
-		request.setMethod(sample.getMethod());
-		request.setBody(sample.getBody());
-
-		List<HttpHeader> headerList = sample.getHeaders();
-		if (headerList != null && !headerList.isEmpty()) {
-			String[] headers = new String[headerList.size()];
-			for (int i = 0; i < headerList.size(); i++) {
-				headers[i] = HttpHeaderListConverter.convertToString(headerList.get(i));
-			}
-			request.setHeaders(headers);
-		}
-		if (StringUtils.hasLength(sample.getCsvFilePath()) && StringUtils.hasLength(sample.getVariableNames())) {
-			request.setCsvFilePath(uri.getPath() + sample.getCsvFilePath());
-			request.setVariableNames(sample.getVariableNames());
+		if (StringUtils.hasLength(snapshot.getVariableFilePath())
+				&& StringUtils.hasLength(snapshot.getVariableNames())) {
+			request.setCsvFilePath(uri.getPath() + snapshot.getVariableFilePath());
+			request.setVariableNames(snapshot.getVariableNames());
 		}
 		return request;
 	}

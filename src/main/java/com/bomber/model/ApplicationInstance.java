@@ -65,6 +65,10 @@ public class ApplicationInstance extends BaseEntity {
 	@Version
 	private int version = -1;
 
+	public String getUrl() {
+		return protocol.name() + "://" + host + ":" + port;
+	}
+
 	@Override
 	public String toString() {
 		return appName + '@' + host + ':' + port + (env == null ? "" : "[" + env + "]");

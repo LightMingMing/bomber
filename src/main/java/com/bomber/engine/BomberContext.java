@@ -21,6 +21,10 @@ public class BomberContext {
 
 	@Getter
 	@Setter
+	private HttpSampleSnapshot httpSampleSnapshot;
+
+	@Getter
+	@Setter
 	private List<Integer> threadGroup;
 
 	@Getter
