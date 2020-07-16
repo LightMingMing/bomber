@@ -20,7 +20,7 @@ import org.ironrhino.core.metadata.Readonly;
 import org.ironrhino.core.metadata.Richtable;
 import org.ironrhino.core.metadata.UiConfig;
 import org.ironrhino.core.model.BaseEntity;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.http.HttpMethod;
 
 import com.bomber.converter.HttpHeaderListConverter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -60,7 +60,7 @@ public class HttpSample extends BaseEntity {
 
 	@Column(nullable = false)
 	@UiConfig(alias = "requestMethod", width = "100px", cellDynamicAttributes = "{\"style\":\"text-align: center\"}")
-	private RequestMethod method;
+	private HttpMethod method;
 
 	@Column(nullable = false)
 	@UiConfig(cssClass = "input-xxlarge", shownInPick = true, cellDynamicAttributes = "{\"style\":\"font-family:SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;min-width:200px\"}")

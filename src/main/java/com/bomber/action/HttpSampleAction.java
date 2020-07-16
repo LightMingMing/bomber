@@ -192,8 +192,6 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		}
 
 		httpSample = httpSampleManager.get(httpSample.getId());
-		String path = httpSample.getPath();
-		ApplicationInstance app = httpSample.getApplicationInstance();
 
 		if (requestsPerThread > maxRequestsPerThread) {
 			addFieldError("requestsPerThread", "requestsPerThread > " + maxRequestsPerThread);
@@ -225,7 +223,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		try {
 			URI uri = URI.create(app.getProtocol().name() + "://" + app.getHost() + ":" + app.getPort()
 					+ (path.startsWith("/") ? path : "/" + path));
-			HttpMethod method = HttpMethod.valueOf(httpSample.getMethod().name());
+			HttpMethod method = httpSample.getMethod();
 			MultiValueMap<String, String> headers = convertToHttpHeaders(httpSample.getHeaders());
 			String body = httpSample.getBody();
 

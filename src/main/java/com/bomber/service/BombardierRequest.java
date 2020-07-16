@@ -1,6 +1,6 @@
 package com.bomber.service;
 
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.http.HttpMethod;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -17,7 +17,7 @@ public class BombardierRequest {
 	private int numberOfRequests;
 
 	@JsonProperty("method")
-	private RequestMethod method;
+	private HttpMethod method;
 
 	private String[] headers;
 
