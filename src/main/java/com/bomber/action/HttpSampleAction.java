@@ -243,16 +243,21 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 				}
 			}
 
-			RequestEntity<String> entity = new RequestEntity<>(body, headers, method, uri);
+			RequestEntity<String> requestEntity = new RequestEntity<>(body, headers, method, uri);
+			logger.info("request entity\n{}", requestEntity.toString());
 
-			ResponseEntity<String> result = stringMessageRestTemplate.exchange(entity, String.class);
-			addActionMessage(displayResponseEntity(result));
+			ResponseEntity<String> responseEntity = stringMessageRestTemplate.exchange(requestEntity, String.class);
+			String result = displayResponseEntity(responseEntity);
+			addActionMessage(result);
+			logger.info("response entity\n{}", result);
 		} catch (HttpClientErrorException e) {
 			// eg. 404 Not Found
 			addActionError(e.getStatusCode().toString());
+			logger.warn(e.getMessage());
 			return ERROR;
 		} catch (Exception e) {
 			addActionError(e.getMessage());
+			logger.warn(e.getMessage());
 			return ERROR;
 		}
 		return SUCCESS;
