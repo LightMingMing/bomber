@@ -131,11 +131,6 @@ public class BomberEngineImpl implements BomberEngine {
 	}
 
 	@Override
-	public void pauseExecute(String ctxId) {
-		Optional.ofNullable(registry.get(ctxId)).ifPresent(BomberContext::pause);
-	}
-
-	@Override
 	@Transactional
 	public void continueExecute(String ctxId) {
 		BombingRecord record = bombingRecordManager.get(ctxId);
@@ -152,14 +147,25 @@ public class BomberEngineImpl implements BomberEngine {
 		ctx.setThreadGroupCursor(record.getThreadGroupCursor());
 		ctx.setRequestsPerThread(record.getRequestsPerThread());
 		ctx.setActiveThreads(record.getActiveThreads());
-		bombingExecutor.execute(() -> {
-			registry.registerBomberContext(ctx);
-			try {
-				doExecute(ctx);
-			} finally {
-				registry.unregisterBomberContext(ctx);
+
+		TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+			@Override
+			public void afterCommit() {
+				bombingExecutor.execute(() -> {
+					registry.registerBomberContext(ctx);
+					try {
+						doExecute(ctx);
+					} finally {
+						registry.unregisterBomberContext(ctx);
+					}
+				});
 			}
 		});
+	}
+
+	@Override
+	public void pauseExecute(String ctxId) {
+		Optional.ofNullable(registry.get(ctxId)).ifPresent(BomberContext::pause);
 	}
 
 	private void doExecute(BomberContext ctx) {
