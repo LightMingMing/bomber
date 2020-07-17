@@ -127,7 +127,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		}
 	}
 
-	private static String displayResponseEntity(ResponseEntity<String> responseEntity) {
+	private static String convertToString(ResponseEntity<String> responseEntity) {
 		MediaType contentType = responseEntity.getHeaders().getContentType();
 		String body = responseEntity.getBody();
 		if (contentType != null && body != null) {
@@ -242,12 +242,12 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 			}
 
 			RequestEntity<String> requestEntity = new RequestEntity<>(body, headers, method, uri);
-			logger.info("request entity\n{}", requestEntity.toString());
+			logger.info("Request entity:\n{}", requestEntity.toString());
 
 			ResponseEntity<String> responseEntity = stringMessageRestTemplate.exchange(requestEntity, String.class);
-			String result = displayResponseEntity(responseEntity);
+			String result = convertToString(responseEntity);
 			addActionMessage(result);
-			logger.info("response entity\n{}", result);
+			logger.info("Response entity:\n{}", result);
 		} catch (HttpClientErrorException e) {
 			// eg. 404 Not Found
 			addActionError(e.getStatusCode().toString());
