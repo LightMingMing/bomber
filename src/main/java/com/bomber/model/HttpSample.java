@@ -63,7 +63,7 @@ public class HttpSample extends BaseEntity {
 	private HttpMethod method;
 
 	@Column(nullable = false)
-	@UiConfig(cssClass = "input-xxlarge", shownInPick = true, cellDynamicAttributes = "{\"style\":\"font-family:SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;min-width:200px\"}")
+	@UiConfig(cssClass = "input-xxlarge", shownInPick = true, excludedFromQuery = true, cellDynamicAttributes = "{\"style\":\"font-family:SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;min-width:200px\"}")
 	private String path;
 
 	@UiConfig(alias = "headers", width = "250px", listTemplate = HEADERS_TEMPLATE, cellDynamicAttributes = CODE_ATTRIBUTE)

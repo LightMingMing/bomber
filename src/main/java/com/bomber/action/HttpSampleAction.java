@@ -221,8 +221,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		String path = httpSample.getPath();
 		ApplicationInstance app = httpSample.getApplicationInstance();
 		try {
-			URI uri = URI.create(app.getProtocol().name() + "://" + app.getHost() + ":" + app.getPort()
-					+ (path.startsWith("/") ? path : "/" + path));
+			URI uri = URI.create(app.getUrl() + (path.startsWith("/") ? path : "/" + path));
 			HttpMethod method = httpSample.getMethod();
 			MultiValueMap<String, String> headers = convertToHttpHeaders(httpSample.getHeaders());
 			String body = httpSample.getBody();

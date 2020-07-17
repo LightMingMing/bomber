@@ -11,6 +11,7 @@ import javax.validation.constraints.Min;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.ironrhino.core.metadata.AutoConfig;
+import org.ironrhino.core.metadata.Hidden;
 import org.ironrhino.core.metadata.Richtable;
 import org.ironrhino.core.metadata.UiConfig;
 import org.ironrhino.core.model.BaseEntity;
@@ -36,41 +37,27 @@ public class ApplicationInstance extends BaseEntity {
 			+ "<#case 'uat'>label-success<#break><#default></#switch> '>${value}</span></#if>";
 
 	@Column(length = 32, nullable = false)
-	@UiConfig(width = "200px", shownInPick = true, cellDynamicAttributes = CENTER_ATTRIBUTE)
+	@UiConfig(shownInPick = true, cellDynamicAttributes = CENTER_ATTRIBUTE)
 	private String appName;
 
-	@Column(length = 8, nullable = false)
-	@UiConfig(width = "150px", shownInPick = true, cellDynamicAttributes = CENTER_ATTRIBUTE)
-	private Protocol protocol = Protocol.http;
-
-	@Column(length = 32, nullable = false)
-	@UiConfig(width = "200px", shownInPick = true, cellDynamicAttributes = CENTER_ATTRIBUTE)
-	private String host;
-
-	@Min(0)
-	@Max(65535)
 	@Column(nullable = false)
-	@UiConfig(width = "150px", shownInPick = true, cellDynamicAttributes = CENTER_ATTRIBUTE)
-	private Integer port;
+	@UiConfig(shownInPick = true, template = "<a href='${value}' target='_blank'>${value}</a>", excludedFromQuery = true, cellDynamicAttributes = CENTER_ATTRIBUTE)
+	private String url;
 
 	@Column(length = 16)
-	@UiConfig(width = "150px", shownInPick = true, template = ENV_TEMPLATE, cellDynamicAttributes = CENTER_ATTRIBUTE)
+	@UiConfig(shownInPick = true, template = ENV_TEMPLATE, cellDynamicAttributes = CENTER_ATTRIBUTE)
 	private Env env;
 
 	@CreationTimestamp
 	@Column(updatable = false, nullable = false)
-	@UiConfig(width = "250px", excludedFromQuery = true, cellDynamicAttributes = CENTER_ATTRIBUTE)
+	@UiConfig(excludedFromQuery = true, cellDynamicAttributes = CENTER_ATTRIBUTE)
 	private Date createDate;
 
 	@Version
 	private int version = -1;
 
-	public String getUrl() {
-		return protocol.name() + "://" + host + ":" + port;
-	}
-
 	@Override
 	public String toString() {
-		return appName + '@' + host + ':' + port + (env == null ? "" : "[" + env + "]");
+		return appName + (env == null ? "" : "[" + env + "]");
 	}
 }
