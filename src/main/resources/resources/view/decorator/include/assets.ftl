@@ -1,2 +1,1 @@
-<script src="<@url value="/assets/scripts/bomber.js"/>"
-        type="text/javascript"<#if !head?contains('</script>')> defer</#if>></script>
+<script src="<@url value="/assets/scripts/bomber.js?v=0x7c00"/>" type="text/javascript"></script>

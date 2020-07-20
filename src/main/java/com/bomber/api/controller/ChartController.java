@@ -122,11 +122,9 @@ public class ChartController {
 
 	@GetMapping("/compare")
 	public Chart<Integer, Double> compare(String ids) {
-		// TODO polish
 		List<BombingRecord> bombingRecords = bombingRecordManager.get(Arrays.asList(ids.split(", *"))).stream()
 				.filter(Objects::nonNull).collect(Collectors.toList());
 
-		// TODO httpSample name
 		String title = "TPS和平均响应时间与并发数变化关系";
 		Chart<Integer, Double> chart = new Chart<>(title, subTitleFromDate());
 
@@ -143,8 +141,10 @@ public class ChartController {
 
 		boolean threadsAdded = false;
 		for (BombingRecord bombingRecord : bombingRecords) {
-			Axis<Double> tps = new Axis<>(bombingRecord.getName() + " TPS", ChartType.LINE);
-			Axis<Double> avg = new Axis<>(bombingRecord.getName() + " AVG", ChartType.LINE);
+			Axis<Double> tps = new Axis<>(
+					bombingRecord.getHttpSample().getName() + "-" + bombingRecord.getName() + " TPS", ChartType.LINE);
+			Axis<Double> avg = new Axis<>(
+					bombingRecord.getHttpSample().getName() + "-" + bombingRecord.getName() + " AVG", ChartType.LINE);
 
 			boolean finalThreadsAdded = threadsAdded;
 
