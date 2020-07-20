@@ -6,12 +6,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Version;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.ironrhino.core.metadata.AutoConfig;
-import org.ironrhino.core.metadata.Hidden;
 import org.ironrhino.core.metadata.Richtable;
 import org.ironrhino.core.metadata.UiConfig;
 import org.ironrhino.core.model.BaseEntity;
