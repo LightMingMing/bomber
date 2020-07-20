@@ -52,7 +52,7 @@ public class BomberEngineImpl implements BomberEngine {
 
 	private final BomberContextRegistry registry;
 
-	@Value("${fileStorage.uri:file:///${app.context}/assets/}")
+	@Value("${fileStorage.uri}")
 	protected URI uri;
 
 	public BomberEngineImpl(HttpSampleManager httpSampleManager, BombingRecordManager bombingRecordManager,

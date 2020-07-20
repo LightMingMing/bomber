@@ -18,11 +18,11 @@ import java.util.stream.Collectors;
 import org.ironrhino.core.fs.FileStorage;
 import org.ironrhino.core.metadata.AutoConfig;
 import org.ironrhino.core.struts.EntityAction;
+import org.ironrhino.core.util.CodecUtils;
 import org.ironrhino.core.util.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -66,9 +66,6 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 
 	@Getter
 	private final int maxRequestsPerThread = MAX_REQUESTS_PRE_THREAD;
-
-	@Value("${fileStorage.uri:file:///${app.context}/assets/}")
-	protected URI uri;
 
 	@Autowired
 	private HttpSampleManager httpSampleManager;
@@ -145,6 +142,19 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 				+ ',' + responseEntity.getHeaders() + '>';
 	}
 
+	private static String generateFilePath(String fileName) {
+		int extIndex = fileName.lastIndexOf('.');
+		String prefix, suffix;
+		if (extIndex > 0) {
+			prefix = fileName.substring(0, extIndex);
+			suffix = fileName.substring(extIndex);
+		} else {
+			prefix = fileName;
+			suffix = ".txt";
+		}
+		return prefix + CodecUtils.nextId(4) + suffix;
+	}
+
 	@Override
 	@Transactional
 	public String save() throws Exception {
@@ -154,11 +164,11 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		httpSample = getEntity();
 
 		if (httpSample.getCsvFile() != null) {
-			String fileName = httpSample.getCsvFileFileName();
-			fileStorage.write(httpSample.getCsvFile(), fileName);
+			String filePath = generateFilePath(httpSample.getCsvFileFileName());
+			fileStorage.write(httpSample.getCsvFile(), filePath);
 
-			httpSample.setCsvFilePath(fileName);
-			logger.info("Upload file '{}'", fileName);
+			httpSample.setCsvFilePath(filePath);
+			logger.info("Upload file '{}'", filePath);
 		}
 
 		httpSample.setVariableNames(StringUtils.trimAllWhitespace(httpSample.getVariableNames()));
