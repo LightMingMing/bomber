@@ -219,7 +219,13 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 
 		httpSample.setVariableNames(StringUtils.trimAllWhitespace(httpSample.getVariableNames()));
 
-		httpSample.setBody(JsonUtils.prettify(httpSample.getBody()));
+		// TODO avoid NPE
+		for (HttpHeader header : httpSample.getHeaders()) {
+			if ("Content-Type".equals(header.getName()) && header.getValue().contains("json")) {
+				httpSample.setBody(JsonUtils.prettify(httpSample.getBody()));
+				break;
+			}
+		}
 
 		httpSampleManager.save(httpSample);
 		return SUCCESS;
