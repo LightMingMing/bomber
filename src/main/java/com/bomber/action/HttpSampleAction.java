@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -93,6 +94,13 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 	@Setter
 	private String name;
 
+	@Getter
+	private String requestMessage;
+	@Getter
+	private String responseMessage;
+	@Getter
+	private String errorMessage;
+
 	private static MultiValueMap<String, String> convertToHttpHeaders(List<HttpHeader> httpHeaderList) {
 		if (httpHeaderList == null) {
 			return null;
@@ -124,22 +132,60 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		}
 	}
 
-	private static String convertToString(ResponseEntity<String> responseEntity) {
-		MediaType contentType = responseEntity.getHeaders().getContentType();
-		String body = responseEntity.getBody();
-		if (contentType != null && body != null) {
-			if (contentType.includes(MediaType.APPLICATION_JSON)) {
-				return JsonUtils.prettify(body);
-			} else if (contentType.includes(MediaType.TEXT_HTML) || contentType.includes(MediaType.TEXT_XML)) {
-				List<Charset> charsets = responseEntity.getHeaders().getAcceptCharset();
-				String charset = charsets.isEmpty() ? "utf-8" : charsets.get(0).name();
-				return HtmlUtils.htmlEscape(body, charset);
-			} else if (contentType.includes(MediaType.TEXT_PLAIN)) {
-				return body;
-			}
+	private static List<String> convertToStringList(HttpHeaders httpHeaders) {
+		List<String> headers = new ArrayList<>();
+		httpHeaders.forEach((key, value) -> headers.add(key + ": " + String.join(", ", value)));
+		return headers;
+	}
+
+	private static String convertToString(RequestEntity<String> requestEntity) {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append(requestEntity.getMethod());
+		sb.append(' ');
+		sb.append(requestEntity.getUrl().toString());
+
+		HttpHeaders httpHeaders = requestEntity.getHeaders();
+		if (httpHeaders.size() > 0) {
+			sb.append('\n');
+			sb.append(String.join("\n", convertToStringList(httpHeaders)));
 		}
-		return "<" + responseEntity.getStatusCode().toString() + ' ' + responseEntity.getStatusCode().getReasonPhrase()
-				+ ',' + responseEntity.getHeaders() + '>';
+
+		String body = requestEntity.getBody();
+		if (body != null) {
+			sb.append("\n\n");
+			sb.append(requestEntity.getBody());
+		}
+		return sb.toString();
+	}
+
+	private static String convertToString(ResponseEntity<String> responseEntity) {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append(responseEntity.getStatusCode().toString());
+
+		HttpHeaders httpHeaders = responseEntity.getHeaders();
+		if (httpHeaders.size() > 0) {
+			sb.append('\n');
+			sb.append(String.join("\n", convertToStringList(httpHeaders)));
+		}
+
+		String body = responseEntity.getBody();
+		if (body != null) {
+			MediaType contentType = responseEntity.getHeaders().getContentType();
+			if (contentType != null) {
+				if (contentType.includes(MediaType.APPLICATION_JSON)) {
+					body = JsonUtils.prettify(body);
+				} else if (contentType.includes(MediaType.TEXT_HTML) || contentType.includes(MediaType.TEXT_XML)) {
+					List<Charset> charsets = responseEntity.getHeaders().getAcceptCharset();
+					String charset = charsets.isEmpty() ? "utf-8" : charsets.get(0).name();
+					body = HtmlUtils.htmlEscape(body, charset);
+				}
+			}
+			sb.append("\n\n");
+			sb.append(body);
+		}
+		return sb.toString();
 	}
 
 	private static String generateFilePath(String fileName) {
@@ -251,22 +297,20 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 			}
 
 			RequestEntity<String> requestEntity = new RequestEntity<>(body, headers, method, uri);
-			logger.info("Request entity:\n{}", requestEntity.toString());
+			this.requestMessage = convertToString(requestEntity);
+			logger.info("Request entity:\n{}", requestMessage);
 
 			ResponseEntity<String> responseEntity = stringMessageRestTemplate.exchange(requestEntity, String.class);
-			String result = convertToString(responseEntity);
-			addActionMessage(result);
-			logger.info("Response entity:\n{}", result);
+			this.responseMessage = convertToString(responseEntity);
+			logger.info("Response entity:\n{}", responseMessage);
 		} catch (HttpClientErrorException e) {
 			// eg. 404 Not Found
-			addActionError(e.getStatusCode().toString());
+			this.responseMessage = e.getStatusCode().toString() + "\n" + e.getResponseBodyAsString();
 			logger.warn(e.getMessage());
-			return ERROR;
 		} catch (Exception e) {
-			addActionError(e.getMessage());
+			this.errorMessage = e.toString();
 			logger.warn(e.getMessage());
-			return ERROR;
 		}
-		return SUCCESS;
+		return "singleShot";
 	}
 }
