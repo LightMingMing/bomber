@@ -33,6 +33,11 @@ sourceSets {
         java.srcDirs = ['src/main/java']
         resources.srcDirs = ["src/main/java", "src/main/resources"]
     }
+    jmh {
+        java.srcDirs = ['src/jmh/java']
+        compileClasspath += sourceSets.main.compileClasspath
+        runtimeClasspath += sourceSets.main.runtimeClasspath
+    }
 }
 
 repositories {
@@ -233,14 +238,15 @@ dependencies {
         exclude group: "org.objenesis"
     }
 
-    testCompile("org.openjdk.jmh:jmh-core:${jmhVersion}") {
-        exclude group: "org.apache.commons"
-    }
-    testCompile("org.openjdk.jmh:jmh-generator-annprocess:${jmhVersion}") {
+    testCompile("org.springframework:spring-test:${springframeworkVersion}")
+
+    jmhCompile("org.openjdk.jmh:jmh-core:${jmhVersion}") {
         exclude group: "org.apache.commons"
     }
 
-    testCompile("org.springframework:spring-test:${springframeworkVersion}")
+    jmhAnnotationProcessor("org.openjdk.jmh:jmh-generator-annprocess:${jmhVersion}") {
+        exclude group: "org.apache.commons"
+    }
 }
 
 task explodedWar(type: Sync) {
