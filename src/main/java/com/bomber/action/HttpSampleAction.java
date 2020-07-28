@@ -8,11 +8,11 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -132,10 +132,11 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		}
 	}
 
-	private static List<String> convertToStringList(HttpHeaders httpHeaders) {
-		List<String> headers = new ArrayList<>();
-		httpHeaders.forEach((key, value) -> headers.add(key + ": " + String.join(", ", value)));
-		return headers;
+	private static String convertToString(MultiValueMap<String, String> map) {
+		StringJoiner joiner = new StringJoiner("\n");
+		map.forEach(
+				(key, value) -> joiner.add(key + ": " + (value.size() == 1 ? value.get(0) : String.join(", ", value))));
+		return joiner.toString();
 	}
 
 	private static String convertToString(RequestEntity<String> requestEntity) {
@@ -148,7 +149,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		HttpHeaders httpHeaders = requestEntity.getHeaders();
 		if (httpHeaders.size() > 0) {
 			sb.append('\n');
-			sb.append(String.join("\n", convertToStringList(httpHeaders)));
+			sb.append(convertToString(httpHeaders));
 		}
 
 		String body = requestEntity.getBody();
@@ -167,7 +168,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		HttpHeaders httpHeaders = responseEntity.getHeaders();
 		if (httpHeaders.size() > 0) {
 			sb.append('\n');
-			sb.append(String.join("\n", convertToStringList(httpHeaders)));
+			sb.append(convertToString(httpHeaders));
 		}
 
 		String body = responseEntity.getBody();
