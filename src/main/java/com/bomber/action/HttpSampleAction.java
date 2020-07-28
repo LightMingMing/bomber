@@ -210,6 +210,23 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		}
 		httpSample = getEntity();
 
+		int i = 0;
+		for (HttpHeader header : httpSample.getHeaders()) {
+			if (header.getName() == null) {
+				this.addFieldError("headers[" + i + "].name", "required");
+				return INPUT;
+			}
+			if (header.getValue() == null) {
+				this.addFieldError("headers[" + i + "].value", "required");
+				return INPUT;
+			}
+			i++;
+
+			if ("Content-Type".equals(header.getName()) && header.getValue().contains("json")) {
+				httpSample.setBody(JsonUtils.prettify(httpSample.getBody()));
+			}
+		}
+
 		if (httpSample.getCsvFile() != null) {
 			String filePath = generateFilePath(httpSample.getCsvFileFileName());
 			fileStorage.write(httpSample.getCsvFile(), filePath);
@@ -219,14 +236,6 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		}
 
 		httpSample.setVariableNames(StringUtils.trimAllWhitespace(httpSample.getVariableNames()));
-
-		// TODO avoid NPE
-		for (HttpHeader header : httpSample.getHeaders()) {
-			if ("Content-Type".equals(header.getName()) && header.getValue().contains("json")) {
-				httpSample.setBody(JsonUtils.prettify(httpSample.getBody()));
-				break;
-			}
-		}
 
 		httpSampleManager.save(httpSample);
 		return SUCCESS;
