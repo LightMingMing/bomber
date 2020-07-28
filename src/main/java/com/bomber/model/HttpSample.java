@@ -43,7 +43,9 @@ public class HttpSample extends BaseEntity {
 	private static final String HEADERS_TEMPLATE = "<#if value?has_content><#list value as header><span style='color:#d73a49;font-weight:bold'>${header.name}:</span> ${header.value}<#sep><br></#list></#if>";
 
 	private static final String BODY_INPUT_TEMPLATE = "<textarea id='httpSample-body' name='httpSample.body' "
-			+ "class='input-xxlarge' style='min-height: 200px'>${(entity.body)!}</textarea>";
+			+ "class='input-xxlarge' style='height: 350px'>${(entity.body)!}</textarea>";
+
+	private static final String BODY_VIEW_TEMPLATE = "<#if entity.body?has_content><code class='block json' style='color:green;max-height:350px;overflow-y: auto'>${entity.body?no_esc}</code></#if>";
 
 	private static final String CODE_ATTRIBUTE = "{\"style\":\"font-family:SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace\"}";
 
@@ -71,7 +73,7 @@ public class HttpSample extends BaseEntity {
 	private List<HttpHeader> headers;
 
 	@Column(length = 10240)
-	@UiConfig(hiddenInList = @Hidden(true), type = "textarea", inputTemplate = BODY_INPUT_TEMPLATE, excludedFromQuery = true)
+	@UiConfig(hiddenInList = @Hidden(true), type = "textarea", viewTemplate = BODY_VIEW_TEMPLATE, inputTemplate = BODY_INPUT_TEMPLATE, excludedFromQuery = true)
 	private String body;
 
 	@Transient

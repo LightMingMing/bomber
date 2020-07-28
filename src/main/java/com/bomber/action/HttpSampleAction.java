@@ -312,7 +312,8 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 			logger.info("Response entity:\n{}", responseMessage);
 		} catch (HttpClientErrorException e) {
 			// eg. 404 Not Found
-			this.responseMessage = e.getStatusCode().toString() + "\n" + e.getResponseBodyAsString();
+			this.responseMessage = e.getStatusCode().toString() + "\n"
+					+ HtmlUtils.htmlEscape(e.getResponseBodyAsString());
 			logger.warn(e.getMessage());
 		} catch (Exception e) {
 			this.errorMessage = e.toString();

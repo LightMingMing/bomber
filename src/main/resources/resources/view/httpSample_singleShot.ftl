@@ -11,7 +11,7 @@
             <label class="control-label" style="font-weight: bold;font-style: italic">请求</label>
             <div class="controls">
                 <code class="block json"
-                      style="color:green;max-height: 500px;overflow-y: scroll">${requestMessage?no_esc}</code>
+                      style="color:green;max-height: 350px;overflow-y: auto">${requestMessage?no_esc}</code>
             </div>
         </div>
     </div>
@@ -22,7 +22,7 @@
             <label class="control-label" style="font-weight: bold;font-style: italic">响应</label>
             <div class="controls">
                 <code class="block json"
-                      style="color:green;max-height: 500px;overflow-y: scroll">${responseMessage?no_esc}</code>
+                      style="color:green;max-height: 350px;overflow-y: auto">${responseMessage?no_esc}</code>
             </div>
         </div>
     </div>
@@ -32,7 +32,7 @@
         <div id="control-group-error" class="control-group">
             <label class="control-label" style="font-weight: bold;font-style: italic">错误</label>
             <div class="controls">
-                <code class="block json" style="max-height: 500px;overflow-y: scroll">${errorMessage?no_esc}</code>
+                <code class="block json" style="max-height: 350px;overflow-y: auto">${errorMessage?no_esc}</code>
             </div>
         </div>
     </div>
