@@ -1,0 +1,6 @@
+/*
+Fix typeahead
+*/
+.table.datagrided td {
+    position: relative;
+}
