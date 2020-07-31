@@ -1,19 +1,26 @@
 package com.bomber.functions;
 
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class RandomIntegerFunction implements Function {
+public class RandomIntegerFunction extends AbstractFunction {
 
-	private final int min;
-	private final int max;
-
-	public RandomIntegerFunction(int min, int max) {
-		this.min = min;
-		this.max = max;
-	}
+	private int min;
+	private int max;
 
 	@Override
 	public String execute() {
-		return Integer.toString(ThreadLocalRandom.current().nextInt(min, max + 1));
+		return Integer.toString(ThreadLocalRandom.current().nextInt(min, max));
+	}
+
+	@Override
+	public String getRequiredArgs() {
+		return "min, max";
+	}
+
+	@Override
+	protected void doInit(Map<String, String> params) {
+		this.min = Integer.parseInt(params.get("min"));
+		this.max = Integer.parseInt(params.get("max"));
 	}
 }

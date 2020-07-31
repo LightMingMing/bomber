@@ -1,38 +1,54 @@
 package com.bomber.functions;
 
+import java.util.Map;
+
 public class FixedLengthStringFunction implements Function {
 
-	private static final int MIN_LENGTH = 1;
-	private static final int MAX_LENGTH = 10;
+	private static final int MAX_MOD_LENGTH = 10;
 
-	private final String prefix;
-	private final String suffix;
-	private final String format;
-	private final long mod;
+	private String format;
+	private long mod;
 
 	private long count;
 
-	public FixedLengthStringFunction(int length) {
-		this(length, "", "");
+	@Override
+	public String getRequiredArgs() {
+		return "length";
 	}
 
-	public FixedLengthStringFunction(int length, String prefix) {
-		this(length, prefix, "");
+	@Override
+	public String getOptionalArgs() {
+		return "prefix, suffix";
 	}
 
-	public FixedLengthStringFunction(int length, String prefix, String suffix) {
-		length = Math.min(length, MAX_LENGTH);
-		length = Math.max(length, MIN_LENGTH);
-		this.prefix = prefix == null ? "" : prefix;
-		this.suffix = suffix == null ? "" : suffix;
-		this.mod = (long) Math.pow(10, length);
-		this.format = "%s%0" + length + "d%s";
+	@Override
+	public void init(Map<String, String> params) {
+		int length = Integer.parseInt(params.get("length"));
+		if (length < 1) {
+			throw new IllegalArgumentException("length should great than 0");
+		}
+
+		String prefix = params.get("prefix");
+		String suffix = params.get("suffix");
+
+		StringBuilder sb = new StringBuilder();
+		if (prefix != null) {
+			sb.append(prefix);
+		}
+		sb.append("%0").append(length).append("d");
+		if (suffix != null) {
+			sb.append(suffix);
+		}
+		this.format = sb.toString();
+
+		this.mod = (long) Math.pow(10, Math.min(length, MAX_MOD_LENGTH));
 	}
 
 	@Override
 	public String execute() {
-		String result = String.format(format, prefix, count, suffix);
+		String result = String.format(format, count);
 		count = (++count) % mod;
 		return result;
 	}
+
 }

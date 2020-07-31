@@ -2,16 +2,24 @@ package com.bomber.functions;
 
 import org.ironrhino.core.util.CodecUtils;
 
-public class RandomStringFunction implements Function {
+import java.util.Map;
 
-	private final int length;
+public class RandomStringFunction extends AbstractFunction {
 
-	public RandomStringFunction(int length) {
-		this.length = length;
-	}
+	private int length;
 
 	@Override
 	public String execute() {
 		return CodecUtils.nextId(length);
+	}
+
+	@Override
+	public String getRequiredArgs() {
+		return "length";
+	}
+
+	@Override
+	protected void doInit(Map<String, String> params) {
+		this.length = Integer.parseInt(params.get("length"));
 	}
 }
