@@ -27,6 +27,13 @@
         </div>
     </div>
 </#if>
+<#if elapsedTimeInMillis gt 0>
+    <div>
+        <div style="float: right">
+            <span>耗时${elapsedTimeInMillis}毫秒&nbsp</span>
+        </div>
+    </div>
+</#if>
 <#if errorMessage?has_content>
     <div id="error" class="view">
         <div id="control-group-error" class="control-group">

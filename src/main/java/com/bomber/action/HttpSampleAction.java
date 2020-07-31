@@ -100,6 +100,8 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 	private String responseMessage;
 	@Getter
 	private String errorMessage;
+	@Getter
+	private long elapsedTimeInMillis;
 
 	private static MultiValueMap<String, String> convertToHttpHeaders(List<HttpHeader> httpHeaderList) {
 		if (httpHeaderList == null) {
@@ -315,8 +317,9 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 			RequestEntity<String> requestEntity = new RequestEntity<>(body, headers, method, uri);
 			this.requestMessage = convertToString(requestEntity);
 			logger.info("Request entity:\n{}", requestMessage);
-
+			long startTime = System.nanoTime();
 			ResponseEntity<String> responseEntity = stringMessageRestTemplate.exchange(requestEntity, String.class);
+			this.elapsedTimeInMillis = (System.nanoTime() - startTime) / 1_000_000;
 			this.responseMessage = convertToString(responseEntity);
 			logger.info("Response entity:\n{}", responseMessage);
 		} catch (HttpClientErrorException e) {
