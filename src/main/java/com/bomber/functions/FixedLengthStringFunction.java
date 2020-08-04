@@ -2,7 +2,7 @@ package com.bomber.functions;
 
 import java.util.Map;
 
-public class FixedLengthStringFunction implements Function {
+public class FixedLengthStringFunction extends AbstractFunction {
 
 	private static final int MAX_MOD_LENGTH = 10;
 
@@ -22,7 +22,7 @@ public class FixedLengthStringFunction implements Function {
 	}
 
 	@Override
-	public void init(Map<String, String> params) {
+	protected void doInit(Map<String, String> params) {
 		int length = Integer.parseInt(params.get("length"));
 		if (length < 1) {
 			throw new IllegalArgumentException("length should great than 0");
