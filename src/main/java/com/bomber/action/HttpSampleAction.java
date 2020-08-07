@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringJoiner;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -38,10 +39,13 @@ import org.springframework.web.util.HtmlUtils;
 
 import com.bomber.engine.BomberContext;
 import com.bomber.engine.BomberEngine;
+import com.bomber.functions.FunctionMetadataHelper;
 import com.bomber.manager.HttpSampleManager;
 import com.bomber.model.ApplicationInstance;
 import com.bomber.model.HttpHeader;
 import com.bomber.model.HttpSample;
+import com.bomber.model.Payload;
+import com.bomber.model.PayloadOption;
 import com.bomber.util.ValueReplacer;
 import com.opensymphony.xwork2.interceptor.annotations.InputConfig;
 
@@ -311,6 +315,19 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 						Map<String, String> variables = parseFirstLine(inputStream, fieldNames.split(","));
 						body = ValueReplacer.replace(body, variables);
 					}
+				} else if (httpSample.getPayload() != null) {
+					Set<String> keys = ValueReplacer.getKeys(body);
+					Payload payload = httpSample.getPayload();
+
+					// should strong check ?
+					Map<String, String> context = new HashMap<>();
+					for (PayloadOption option : payload.getOptions()) {
+						if (keys.contains(option.getKey())) {
+							context.put(option.getKey(), FunctionMetadataHelper
+									.instance(option.getFunctionName(), option.getArgumentValues()).execute());
+						}
+					}
+					body = ValueReplacer.replace(body, context);
 				}
 			}
 

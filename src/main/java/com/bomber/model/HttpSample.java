@@ -3,6 +3,7 @@ package com.bomber.model;
 import java.io.File;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Convert;
@@ -10,6 +11,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -87,8 +89,13 @@ public class HttpSample extends BaseEntity {
 	@UiConfig(alias = "filePath", hiddenInList = @Hidden(true), readonly = @Readonly(true), excludedFromQuery = true)
 	private String csvFilePath;
 
-	@UiConfig(alias = "variableNames", width = "180px", description = "separatedByCommas", excludedFromQuery = true)
+	@UiConfig(hiddenInList = @Hidden(true), description = "separatedByCommas", excludedFromQuery = true)
 	private String variableNames;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "payloadId", nullable = true)
+	@UiConfig(alias = "payload", hiddenInList = @Hidden(true))
+	private Payload payload;
 
 	@JsonIgnore
 	@CreationTimestamp
