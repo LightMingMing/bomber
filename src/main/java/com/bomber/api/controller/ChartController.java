@@ -125,12 +125,11 @@ public class ChartController {
 		List<BombingRecord> bombingRecords = bombingRecordManager.get(Arrays.asList(ids.split(", *"))).stream()
 				.filter(Objects::nonNull).collect(Collectors.toList());
 
-		String title = "TPS和平均响应时间与并发数变化关系";
+		String title = "TPS与并发数变化关系";
 		Chart<Integer, Double> chart = new Chart<>(title, subTitleFromDate());
 
 		XAxis<Integer> xAxis = new XAxis<>("并发数");
 		YAxis<Double> tpsYAxis = new YAxis<>("TPS (r/s)");
-		YAxis<Double> durationYAxis = new YAxis<>("平均响应时间(ms)", true);
 
 		// 交集
 		Set<Integer> threads = bombingRecords.stream().map(BombingRecord::getThreadGroup).map(HashSet::new)
@@ -141,10 +140,8 @@ public class ChartController {
 
 		boolean threadsAdded = false;
 		for (BombingRecord bombingRecord : bombingRecords) {
-			Axis<Double> tps = new Axis<>(
-					bombingRecord.getHttpSample().getName() + "-" + bombingRecord.getName() + " TPS", ChartType.LINE);
-			Axis<Double> avg = new Axis<>(
-					bombingRecord.getHttpSample().getName() + "-" + bombingRecord.getName() + " AVG", ChartType.LINE);
+			Axis<Double> tps = new Axis<>(bombingRecord.getHttpSample().getName() + "-" + bombingRecord.getName(),
+					ChartType.LINE);
 
 			boolean finalThreadsAdded = threadsAdded;
 
@@ -155,14 +152,12 @@ public class ChartController {
 							xAxis.add(summary.getNumberOfThreads());
 						}
 						tps.add(summary.getTps());
-						avg.add(summary.getAvg());
 					});
-			durationYAxis.add(avg);
 			tpsYAxis.add(tps);
 			threadsAdded = true;
 		}
 
-		chart.setAxis(xAxis, tpsYAxis, durationYAxis);
+		chart.setAxis(xAxis, tpsYAxis);
 		return chart;
 	}
 }
