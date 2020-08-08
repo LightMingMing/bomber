@@ -47,6 +47,11 @@ public abstract class AbstractFunction implements Function {
 		doInit(params);
 	}
 
+	@Override
+	public void skip(int steps) {
+
+	}
+
 	protected abstract void doInit(Map<String, String> params);
 
 }

@@ -37,4 +37,27 @@ public class CitizenIdentificationFunctionTest extends BaseFunctionExecutor<Citi
 		execute(func, 1000 * 366);
 		assertThat(func.execute()).startsWith("41022320210101000").matches(isValid);
 	}
+
+	@Test
+	public void testSkip() {
+		Map<String, String> params = new HashMap<>();
+		params.put("addressCode", "410223");
+		params.put("startDate", "20200101");
+
+		Function func1 = newFunction(params);
+		Function func2 = newFunction(params);
+
+		func1.skip(10);
+		execute(func2, 10);
+		assertThat(func1.execute()).isEqualTo(func2.execute());
+
+		func1.skip(100);
+		execute(func2, 100);
+
+		assertThat(func1.execute()).isEqualTo(func2.execute());
+
+		func1.skip(1000);
+		execute(func2, 1000);
+		assertThat(func1.execute()).isEqualTo(func2.execute());
+	}
 }

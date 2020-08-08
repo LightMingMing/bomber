@@ -37,4 +37,20 @@ public class FixedLengthStringFunctionTest extends BaseFunctionExecutor<FixedLen
 
 		assertThat(func.execute()).isEqualTo("PREFIX00000000000000001000SUFFIX");
 	}
+
+	@Test
+	public void testSkip() {
+		Map<String, String> params = new HashMap<>();
+		params.put("length", "20");
+		params.put("prefix", "PREFIX");
+		params.put("suffix", "SUFFIX");
+
+		Function func1 = newFunction(params);
+		execute(func1, 1000);
+
+		Function func2 = newFunction(params);
+		func2.skip(1000);
+
+		assertThat(func1.execute()).isEqualTo(func2.execute());
+	}
 }

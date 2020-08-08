@@ -12,6 +12,8 @@ public interface Function {
 
 	void init(Map<String, String> params);
 
+	void skip(int steps);
+
 	String execute();
 
 }

@@ -51,4 +51,8 @@ public class FixedLengthStringFunction extends AbstractFunction {
 		return result;
 	}
 
+	@Override
+	public void skip(int steps) {
+		count = (count + steps) % mod;
+	}
 }

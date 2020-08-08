@@ -12,7 +12,7 @@ public class CitizenIdentificationFunction extends AbstractFunction {
 			"63", "64", "65", "71", "81", "82", "91" };
 	private static final int[] power = new int[] { 7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2 };
 	private static final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyyMMdd");
-	private static final int MAX_SEQ = 999;
+	private static final int MAX_SEQ = 1000; // exclusive
 
 	private String addressCode;
 	private LocalDate date;
@@ -51,11 +51,24 @@ public class CitizenIdentificationFunction extends AbstractFunction {
 	public String execute() {
 		String result = addressCode + dateFormat.format(date) + String.format("%03d", seq);
 		result += getCheckBit(getPowerSum(result.toCharArray()));
-		if (seq++ == MAX_SEQ) {
+		if (++seq == MAX_SEQ) {
 			date = date.plusDays(1);
 			seq = 0;
 		}
 		return result;
+	}
+
+	@Override
+	public void skip(int steps) {
+		if (steps < 0) {
+			throw new IllegalArgumentException("the steps to skipping should grater than -1");
+		}
+		int days = steps / MAX_SEQ;
+		if ((seq += steps % MAX_SEQ) >= MAX_SEQ) {
+			days += 1;
+			seq -= MAX_SEQ;
+		}
+		date = date.plusDays(days);
 	}
 
 	@Override
