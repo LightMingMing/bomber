@@ -4,6 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Transient;
 
+import com.bomber.functions.Function;
 import org.ironrhino.core.metadata.Readonly;
 import org.ironrhino.core.metadata.UiConfig;
 
@@ -13,6 +14,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Getter;
 import lombok.Setter;
+
+import static com.bomber.functions.FunctionMetadataHelper.getFunctionMetadata;
+import static com.bomber.functions.FunctionMetadataHelper.instance;
 
 @Embeddable
 public class PayloadOption {
@@ -52,12 +56,20 @@ public class PayloadOption {
 	private String remark;
 
 	public String getRequiredArgs() {
-		FunctionMetadata fm = FunctionMetadataHelper.getFunctionMetadata(functionName);
+		FunctionMetadata fm = getFunctionMetadata(functionName);
 		return fm == null ? null : fm.getRequiredArgs();
 	}
 
 	public String getOptionalArgs() {
-		FunctionMetadata fm = FunctionMetadataHelper.getFunctionMetadata(functionName);
+		FunctionMetadata fm = getFunctionMetadata(functionName);
 		return fm == null ? null : fm.getOptionalArgs();
+	}
+
+	public Function createQuietly() {
+		try {
+			return instance(functionName, argumentValues);
+		} catch (IllegalAccessException | InstantiationException e) {
+			throw new IllegalStateException("Failed instance a function from payload '" + this.key + "'", e);
+		}
 	}
 }

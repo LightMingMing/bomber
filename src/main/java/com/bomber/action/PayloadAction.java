@@ -14,7 +14,6 @@ import org.ironrhino.core.struts.EntityAction;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.bomber.functions.Function;
-import com.bomber.functions.FunctionMetadataHelper;
 import com.bomber.manager.PayloadManager;
 import com.bomber.model.Payload;
 import com.bomber.model.PayloadOption;
@@ -45,18 +44,11 @@ public class PayloadAction extends EntityAction<Payload> {
 	@Setter
 	private List<String> columns;
 
-	private Function instance(PayloadOption option) {
-		try {
-			return FunctionMetadataHelper.instance(option.getFunctionName(), option.getArgumentValues());
-		} catch (IllegalAccessException | InstantiationException e) {
-			throw new IllegalArgumentException("Failed to instance a function", e);
-		}
-	}
-
 	public String preview() {
 		payload = payloadManager.get(this.getUid());
 
-		List<Function> functions = payload.getOptions().stream().map(this::instance).collect(Collectors.toList());
+		List<Function> functions = payload.getOptions().stream().map(PayloadOption::createQuietly)
+				.collect(Collectors.toList());
 
 		StringJoiner joiner = new StringJoiner("\r\n");
 		for (int i = 0; i < rows; i++) {
@@ -76,7 +68,7 @@ public class PayloadAction extends EntityAction<Payload> {
 			throw new IllegalArgumentException("payload does not exists");
 		}
 		List<Function> functions = payload.getOptions().stream().filter(option -> columns.contains(option.getKey()))
-				.map(this::instance).collect(Collectors.toList());
+				.map(PayloadOption::createQuietly).collect(Collectors.toList());
 
 		HttpServletResponse response = ServletActionContext.getResponse();
 		response.setCharacterEncoding("utf-8");

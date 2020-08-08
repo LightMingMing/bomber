@@ -39,7 +39,6 @@ import org.springframework.web.util.HtmlUtils;
 
 import com.bomber.engine.BomberContext;
 import com.bomber.engine.BomberEngine;
-import com.bomber.functions.FunctionMetadataHelper;
 import com.bomber.manager.HttpSampleManager;
 import com.bomber.model.ApplicationInstance;
 import com.bomber.model.HttpHeader;
@@ -323,8 +322,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 					Map<String, String> context = new HashMap<>();
 					for (PayloadOption option : payload.getOptions()) {
 						if (keys.contains(option.getKey())) {
-							context.put(option.getKey(), FunctionMetadataHelper
-									.instance(option.getFunctionName(), option.getArgumentValues()).execute());
+							context.put(option.getKey(), option.createQuietly().execute());
 						}
 					}
 					body = ValueReplacer.replace(body, context);
