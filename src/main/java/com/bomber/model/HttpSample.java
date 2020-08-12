@@ -3,7 +3,6 @@ package com.bomber.model;
 import java.io.File;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Convert;
@@ -11,14 +10,12 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.ironrhino.core.metadata.Hidden;
-import org.ironrhino.core.metadata.Readonly;
 import org.ironrhino.core.metadata.Richtable;
 import org.ironrhino.core.metadata.UiConfig;
 import org.ironrhino.core.model.BaseEntity;
@@ -86,7 +83,7 @@ public class HttpSample extends BaseEntity {
 	@UiConfig(hidden = true)
 	private String csvFileFileName;
 
-	@UiConfig(alias = "filePath", hiddenInList = @Hidden(true), readonly = @Readonly(true), excludedFromQuery = true)
+	@UiConfig(alias = "filePath", hiddenInList = @Hidden(true), hiddenInInput = @Hidden(expression = "!value?has_content"), excludedFromQuery = true)
 	private String csvFilePath;
 
 	@UiConfig(hiddenInList = @Hidden(true), description = "separatedByCommas", excludedFromQuery = true)
