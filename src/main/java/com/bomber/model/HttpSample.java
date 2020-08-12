@@ -90,7 +90,7 @@ public class HttpSample extends BaseEntity {
 	private String variableNames;
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "payloadId", nullable = true)
+	@JoinColumn(name = "payloadId")
 	@UiConfig(alias = "payload", hiddenInList = @Hidden(true))
 	private Payload payload;
 

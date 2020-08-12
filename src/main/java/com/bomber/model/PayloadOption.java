@@ -1,22 +1,21 @@
 package com.bomber.model;
 
+import static com.bomber.functions.FunctionMetadataHelper.getFunctionMetadata;
+import static com.bomber.functions.FunctionMetadataHelper.instance;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Transient;
 
-import com.bomber.functions.Function;
 import org.ironrhino.core.metadata.Readonly;
 import org.ironrhino.core.metadata.UiConfig;
 
+import com.bomber.functions.Function;
 import com.bomber.functions.FunctionMetadata;
-import com.bomber.functions.FunctionMetadataHelper;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Getter;
 import lombok.Setter;
-
-import static com.bomber.functions.FunctionMetadataHelper.getFunctionMetadata;
-import static com.bomber.functions.FunctionMetadataHelper.instance;
 
 @Embeddable
 public class PayloadOption {

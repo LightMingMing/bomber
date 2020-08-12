@@ -11,6 +11,8 @@ import lombok.Setter;
 @AutoConfig
 public class ApplicationInstanceAction extends EntityAction<ApplicationInstance> {
 
+	private static final long serialVersionUID = 4427210922725855861L;
+
 	@Getter
 	@Setter
 	private ApplicationInstance applicationInstance;

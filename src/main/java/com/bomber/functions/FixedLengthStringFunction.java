@@ -7,6 +7,7 @@ public class FixedLengthStringFunction extends AbstractFunction {
 	private static final int MAX_MOD_LENGTH = 10;
 
 	private String format;
+
 	private long mod;
 
 	private long count;
