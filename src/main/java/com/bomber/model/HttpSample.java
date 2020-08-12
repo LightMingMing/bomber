@@ -3,6 +3,7 @@ package com.bomber.model;
 import java.io.File;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Convert;
@@ -59,6 +60,10 @@ public class HttpSample extends BaseEntity {
 	@UiConfig(alias = "requestName", width = "200px", cellDynamicAttributes = "{\"style\":\"text-align: center\"}")
 	private String name;
 
+	@Column
+	@UiConfig(templateName = "httpSample_tag", type = "dictionary", cssClass = "chosen", hiddenInList = @Hidden(true), excludedFromQuery = true)
+	private Set<String> tags;
+
 	@Column(nullable = false)
 	@UiConfig(alias = "requestMethod", width = "100px", cellDynamicAttributes = "{\"style\":\"text-align: center\"}")
 	private HttpMethod method;
@@ -91,7 +96,7 @@ public class HttpSample extends BaseEntity {
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "payloadId")
-	@UiConfig(alias = "payload", hiddenInList = @Hidden(true))
+	@UiConfig(alias = "payload", hiddenInList = @Hidden(true), excludedFromQuery = true)
 	private Payload payload;
 
 	@JsonIgnore
