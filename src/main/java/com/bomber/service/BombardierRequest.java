@@ -25,7 +25,9 @@ public class BombardierRequest {
 
 	private String body;
 
-	private String csvFilePath;
+	private String payloadFile;
+
+	private String payloadUrl;
 
 	private String variableNames;
 

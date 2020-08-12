@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 
+import org.ironrhino.core.util.AppInfo;
 import org.ironrhino.rest.RestStatus;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
@@ -29,10 +30,12 @@ import com.bomber.model.ApplicationInstance;
 import com.bomber.model.BombingRecord;
 import com.bomber.model.HttpHeader;
 import com.bomber.model.HttpSample;
+import com.bomber.model.Payload;
 import com.bomber.model.SummaryReport;
 import com.bomber.service.BombardierRequest;
 import com.bomber.service.BombardierResponse;
 import com.bomber.service.BombardierService;
+import com.bomber.util.ValueReplacer;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -117,7 +120,23 @@ public class BomberEngineImpl implements BomberEngine {
 		snapshot.setVariableNames(sample.getVariableNames());
 		snapshot.setVariableFilePath(sample.getCsvFilePath());
 
+		Payload payload = sample.getPayload();
+		if (payload != null) {
+			snapshot.setPayloadId(payload.getId());
+		}
 		return snapshot;
+	}
+
+	public static String getPayloadApiUrl(String id) {
+		String format = "http://%s%s%s/api/payload/" + id;
+		String address = AppInfo.getHostAddress();
+		int port = AppInfo.getHttpPort();
+		String contextPath = AppInfo.getContextPath();
+		if (port > 0 && port != 80) {
+			return String.format(format, address, ":" + port, contextPath);
+		} else {
+			return String.format(format, address, "", contextPath);
+		}
 	}
 
 	@Override
@@ -280,10 +299,23 @@ public class BomberEngineImpl implements BomberEngine {
 		request.setHeaders(snapshot.getHeaders());
 		request.setBody(snapshot.getBody());
 
-		if (StringUtils.hasLength(snapshot.getVariableFilePath())
-				&& StringUtils.hasLength(snapshot.getVariableNames())) {
-			request.setCsvFilePath(uri.getPath() + snapshot.getVariableFilePath());
-			request.setVariableNames(snapshot.getVariableNames());
+		String payloadFile = snapshot.getVariableFilePath();
+		String variableNames = snapshot.getVariableNames();
+
+		if (StringUtils.hasLength(payloadFile) && StringUtils.hasLength(variableNames)) {
+			request.setPayloadFile(uri.getPath() + payloadFile);
+			request.setVariableNames(variableNames);
+		}
+
+		String payloadId = snapshot.getPayloadId();
+		if (snapshot.getBody() != null && StringUtils.hasLength(payloadId)) {
+			request.setPayloadUrl(getPayloadApiUrl(payloadId));
+			if (StringUtils.hasLength(variableNames)) {
+				request.setVariableNames(variableNames);
+			} else {
+				// TODO read variables from url, header
+				request.setVariableNames(String.join(",", ValueReplacer.getKeys(snapshot.getBody())));
+			}
 		}
 		return request;
 	}

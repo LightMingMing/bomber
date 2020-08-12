@@ -21,4 +21,6 @@ public class HttpSampleSnapshot {
 
 	private String variableFilePath;
 
+	private String payloadId;
+
 }
