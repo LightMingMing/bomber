@@ -1,5 +1,6 @@
 package com.bomber.engine;
 
+import static com.bomber.api.controller.PayloadController.getPayloadApiUrl;
 import static com.bomber.model.BombingStatus.COMPLETED;
 import static com.bomber.model.BombingStatus.FAILURE;
 import static com.bomber.model.BombingStatus.PAUSE;
@@ -12,7 +13,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 
-import org.ironrhino.core.util.AppInfo;
 import org.ironrhino.rest.RestStatus;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
@@ -125,18 +125,6 @@ public class BomberEngineImpl implements BomberEngine {
 			snapshot.setPayloadId(payload.getId());
 		}
 		return snapshot;
-	}
-
-	public static String getPayloadApiUrl(String id) {
-		String format = "http://%s%s%s/api/payload/" + id;
-		String address = AppInfo.getHostAddress();
-		int port = AppInfo.getHttpPort();
-		String contextPath = AppInfo.getContextPath();
-		if (port > 0 && port != 80) {
-			return String.format(format, address, ":" + port, contextPath);
-		} else {
-			return String.format(format, address, "", contextPath);
-		}
 	}
 
 	@Override
