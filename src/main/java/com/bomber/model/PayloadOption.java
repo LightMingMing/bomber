@@ -29,19 +29,19 @@ public class PayloadOption {
 	@Getter
 	@Setter
 	@Column(nullable = false)
-	@UiConfig(alias = "functionName", type = "select", listKey = "key", listValue = "value", listOptions = "statics['com.bomber.functions.FunctionMetadataHelper'].getLabelValues()")
+	@UiConfig(alias = "functionName", type = "select", listKey = "key", listValue = "value", listOptions = "statics['com.bomber.functions.FunctionMetadataHelper'].getLabelValues()", cssClass = "function-type")
 	private String functionName;
 
 	@Setter
 	@Transient
 	@JsonIgnore
-	@UiConfig(alias = "requiredArgs", readonly = @Readonly(true))
+	@UiConfig(alias = "requiredArgs", readonly = @Readonly(true), cssClass = "required-args")
 	private String requiredArgs;
 
 	@Setter
 	@Transient
 	@JsonIgnore
-	@UiConfig(alias = "optionalArgs", readonly = @Readonly(true))
+	@UiConfig(alias = "optionalArgs", readonly = @Readonly(true), cssClass = "optional-args")
 	private String optionalArgs;
 
 	@Getter
