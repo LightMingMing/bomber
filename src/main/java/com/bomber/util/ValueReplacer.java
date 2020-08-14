@@ -30,6 +30,9 @@ public class ValueReplacer {
 	}
 
 	public static String replace(String source, Map<String, String> context) {
+		if (context == null) {
+			return source;
+		}
 		StringBuilder sb = new StringBuilder();
 		StringBuilder key = new StringBuilder();
 		char[] charArray = source.toCharArray();

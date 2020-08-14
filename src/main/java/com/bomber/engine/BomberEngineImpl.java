@@ -9,8 +9,10 @@ import static com.bomber.model.BombingStatus.RUNNING;
 
 import java.net.URI;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 
 import org.ironrhino.rest.RestStatus;
@@ -301,8 +303,15 @@ public class BomberEngineImpl implements BomberEngine {
 			if (StringUtils.hasLength(variableNames)) {
 				request.setVariableNames(variableNames);
 			} else {
-				// TODO read variables from url, header
-				request.setVariableNames(String.join(",", ValueReplacer.getKeys(snapshot.getBody())));
+				Set<String> variables = new HashSet<>(ValueReplacer.getKeys(snapshot.getUrl()));
+				String[] headers = snapshot.getHeaders();
+				if (headers != null) {
+					for (String header : snapshot.getHeaders()) {
+						variables.addAll(ValueReplacer.getKeys(header));
+					}
+				}
+				variables.addAll(ValueReplacer.getKeys(snapshot.getBody()));
+				request.setVariableNames(String.join(",", variables));
 			}
 		}
 		return request;

@@ -1,5 +1,7 @@
 package com.bomber.action;
 
+import static com.bomber.util.ValueReplacer.replace;
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -12,7 +14,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.StringJoiner;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -45,7 +46,6 @@ import com.bomber.model.HttpHeader;
 import com.bomber.model.HttpSample;
 import com.bomber.model.Payload;
 import com.bomber.model.PayloadOption;
-import com.bomber.util.ValueReplacer;
 import com.opensymphony.xwork2.interceptor.annotations.InputConfig;
 
 import lombok.Getter;
@@ -106,13 +106,14 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 	@Getter
 	private long elapsedTimeInMillis;
 
-	private static MultiValueMap<String, String> convertToHttpHeaders(List<HttpHeader> httpHeaderList) {
+	private static MultiValueMap<String, String> convertToHttpHeaders(List<HttpHeader> httpHeaderList,
+			Map<String, String> context) {
 		if (httpHeaderList == null) {
 			return null;
 		}
 		MultiValueMap<String, String> headers = new HttpHeaders();
 		for (HttpHeader httpHeader : httpHeaderList) {
-			headers.add(httpHeader.getName(), httpHeader.getValue());
+			headers.add(httpHeader.getName(), replace(httpHeader.getValue(), context));
 		}
 		return headers;
 	}
@@ -298,43 +299,42 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		String path = httpSample.getPath();
 		ApplicationInstance app = httpSample.getApplicationInstance();
 		try {
-			URI uri = URI.create(app.getUrl() + (path.startsWith("/") ? path : "/" + path));
-			HttpMethod method = httpSample.getMethod();
-			MultiValueMap<String, String> headers = convertToHttpHeaders(httpSample.getHeaders());
-			String body = httpSample.getBody();
-
-			if (StringUtils.hasLength(body)) {
-				String filePath = httpSample.getCsvFilePath();
-				String fieldNames = httpSample.getVariableNames();
-				if (StringUtils.hasLength(filePath) && StringUtils.hasLength(fieldNames)) {
-					try (InputStream inputStream = fileStorage.open(filePath)) {
-						if (inputStream == null) {
-							throw new FileNotFoundException("文件不存在");
-						}
-						Map<String, String> variables = parseFirstLine(inputStream, fieldNames.split(","));
-						body = ValueReplacer.replace(body, variables);
+			Map<String, String> context = null;
+			String filePath = httpSample.getCsvFilePath();
+			String fieldNames = httpSample.getVariableNames();
+			if (StringUtils.hasLength(filePath) && StringUtils.hasLength(fieldNames)) {
+				try (InputStream inputStream = fileStorage.open(filePath)) {
+					if (inputStream == null) {
+						throw new FileNotFoundException("文件不存在");
 					}
-				} else if (httpSample.getPayload() != null) {
-					Set<String> keys = ValueReplacer.getKeys(body);
-					Payload payload = httpSample.getPayload();
-
-					// should strong check ?
-					Map<String, String> context = new HashMap<>();
-					for (PayloadOption option : payload.getOptions()) {
-						if (keys.contains(option.getKey())) {
-							context.put(option.getKey(), option.createQuietly().execute());
-						}
-					}
-					body = ValueReplacer.replace(body, context);
+					context = parseFirstLine(inputStream, fieldNames.split(","));
+				}
+			} else if (httpSample.getPayload() != null) {
+				Payload payload = httpSample.getPayload();
+				context = new HashMap<>();
+				for (PayloadOption option : payload.getOptions()) {
+					context.put(option.getKey(), option.createQuietly().execute());
 				}
 			}
 
+			String url = app.getUrl() + (path.startsWith("/") ? path : "/" + path);
+			URI uri = URI.create(replace(url, context));
+
+			HttpMethod method = httpSample.getMethod();
+
+			MultiValueMap<String, String> headers = convertToHttpHeaders(httpSample.getHeaders(), context);
+
+			String body = replace(httpSample.getBody(), context);
+
 			RequestEntity<String> requestEntity = new RequestEntity<>(body, headers, method, uri);
+
 			this.requestMessage = convertToString(requestEntity);
 			logger.info("Request entity:\n{}", requestMessage);
+
 			long startTime = System.nanoTime();
 			ResponseEntity<String> responseEntity = stringMessageRestTemplate.exchange(requestEntity, String.class);
 			this.elapsedTimeInMillis = (System.nanoTime() - startTime) / 1_000_000;
+
 			this.responseMessage = convertToString(responseEntity);
 			logger.info("Response entity:\n{}", responseMessage);
 		} catch (HttpClientErrorException e) {
