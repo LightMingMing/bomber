@@ -12,9 +12,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("unchecked")
-public final class FunctionMetadataHelper {
+public final class FunctionHelper {
 
-	private static final Logger logger = LoggerFactory.getLogger(FunctionMetadataHelper.class);
+	private static final Logger logger = LoggerFactory.getLogger(FunctionHelper.class);
 
 	private static final Map<String, Class<? extends Function>> functionTypeMap = new LinkedHashMap<>();
 

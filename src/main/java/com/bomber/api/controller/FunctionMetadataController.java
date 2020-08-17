@@ -1,7 +1,7 @@
 package com.bomber.api.controller;
 
 import com.bomber.functions.FunctionMetadata;
-import com.bomber.functions.FunctionMetadataHelper;
+import com.bomber.functions.FunctionHelper;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,7 +13,7 @@ public class FunctionMetadataController {
 
 	@GetMapping("/{name}")
 	public FunctionMetadata get(@PathVariable String name) {
-		FunctionMetadata metadata = FunctionMetadataHelper.getFunctionMetadata(name);
+		FunctionMetadata metadata = FunctionHelper.getFunctionMetadata(name);
 		if (metadata == null) {
 			throw new IllegalArgumentException("function '" + name + "' does not exist");
 		}

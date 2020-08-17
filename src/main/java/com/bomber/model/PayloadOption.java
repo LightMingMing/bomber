@@ -1,7 +1,7 @@
 package com.bomber.model;
 
-import static com.bomber.functions.FunctionMetadataHelper.getFunctionMetadata;
-import static com.bomber.functions.FunctionMetadataHelper.instance;
+import static com.bomber.functions.FunctionHelper.getFunctionMetadata;
+import static com.bomber.functions.FunctionHelper.instance;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -29,7 +29,7 @@ public class PayloadOption {
 	@Getter
 	@Setter
 	@Column(nullable = false)
-	@UiConfig(alias = "functionName", type = "select", listKey = "key", listValue = "value", listOptions = "statics['com.bomber.functions.FunctionMetadataHelper'].getLabelValues()", cssClass = "function-type")
+	@UiConfig(alias = "functionName", type = "select", listKey = "key", listValue = "value", listOptions = "statics['com.bomber.functions.FunctionHelper'].getLabelValues()", cssClass = "function-type")
 	private String functionName;
 
 	@Setter
