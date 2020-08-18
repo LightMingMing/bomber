@@ -30,7 +30,7 @@ public class ValueReplacer {
 	}
 
 	public static String replace(String source, Map<String, String> context) {
-		if (context == null) {
+		if (source == null || context == null) {
 			return source;
 		}
 		StringBuilder sb = new StringBuilder();

@@ -20,7 +20,7 @@ public abstract class AbstractFunction implements Function {
 		} else {
 			Map<String, String> map = new HashMap<>();
 			for (String argumentValue : params.split(", *")) {
-				String[] arr = argumentValue.split("=");
+				String[] arr = argumentValue.split("=", 2);
 				if (arr.length != 2) {
 					throw new IllegalArgumentException("Invalid argumentValue format '" + argumentValue + "'");
 				}
@@ -44,7 +44,9 @@ public abstract class AbstractFunction implements Function {
 				}
 			}
 		}
-		doInit(params);
+		if (params != null) {
+			doInit(params);
+		}
 	}
 
 	@Override

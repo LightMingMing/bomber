@@ -17,7 +17,7 @@ $(function () {
         'Cache-Control', 'Connection', 'Content-Encoding', 'Content-Language', 'Content-Length', 'Content-Type', 'Cookie',
         'Host', 'Location', 'Origin', 'Referer', 'Server', 'Set-Cookie'];
 
-    const contentTypes = ['text/html', 'text/plain', 'application/xhtml+xml', 'application/json']
+    const contentTypes = ['text/html', 'text/plain', 'application/xhtml+xml', 'application/json', 'application/x-www-form-urlencoded']
 
     $(document).on('focus.typeahead.data-api', '.header-name', function () {
         const $this = $(this);

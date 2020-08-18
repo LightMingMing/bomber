@@ -298,7 +298,7 @@ public class BomberEngineImpl implements BomberEngine {
 		}
 
 		String payloadId = snapshot.getPayloadId();
-		if (snapshot.getBody() != null && StringUtils.hasLength(payloadId)) {
+		if (StringUtils.hasLength(payloadId)) {
 			request.setPayloadUrl(getPayloadApiUrl(payloadId));
 			if (StringUtils.hasLength(variableNames)) {
 				request.setVariableNames(variableNames);
@@ -310,7 +310,9 @@ public class BomberEngineImpl implements BomberEngine {
 						variables.addAll(ValueReplacer.getKeys(header));
 					}
 				}
-				variables.addAll(ValueReplacer.getKeys(snapshot.getBody()));
+				if (snapshot.getBody() != null) {
+					variables.addAll(ValueReplacer.getKeys(snapshot.getBody()));
+				}
 				request.setVariableNames(String.join(",", variables));
 			}
 		}
