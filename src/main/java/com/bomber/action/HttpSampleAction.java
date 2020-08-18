@@ -18,6 +18,9 @@ import java.util.StringJoiner;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import com.bomber.functions.FunctionExecutor;
+import com.bomber.functions.FunctionOption;
+import com.bomber.model.PayloadOption;
 import org.ironrhino.core.fs.FileStorage;
 import org.ironrhino.core.metadata.AutoConfig;
 import org.ironrhino.core.struts.EntityAction;
@@ -45,7 +48,6 @@ import com.bomber.model.ApplicationInstance;
 import com.bomber.model.HttpHeader;
 import com.bomber.model.HttpSample;
 import com.bomber.model.Payload;
-import com.bomber.model.PayloadOption;
 import com.opensymphony.xwork2.interceptor.annotations.InputConfig;
 
 import lombok.Getter;
@@ -311,10 +313,9 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 				}
 			} else if (httpSample.getPayload() != null) {
 				Payload payload = httpSample.getPayload();
-				context = new HashMap<>();
-				for (PayloadOption option : payload.getOptions()) {
-					context.put(option.getKey(), option.createQuietly().execute());
-				}
+				List<FunctionOption> options = payload.getOptions().stream().map(PayloadOption::map)
+						.collect(Collectors.toList());
+				context = new FunctionExecutor(options).execute();
 			}
 
 			String url = app.getUrl() + (path.startsWith("/") ? path : "/" + path);

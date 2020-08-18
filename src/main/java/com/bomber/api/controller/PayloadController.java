@@ -1,7 +1,5 @@
 package com.bomber.api.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -14,7 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.bomber.functions.Function;
+import com.bomber.functions.FunctionExecutor;
+import com.bomber.functions.FunctionOption;
 import com.bomber.manager.PayloadManager;
 import com.bomber.model.Payload;
 import com.bomber.model.PayloadOption;
@@ -50,43 +49,13 @@ public class PayloadController {
 			throw new IllegalArgumentException(
 					String.format("limit is %d, expect less than or equal to %d", limit, MAX_LIMIT));
 		}
-
 		Payload payload = payloadManager.get(id);
 		if (payload == null) {
 			throw new IllegalArgumentException("payload does not exist");
 		}
-
-		List<PayloadOption> options = payload.getOptions();
-		Map<String, Function> functionMap = new HashMap<>();
-
-		if (columns == null) {
-			for (PayloadOption option : options) {
-				Function func = option.createQuietly();
-				func.skip(offset);
-				functionMap.put(option.getKey(), func);
-			}
-		} else {
-			Set<String> allColumns = options.stream().map(PayloadOption::getKey).collect(Collectors.toSet());
-			for (String column : columns) {
-				if (!allColumns.contains(column)) {
-					throw new IllegalArgumentException("invalid column '" + column + "'");
-				}
-			}
-			for (PayloadOption option : options) {
-				if (columns.contains(option.getKey())) {
-					Function func = option.createQuietly();
-					func.skip(offset);
-					functionMap.put(option.getKey(), func);
-				}
-			}
-		}
-
-		List<Map<String, String>> data = new ArrayList<>(limit);
-		for (int i = 0; i < limit; i++) {
-			Map<String, String> map = new HashMap<>(functionMap.size());
-			functionMap.forEach((name, func) -> map.put(name, func.execute()));
-			data.add(map);
-		}
-		return data;
+		List<FunctionOption> options = payload.getOptions().stream().map(PayloadOption::map)
+				.collect(Collectors.toList());
+		FunctionExecutor executor = new FunctionExecutor(options, columns);
+		return executor.execute(offset, limit);
 	}
 }
