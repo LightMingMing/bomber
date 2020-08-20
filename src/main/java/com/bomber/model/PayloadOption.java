@@ -48,11 +48,6 @@ public class PayloadOption {
 	@UiConfig(alias = "argumentValues", cssClass = "input-xxlarge")
 	private String argumentValues;
 
-	@Getter
-	@Setter
-	@UiConfig(alias = "remark")
-	private String remark;
-
 	public String getRequiredArgs() {
 		FunctionMetadata fm = getFunctionMetadata(functionName);
 		return fm == null ? null : fm.getRequiredArgs();

@@ -69,20 +69,25 @@ $(function () {
             contentType: "application/json",
             url: CONTEXT_PATH + "/api/functionMetadata/" + name,
             success: function (data) {
-                const $tr = $this.parent('td').parent('tr')
-                const requiredArgs = $tr.find('input.required-args')
-                const optionalArgs = $tr.find('input.optional-args')
-
-                if (requiredArgs.length !== 0 && data.requiredArgs !== undefined) {
-                    requiredArgs[0].value = data.requiredArgs
-                } else {
-                    requiredArgs[0].value = ''
-                }
-
-                if (optionalArgs.length !== 0 && data.optionalArgs !== undefined) {
-                    optionalArgs[0].value = data.optionalArgs
-                } else {
-                    optionalArgs[0].value = ''
+                const $tr = $this.closest('tr')
+                const textarea = $tr.find('.argument-values')
+                if (textarea.length !== 0) {
+                    let content = []
+                    if (data.requiredArgs !== undefined) {
+                        content.push("# required args")
+                        let args = data.requiredArgs.split(/,\s+/)
+                        for (let i in args) {
+                            content.push(args[i] + "=")
+                        }
+                    }
+                    if (data.optionalArgs !== undefined) {
+                        content.push("# optional args")
+                        let args = data.optionalArgs.split(/,\s+/)
+                        for (let i in args) {
+                            content.push(args[i] + "=")
+                        }
+                    }
+                    textarea[0].value = content.join("\n")
                 }
             }
         })

@@ -2,6 +2,8 @@ package com.bomber.action;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
@@ -45,6 +47,98 @@ public class PayloadAction extends EntityAction<Payload> {
 	@Getter
 	@Setter
 	private List<String> columns;
+
+	@Getter
+	private List<String> formattedArgumentValues;
+
+	protected String formatArgumentValues(PayloadOption option) {
+		if (option == null)
+			return null;
+		String args = option.getArgumentValues();
+
+		Map<String, String> params = new HashMap<>();
+		if (args != null && !args.isEmpty()) {
+			String[] pairs = args.split(", *");
+			for (String pair : pairs) {
+				String[] arr = pair.split("=", 2);
+				if (arr.length == 2) {
+					params.put(arr[0], arr[1]);
+				}
+			}
+		}
+
+		StringJoiner joiner = new StringJoiner("\n");
+
+		String requiredArgs = option.getRequiredArgs();
+		if (requiredArgs != null && !requiredArgs.isEmpty()) {
+			joiner.add("# required args");
+			String[] arr = requiredArgs.split(", *");
+			for (String arg : arr) {
+				joiner.add(arg + "=" + params.getOrDefault(arg, ""));
+			}
+		}
+
+		String optionalArgs = option.getOptionalArgs();
+		if (optionalArgs != null && !optionalArgs.isEmpty()) {
+			joiner.add("# optional args");
+			String[] arr = optionalArgs.split(", *");
+			for (String arg : arr) {
+				joiner.add(arg + "=" + params.getOrDefault(arg, ""));
+			}
+		}
+
+		return joiner.toString();
+	}
+
+	@Override
+	protected String doInput() throws Exception {
+		String parent = super.doInput();
+		if (INPUT.equals(parent)) {
+			Payload payload = this.getEntity();
+			List<PayloadOption> options = payload.getOptions();
+			if (options != null && !options.isEmpty()) {
+				formattedArgumentValues = options.stream().map(this::formatArgumentValues).collect(Collectors.toList());
+			}
+		}
+		return parent;
+	}
+
+	@Override
+	public String save() {
+		if (!makeEntityValid()) {
+			return INPUT;
+		}
+		payload = getEntity();
+		if (payload.getOptions() != null) {
+			for (PayloadOption option : payload.getOptions()) {
+				List<String> args = new ArrayList<>();
+				String content = option.getArgumentValues();
+				if (content == null) {
+					continue;
+				}
+				String[] lines = content.split("\n");
+				for (int i = 0; i < lines.length; i++) {
+					String line = lines[i];
+					if (line == null || line.isEmpty() || line.startsWith("#")) {
+						continue;
+					}
+					String[] pair = line.split("=", 2);
+					if (pair.length != 2) {
+						this.addActionError("line " + i + " is invalid");
+						return INPUT;
+					}
+					if (pair[1].isEmpty()) {
+						continue;
+					}
+					// TODO strong check ?
+					args.add(line);
+				}
+				option.setArgumentValues(String.join(", ", args));
+			}
+		}
+		payloadManager.save(payload);
+		return SUCCESS;
+	}
 
 	public String preview() {
 		payload = payloadManager.get(this.getUid());
