@@ -3,7 +3,7 @@ package com.bomber.functions;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class RandomIntegerFunction extends AbstractFunction {
+public class RandomIntegerFunction extends AbstractStringFunction {
 
 	private int min;
 	private int max;

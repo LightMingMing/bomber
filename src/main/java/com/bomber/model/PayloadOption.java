@@ -2,6 +2,7 @@ package com.bomber.model;
 
 import static com.bomber.functions.FunctionHelper.getFunctionMetadata;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,17 +70,16 @@ public class PayloadOption {
 	}
 
 	public FunctionOption map() {
-		FunctionOption option = new FunctionOption();
-		option.setKey(key);
-		option.setFunctionName(functionName);
+		Map<String, String> params;
 		if (argumentValues != null && !argumentValues.isEmpty()) {
-			Map<String, String> params = new HashMap<>();
+			params = new HashMap<>();
 			for (String each : argumentValues) {
 				String[] pair = each.split("=", 2);
 				params.put(pair[0], pair[1]);
 			}
-			option.setParams(params);
+		} else {
+			params = Collections.emptyMap();
 		}
-		return option;
+		return new FunctionOption(key, functionName, params);
 	}
 }

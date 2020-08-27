@@ -16,23 +16,26 @@ public final class FunctionHelper {
 
 	private static final Logger logger = LoggerFactory.getLogger(FunctionHelper.class);
 
-	private static final Map<String, Class<? extends Function>> functionTypeMap = new LinkedHashMap<>();
+	private static final Map<String, Class<? extends Function<?>>> functionTypeMap = new LinkedHashMap<>();
 
 	private static final Map<String, FunctionMetadata> functionMetadataMap = new LinkedHashMap<>();
 
 	static {
 		ClassScanner.scanAssignable(ClassScanner.getAppPackages(), Function.class).stream()
-				.filter(clazz -> !isInterfaceOrAbstract(clazz)).map(clazz -> (Class<? extends Function>) clazz)
+				.filter(clazz -> !isInterfaceOrAbstract(clazz)).map(clazz -> (Class<? extends Function<?>>) clazz)
 				.forEach(clazz -> {
 					String name = clazz.getSimpleName().replace("Function", "");
 					FunctionMetadata fm;
 					try {
-						Function instance = clazz.newInstance();
+						Function<?> instance = clazz.newInstance();
 						fm = new FunctionMetadata();
 						fm.setFunctionType(clazz);
 						fm.setName(name);
 						fm.setRequiredArgs(instance.getRequiredArgs());
 						fm.setOptionalArgs(instance.getOptionalArgs());
+						fm.setOutputAllInputArgs(instance.outputAllInputArgs());
+						fm.setOutputArgNames(instance.getOutputArgNames());
+						fm.setOutputArgValues(instance.getOutputArgValues());
 					} catch (InstantiationException | IllegalAccessException e) {
 						logger.warn("skip " + clazz.getName(), e);
 						return;
@@ -47,7 +50,7 @@ public final class FunctionHelper {
 		return Modifier.isInterface(mod) || Modifier.isAbstract(mod);
 	}
 
-	public static Class<? extends Function> getFunctionType(String name) {
+	public static Class<? extends Function<?>> getFunctionType(String name) {
 		if (name == null)
 			return null;
 		return functionTypeMap.get(name);
@@ -65,15 +68,15 @@ public final class FunctionHelper {
 		return Collections.unmodifiableMap(map);
 	}
 
-	public static Function instance(String name) throws IllegalAccessException, InstantiationException {
+	public static Function<?> instance(String name) throws IllegalAccessException, InstantiationException {
 		return instance(name, null);
 	}
 
-	public static Function instance(String name, Map<String, String> params)
+	public static Function<?> instance(String name, Map<String, String> params)
 			throws IllegalAccessException, InstantiationException {
-		Class<? extends Function> type = getFunctionType(name);
+		Class<? extends Function<?>> type = getFunctionType(name);
 		Objects.requireNonNull(type);
-		Function instance = type.newInstance();
+		Function<?> instance = type.newInstance();
 		instance.init(params);
 		return instance;
 	}

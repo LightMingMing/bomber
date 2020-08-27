@@ -13,7 +13,7 @@ public class FunctionExecutor {
 
 	private final List<FunctionOption> options;
 
-	private final Map<String, Function> singletonFunctions = new HashMap<>();
+	private final Map<String, Function<?>> singletonFunctions = new HashMap<>();
 
 	private final List<FunctionOption> prototypeFunctionOptions = new ArrayList<>();
 
@@ -37,13 +37,23 @@ public class FunctionExecutor {
 
 	public Map<String, String> execute() {
 		Map<String, String> context = new HashMap<>(options.size());
-		singletonFunctions.forEach((name, func) -> context.put(name, func.execute()));
+		singletonFunctions.forEach((name, function) -> {
+			if (function instanceof AbstractStringFunction) {
+				context.put(name, ((AbstractStringFunction) function).execute());
+			} else if (function instanceof AbstractMapFunction) {
+				context.putAll(((AbstractMapFunction) function).execute());
+			}
+		});
 		for (FunctionOption option : prototypeFunctionOptions) {
 			Map<String, String> params = new HashMap<>();
 			// not null
 			option.getParams().forEach((k, v) -> params.put(k, replace(v, context)));
-			Function function = create(option.getFunctionName(), params);
-			context.put(option.getKey(), function.execute());
+			Function<?> function = create(option.getFunctionName(), params);
+			if (function instanceof AbstractStringFunction) {
+				context.put(option.getKey(), ((AbstractStringFunction) function).execute());
+			} else if (function instanceof AbstractMapFunction) {
+				context.putAll(((AbstractMapFunction) function).execute());
+			}
 		}
 		return context;
 	}
@@ -59,7 +69,7 @@ public class FunctionExecutor {
 		return list;
 	}
 
-	private Function create(String name, Map<String, String> params) {
+	private Function<?> create(String name, Map<String, String> params) {
 		try {
 			return FunctionHelper.instance(name, params);
 		} catch (IllegalAccessException | InstantiationException e) {

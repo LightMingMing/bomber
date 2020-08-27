@@ -16,7 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 
-public class LoginFunction extends AbstractFunction {
+public class LoginFunction extends AbstractStringFunction {
 
 	private static final RestTemplate template = new RestTemplate();
 

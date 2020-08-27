@@ -2,7 +2,7 @@ package com.bomber.functions;
 
 import java.util.Map;
 
-public class FixedLengthStringFunction extends AbstractFunction {
+public class FixedLengthStringFunction extends AbstractStringFunction {
 
 	private static final int MAX_MOD_LENGTH = 10;
 

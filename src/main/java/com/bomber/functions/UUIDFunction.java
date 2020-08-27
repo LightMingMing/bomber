@@ -3,7 +3,7 @@ package com.bomber.functions;
 import java.util.Map;
 import java.util.UUID;
 
-public class UUIDFunction extends AbstractFunction {
+public class UUIDFunction extends AbstractStringFunction {
 
 	private static final char hyphen = '-';
 

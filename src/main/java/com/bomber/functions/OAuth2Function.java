@@ -16,7 +16,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 
-public class OAuth2Function extends AbstractFunction {
+public class OAuth2Function extends AbstractStringFunction {
 
 	private static final RestTemplate template = new RestTemplate();
 

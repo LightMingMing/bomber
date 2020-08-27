@@ -3,6 +3,7 @@ package com.bomber.functions;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,10 +29,30 @@ public class FunctionExecutorTest {
 	}
 
 	@Test
+	public void testComplexFunctionExecute() {
+		FunctionOption f1 = makeOption("s1", "Sum", "a=${a}, b=${b}");
+		FunctionOption f2 = makeOption("s2", "Sum", "a=${b}, b=${c}");
+		FunctionOption f3 = makeOption("s3", "Sum", "a=${c}, b=${d}");
+		FunctionOption f4 = makeOption("f5", "RetInputArgNames", "a=50, b=100, c=0, d=0");
+
+		Map<String, String> params = new HashMap<>();
+		params.put("value", "200");
+		params.put("retArgs", "c,d");
+		FunctionOption f5 = makeOption("f6", "RetInputArgValues", params);
+
+		FunctionExecutor executor = new FunctionExecutor(Arrays.asList(f1, f2, f3, f4, f5));
+		Map<String, String> result = executor.execute();
+
+		assertThat(result.get("s1")).isEqualTo("150");
+		assertThat(result.get("s2")).isEqualTo("300");
+		assertThat(result.get("s3")).isEqualTo("400");
+	}
+
+	@Test
 	public void testOffsetExecute() {
 		FunctionOption f1 = makeOption("c", "Sum", "a=${a}, b=${b}"); // c = a + b
-		FunctionOption f2 = makeOption("a", "Counter", null);
-		FunctionOption f3 = makeOption("b", "Counter", null);
+		FunctionOption f2 = makeOption("a", "Counter", (String) null);
+		FunctionOption f3 = makeOption("b", "Counter", (String) null);
 
 		FunctionExecutor executor = new FunctionExecutor(Arrays.asList(f1, f2, f3));
 		List<Map<String, String>> result = executor.execute(100, 1);

@@ -11,11 +11,17 @@ public class FunctionMetadata {
 
 	private String name;
 
-	private Class<? extends Function> functionType;
+	private Class<? extends Function<?>> functionType;
 
 	private String requiredArgs;
 
 	private String optionalArgs;
+
+	private boolean outputAllInputArgs;
+
+	private String outputArgNames;
+
+	private String outputArgValues;
 
 	@Override
 	public boolean equals(Object o) {

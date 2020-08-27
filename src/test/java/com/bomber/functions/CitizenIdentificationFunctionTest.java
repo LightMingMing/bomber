@@ -19,7 +19,7 @@ public class CitizenIdentificationFunctionTest extends BaseFunctionExecutor<Citi
 		params.put("addressCode", "410223");
 		params.put("startDate", "20200101");
 
-		Function func = newFunction(params);
+		Function<String> func = newFunction(params);
 
 		assertThat(func.execute()).startsWith("41022320200101000").matches(isValid);
 		assertThat(func.execute()).startsWith("41022320200101001").matches(isValid);
@@ -44,8 +44,8 @@ public class CitizenIdentificationFunctionTest extends BaseFunctionExecutor<Citi
 		params.put("addressCode", "410223");
 		params.put("startDate", "20200101");
 
-		Function func1 = newFunction(params);
-		Function func2 = newFunction(params);
+		Function<String> func1 = newFunction(params);
+		Function<String> func2 = newFunction(params);
 
 		func1.skip(10);
 		execute(func2, 10);

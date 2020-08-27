@@ -2,9 +2,13 @@ package com.bomber.functions;
 
 import java.util.Map;
 
-public class PropertyFunction extends AbstractFunction {
+public class PropertyFunction extends AbstractStringFunction {
 
 	private String value;
+
+	public static void main(String[] args) {
+		new PropertyFunction();
+	}
 
 	@Override
 	public String getRequiredArgs() {

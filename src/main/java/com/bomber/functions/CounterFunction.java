@@ -2,7 +2,7 @@ package com.bomber.functions;
 
 import java.util.Map;
 
-public class CounterFunction extends AbstractFunction {
+public class CounterFunction extends AbstractStringFunction {
 
 	private int counter = 0;
 

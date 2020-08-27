@@ -4,16 +4,38 @@ import java.util.Map;
 
 import org.springframework.lang.Nullable;
 
-public abstract class AbstractFunction implements Function {
+public abstract class AbstractFunction<T> implements Function<T> {
 
+	// TODO
+	// protected Class<T> returnType = (Class<T>)
+	// ReflectionUtils.getGenericClass(this.getClass());
+
+	@Override
 	public String getRequiredArgs() {
 		return null;
 	}
 
+	@Override
 	public String getOptionalArgs() {
 		return null;
 	}
 
+	@Override
+	public boolean outputAllInputArgs() {
+		return false;
+	}
+
+	@Override
+	public String getOutputArgNames() {
+		return null;
+	}
+
+	@Override
+	public String getOutputArgValues() {
+		return null;
+	}
+
+	@Override
 	public void init(@Nullable Map<String, String> params) {
 		String required = getRequiredArgs();
 		if (required != null) {
@@ -34,7 +56,6 @@ public abstract class AbstractFunction implements Function {
 
 	@Override
 	public void skip(int steps) {
-
 	}
 
 	protected abstract void doInit(Map<String, String> params);

@@ -5,7 +5,7 @@ import org.ironrhino.core.util.ReflectionUtils;
 import java.util.Map;
 
 @SuppressWarnings({ "unchecked" })
-public abstract class BaseFunctionExecutor<T extends Function> {
+public abstract class BaseFunctionExecutor<T extends Function<String>> {
 
 	private final Class<T> clazz;
 
@@ -13,7 +13,7 @@ public abstract class BaseFunctionExecutor<T extends Function> {
 		clazz = (Class<T>) ReflectionUtils.getGenericClass(this.getClass());
 	}
 
-	public static String execute(Function func, int count) {
+	public static String execute(Function<String> func, int count) {
 		String result = null;
 
 		for (int i = 0; i < count; i++) {

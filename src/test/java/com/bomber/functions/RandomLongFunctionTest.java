@@ -18,7 +18,7 @@ public class RandomLongFunctionTest extends BaseFunctionExecutor<RandomLongFunct
 		params.put("min", "" + min);
 		params.put("max", "" + max);
 
-		Function func = newFunction(params);
+		Function<String> func = newFunction(params);
 		for (int i = 0; i < 100; i++) {
 			assertThat(Long.parseLong(func.execute())).isBetween(min, max);
 		}

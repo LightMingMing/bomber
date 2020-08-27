@@ -2,7 +2,7 @@ package com.bomber.functions;
 
 import java.util.Map;
 
-public class SumFunction extends AbstractFunction {
+public class SumFunction extends AbstractStringFunction {
 
 	private String a;
 	private String b;

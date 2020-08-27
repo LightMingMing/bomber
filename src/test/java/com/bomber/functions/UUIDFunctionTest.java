@@ -2,7 +2,6 @@ package com.bomber.functions;
 
 import org.junit.Test;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,11 +14,11 @@ public class UUIDFunctionTest {
 		Map<String, String> params = new HashMap<>();
 
 		params.put("noHyphen", "true");
-		Function func = FunctionHelper.instance("UUID", params);
-		assertThat(func.execute()).doesNotContain("-");
+		Function<?> func = FunctionHelper.instance("UUID", params);
+		assertThat((String) func.execute()).doesNotContain("-");
 
 		params.put("noHyphen", "false");
 		func = FunctionHelper.instance("UUID", params);
-		assertThat(func.execute()).contains("-");
+		assertThat((String) func.execute()).contains("-");
 	}
 }

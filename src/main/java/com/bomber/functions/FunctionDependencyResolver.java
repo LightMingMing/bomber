@@ -1,7 +1,5 @@
 package com.bomber.functions;
 
-import static com.bomber.util.ValueReplacer.readReplaceableKeys;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -35,12 +33,10 @@ public class FunctionDependencyResolver {
 			Iterator<FunctionOption> iterator = options.iterator();
 			while (iterator.hasNext()) {
 				FunctionOption next = iterator.next();
-				Map<String, String> params = next.getParams();
 				Set<String> dependentArgs;
-				if (params == null || (dependentArgs = readReplaceableKeys(params.values())).isEmpty()
-						|| ctx.containsAll(dependentArgs)) {
+				if ((dependentArgs = next.getDependentKeys()).isEmpty() || ctx.containsAll(dependentArgs)) {
 					result.add(next);
-					ctx.add(next.getKey());
+					ctx.addAll(next.getOutputKeys());
 					iterator.remove();
 				}
 			}
@@ -52,18 +48,12 @@ public class FunctionDependencyResolver {
 	}
 
 	private void resolveDependency(String key, Set<String> ctx) {
-		FunctionOption option = optionMap.get(key);
-		if (option == null) {
-			throw new IllegalArgumentException("Key '" + key + "' can't found");
-		}
-		ctx.add(key);
-		Map<String, String> params = option.getParams();
-		if (params != null) {
-			Set<String> dependentArgs = readReplaceableKeys(params.values());
-			for (String arg : dependentArgs) {
-				if (!ctx.contains(arg)) {
-					resolveDependency(arg, ctx);
-				}
+		FunctionOption option = optionMap.values().stream().filter(o -> o.getOutputKeys().contains(key)).findFirst()
+				.orElseThrow(() -> new IllegalArgumentException("Key '" + key + "' can't found"));
+		ctx.add(option.getKey());
+		for (String arg : option.getDependentKeys()) {
+			if (!ctx.contains(arg)) {
+				resolveDependency(arg, ctx);
 			}
 		}
 	}

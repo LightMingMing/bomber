@@ -5,7 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Map;
 
-public class CitizenIdentificationFunction extends AbstractFunction {
+public class CitizenIdentificationFunction extends AbstractStringFunction {
 
 	private static final String[] provinces = new String[] { "11", "12", "13", "14", "15", "21", "22", "23", "31", "32",
 			"33", "34", "35", "36", "37", "41", "42", "43", "44", "45", "46", "50", "51", "52", "53", "54", "61", "62",

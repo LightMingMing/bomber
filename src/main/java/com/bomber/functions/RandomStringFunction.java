@@ -4,7 +4,7 @@ import org.ironrhino.core.util.CodecUtils;
 
 import java.util.Map;
 
-public class RandomStringFunction extends AbstractFunction {
+public class RandomStringFunction extends AbstractStringFunction {
 
 	private int length;
 
