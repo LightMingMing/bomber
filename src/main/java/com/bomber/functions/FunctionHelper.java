@@ -69,13 +69,12 @@ public final class FunctionHelper {
 		return instance(name, null);
 	}
 
-	public static Function instance(String name, String params) throws IllegalAccessException, InstantiationException {
+	public static Function instance(String name, Map<String, String> params)
+			throws IllegalAccessException, InstantiationException {
 		Class<? extends Function> type = getFunctionType(name);
 		Objects.requireNonNull(type);
 		Function instance = type.newInstance();
-		if (params != null) {
-			instance.init(params);
-		}
+		instance.init(params);
 		return instance;
 	}
 }

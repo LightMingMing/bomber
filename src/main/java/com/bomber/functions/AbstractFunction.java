@@ -1,7 +1,8 @@
 package com.bomber.functions;
 
-import java.util.HashMap;
 import java.util.Map;
+
+import org.springframework.lang.Nullable;
 
 public abstract class AbstractFunction implements Function {
 
@@ -11,27 +12,9 @@ public abstract class AbstractFunction implements Function {
 
 	public String getOptionalArgs() {
 		return null;
-
 	}
 
-	public void init(String params) {
-		if (params == null) {
-			init((Map<String, String>) null);
-		} else {
-			Map<String, String> map = new HashMap<>();
-			for (String argumentValue : params.split(", *")) {
-				String[] arr = argumentValue.split("=", 2);
-				if (arr.length != 2) {
-					throw new IllegalArgumentException("Invalid argumentValue format '" + argumentValue + "'");
-				}
-				map.put(arr[0], arr[1]);
-			}
-			init(map);
-		}
-
-	}
-
-	public void init(Map<String, String> params) {
+	public void init(@Nullable Map<String, String> params) {
 		String required = getRequiredArgs();
 		if (required != null) {
 			if (params == null || params.isEmpty()) {

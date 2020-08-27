@@ -8,8 +8,6 @@ public interface Function {
 
 	String getOptionalArgs();
 
-	void init(String params);
-
 	void init(Map<String, String> params);
 
 	void skip(int steps);

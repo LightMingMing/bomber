@@ -1,6 +1,6 @@
 package com.bomber.functions;
 
-import static com.bomber.util.ValueReplacer.getKeys;
+import static com.bomber.util.ValueReplacer.readReplaceableKeys;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,9 +35,10 @@ public class FunctionDependencyResolver {
 			Iterator<FunctionOption> iterator = options.iterator();
 			while (iterator.hasNext()) {
 				FunctionOption next = iterator.next();
-				String args = next.getArgumentValues();
+				Map<String, String> params = next.getParams();
 				Set<String> dependentArgs;
-				if (args == null || (dependentArgs = getKeys(args)).isEmpty() || ctx.containsAll(dependentArgs)) {
+				if (params == null || (dependentArgs = readReplaceableKeys(params.values())).isEmpty()
+						|| ctx.containsAll(dependentArgs)) {
 					result.add(next);
 					ctx.add(next.getKey());
 					iterator.remove();
@@ -56,9 +57,9 @@ public class FunctionDependencyResolver {
 			throw new IllegalArgumentException("Key '" + key + "' can't found");
 		}
 		ctx.add(key);
-		String args = option.getArgumentValues();
-		if (args != null) {
-			Set<String> dependentArgs = getKeys(args);
+		Map<String, String> params = option.getParams();
+		if (params != null) {
+			Set<String> dependentArgs = readReplaceableKeys(params.values());
 			for (String arg : dependentArgs) {
 				if (!ctx.contains(arg)) {
 					resolveDependency(arg, ctx);

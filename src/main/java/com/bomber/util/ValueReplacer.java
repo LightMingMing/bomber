@@ -1,32 +1,43 @@
 package com.bomber.util;
 
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
 public class ValueReplacer {
 
-	public static Set<String> getKeys(String source) {
-		StringBuilder key = new StringBuilder();
-		char[] charArray = source.toCharArray();
-		char previous = ' ';
+	public static Set<String> readReplaceableKeys(Collection<String> sources) {
+		Set<String> result = new LinkedHashSet<>();
+		for (String source : sources) {
+			readReplaceableKeys(source, result);
+		}
+		return result;
+	}
 
+	public static Set<String> readReplaceableKeys(String source) {
+		Set<String> result = new LinkedHashSet<>();
+		readReplaceableKeys(source, result);
+		return result;
+	}
+
+	private static void readReplaceableKeys(String source, Set<String> result) {
+		char p = ' ';
 		boolean matched = false;
+		StringBuilder key = new StringBuilder();
 
-		Set<String> keys = new LinkedHashSet<>();
-		for (char c : charArray) {
-			if (c == '{' && previous == '$') {
+		for (char c : source.toCharArray()) {
+			if (c == '{' && p == '$') {
 				matched = true;
 			} else if (c == '}' && matched) {
-				keys.add(key.toString());
+				result.add(key.toString());
 				key = new StringBuilder();
 				matched = false;
 			} else if (matched) {
 				key.append(c);
 			}
-			previous = c;
+			p = c;
 		}
-		return keys;
 	}
 
 	public static String replace(String source, Map<String, String> context) {

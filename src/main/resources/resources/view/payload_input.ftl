@@ -65,7 +65,7 @@
                             <td>
                             <textarea class="argument-values"
                                       style="height: 120px;overflow-y: auto;font-family: Menlo, Monaco, Consolas, 'Courier New', monospace;"
-                                      name="payload.options[${index}].argumentValues">${(formattedArgumentValues[index])!}</textarea>
+                                      name="payload.options[${index}].content">${(option['content'])!}</textarea>
                             </td>
                             <td class="manipulate"><i class="glyphicon glyphicon-plus manipulate add clickable"></i>
                                 <i class="glyphicon glyphicon-minus manipulate remove clickable"></i></td>

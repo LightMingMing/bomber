@@ -2,6 +2,10 @@ package com.bomber.model;
 
 import static com.bomber.functions.FunctionHelper.getFunctionMetadata;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Transient;
@@ -46,7 +50,13 @@ public class PayloadOption {
 	@Getter
 	@Setter
 	@UiConfig(alias = "argumentValues", cssClass = "input-xxlarge")
-	private String argumentValues;
+	private List<String> argumentValues;
+
+	@Getter
+	@Setter
+	@Transient
+	@JsonIgnore
+	private String content;
 
 	public String getRequiredArgs() {
 		FunctionMetadata fm = getFunctionMetadata(functionName);
@@ -62,7 +72,14 @@ public class PayloadOption {
 		FunctionOption option = new FunctionOption();
 		option.setKey(key);
 		option.setFunctionName(functionName);
-		option.setArgumentValues(argumentValues);
+		if (argumentValues != null && !argumentValues.isEmpty()) {
+			Map<String, String> params = new HashMap<>();
+			for (String each : argumentValues) {
+				String[] pair = each.split("=", 2);
+				params.put(pair[0], pair[1]);
+			}
+			option.setParams(params);
+		}
 		return option;
 	}
 }

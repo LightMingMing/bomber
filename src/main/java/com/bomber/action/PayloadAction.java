@@ -48,18 +48,13 @@ public class PayloadAction extends EntityAction<Payload> {
 	@Setter
 	private List<String> columns;
 
-	@Getter
-	private List<String> formattedArgumentValues;
-
 	protected String formatArgumentValues(PayloadOption option) {
 		if (option == null)
 			return null;
-		String args = option.getArgumentValues();
-
+		List<String> args = option.getArgumentValues();
 		Map<String, String> params = new HashMap<>();
 		if (args != null && !args.isEmpty()) {
-			String[] pairs = args.split(", *");
-			for (String pair : pairs) {
+			for (String pair : args) {
 				String[] arr = pair.split("=", 2);
 				if (arr.length == 2) {
 					params.put(arr[0], arr[1]);
@@ -97,7 +92,7 @@ public class PayloadAction extends EntityAction<Payload> {
 			Payload payload = this.getEntity();
 			List<PayloadOption> options = payload.getOptions();
 			if (options != null && !options.isEmpty()) {
-				formattedArgumentValues = options.stream().map(this::formatArgumentValues).collect(Collectors.toList());
+				options.forEach(option -> option.setContent(formatArgumentValues(option)));
 			}
 		}
 		return parent;
@@ -112,7 +107,7 @@ public class PayloadAction extends EntityAction<Payload> {
 		if (payload.getOptions() != null) {
 			for (PayloadOption option : payload.getOptions()) {
 				List<String> args = new ArrayList<>();
-				String content = option.getArgumentValues();
+				String content = option.getContent();
 				if (content == null) {
 					continue;
 				}
@@ -133,7 +128,7 @@ public class PayloadAction extends EntityAction<Payload> {
 					// TODO strong check ?
 					args.add(line);
 				}
-				option.setArgumentValues(String.join(", ", args));
+				option.setArgumentValues(args);
 			}
 		}
 		payloadManager.save(payload);

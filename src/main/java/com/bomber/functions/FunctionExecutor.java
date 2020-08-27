@@ -1,6 +1,6 @@
 package com.bomber.functions;
 
-import static com.bomber.util.ValueReplacer.getKeys;
+import static com.bomber.util.ValueReplacer.readReplaceableKeys;
 import static com.bomber.util.ValueReplacer.replace;
 
 import java.util.ArrayList;
@@ -26,9 +26,9 @@ public class FunctionExecutor {
 		this.options = specificFunctions == null ? resolver.getResolvedOptions()
 				: resolver.getDependentOptions(specificFunctions);
 		for (FunctionOption option : this.options) {
-			String args = option.getArgumentValues();
-			if (args == null || getKeys(args).isEmpty()) {
-				singletonFunctions.put(option.getKey(), create(option.getFunctionName(), option.getArgumentValues()));
+			Map<String, String> params = option.getParams();
+			if (params == null || readReplaceableKeys(params.values()).isEmpty()) {
+				singletonFunctions.put(option.getKey(), create(option.getFunctionName(), params));
 			} else {
 				prototypeFunctionOptions.add(option);
 			}
@@ -39,8 +39,10 @@ public class FunctionExecutor {
 		Map<String, String> context = new HashMap<>(options.size());
 		singletonFunctions.forEach((name, func) -> context.put(name, func.execute()));
 		for (FunctionOption option : prototypeFunctionOptions) {
-			String argumentValues = replace(option.getArgumentValues(), context);
-			Function function = create(option.getFunctionName(), argumentValues);
+			Map<String, String> params = new HashMap<>();
+			// not null
+			option.getParams().forEach((k, v) -> params.put(k, replace(v, context)));
+			Function function = create(option.getFunctionName(), params);
 			context.put(option.getKey(), function.execute());
 		}
 		return context;
@@ -57,9 +59,9 @@ public class FunctionExecutor {
 		return list;
 	}
 
-	private Function create(String name, String argumentValues) {
+	private Function create(String name, Map<String, String> params) {
 		try {
-			return FunctionHelper.instance(name, argumentValues);
+			return FunctionHelper.instance(name, params);
 		} catch (IllegalAccessException | InstantiationException e) {
 			throw new IllegalStateException("Failed to instance the function '" + name + "'", e);
 		}

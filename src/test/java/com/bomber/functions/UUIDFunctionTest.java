@@ -2,17 +2,23 @@ package com.bomber.functions;
 
 import org.junit.Test;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class UUIDFunctionTest {
 
 	@Test
 	public void test() throws InstantiationException, IllegalAccessException {
-		String params = "noHyphen=true";
+		Map<String, String> params = new HashMap<>();
+
+		params.put("noHyphen", "true");
 		Function func = FunctionHelper.instance("UUID", params);
 		assertThat(func.execute()).doesNotContain("-");
 
-		params = "noHyphen=false";
+		params.put("noHyphen", "false");
 		func = FunctionHelper.instance("UUID", params);
 		assertThat(func.execute()).contains("-");
 	}

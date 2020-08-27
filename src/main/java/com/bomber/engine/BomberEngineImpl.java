@@ -303,15 +303,15 @@ public class BomberEngineImpl implements BomberEngine {
 			if (StringUtils.hasLength(variableNames)) {
 				request.setVariableNames(variableNames);
 			} else {
-				Set<String> variables = new HashSet<>(ValueReplacer.getKeys(snapshot.getUrl()));
+				Set<String> variables = new HashSet<>(ValueReplacer.readReplaceableKeys(snapshot.getUrl()));
 				String[] headers = snapshot.getHeaders();
 				if (headers != null) {
 					for (String header : snapshot.getHeaders()) {
-						variables.addAll(ValueReplacer.getKeys(header));
+						variables.addAll(ValueReplacer.readReplaceableKeys(header));
 					}
 				}
 				if (snapshot.getBody() != null) {
-					variables.addAll(ValueReplacer.getKeys(snapshot.getBody()));
+					variables.addAll(ValueReplacer.readReplaceableKeys(snapshot.getBody()));
 				}
 				request.setVariableNames(String.join(",", variables));
 			}
