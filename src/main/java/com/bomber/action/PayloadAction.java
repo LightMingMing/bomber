@@ -143,7 +143,8 @@ public class PayloadAction extends EntityAction<Payload> {
 
 		List<FunctionOption> options = payload.getOptions().stream().map(PayloadOption::map)
 				.collect(Collectors.toList());
-		this.columns = options.stream().map(FunctionOption::getKey).collect(Collectors.toList());
+		this.columns = new ArrayList<>();
+		options.stream().map(FunctionOption::getOutputKeys).forEach(columns::addAll);
 
 		FunctionExecutor executor = new FunctionExecutor(options);
 
