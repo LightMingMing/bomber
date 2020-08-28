@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
@@ -62,6 +64,7 @@ public class PayloadAction extends EntityAction<Payload> {
 			}
 		}
 
+		Set<String> added = new HashSet<>();
 		StringJoiner joiner = new StringJoiner("\n");
 
 		String requiredArgs = option.getRequiredArgs();
@@ -70,6 +73,7 @@ public class PayloadAction extends EntityAction<Payload> {
 			String[] arr = requiredArgs.split(", *");
 			for (String arg : arr) {
 				joiner.add(arg + "=" + params.getOrDefault(arg, ""));
+				added.add(arg);
 			}
 		}
 
@@ -79,7 +83,17 @@ public class PayloadAction extends EntityAction<Payload> {
 			String[] arr = optionalArgs.split(", *");
 			for (String arg : arr) {
 				joiner.add(arg + "=" + params.getOrDefault(arg, ""));
+				added.add(arg);
 			}
+		}
+
+		if (params.size() > added.size()) {
+			joiner.add("# customized args");
+			params.forEach((k, v) -> {
+				if (!added.contains(k)) {
+					joiner.add(k + "=" + v);
+				}
+			});
 		}
 
 		return joiner.toString();
