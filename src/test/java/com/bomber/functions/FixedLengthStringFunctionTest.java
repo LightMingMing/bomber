@@ -14,7 +14,7 @@ public class FixedLengthStringFunctionTest extends BaseFunctionExecutor<FixedLen
 		Map<String, String> params = new HashMap<>();
 		params.put("length", "1");
 
-		Function func = newFunction(params);
+		Function<String> func = newFunction(params);
 
 		assertThat(func.execute()).isEqualTo("0");
 		assertThat(func.execute()).isEqualTo("1");
@@ -31,7 +31,7 @@ public class FixedLengthStringFunctionTest extends BaseFunctionExecutor<FixedLen
 		params.put("prefix", "PREFIX");
 		params.put("suffix", "SUFFIX");
 
-		Function func = newFunction(params);
+		Function<String> func = newFunction(params);
 
 		execute(func, 1000);
 
@@ -45,10 +45,10 @@ public class FixedLengthStringFunctionTest extends BaseFunctionExecutor<FixedLen
 		params.put("prefix", "PREFIX");
 		params.put("suffix", "SUFFIX");
 
-		Function func1 = newFunction(params);
+		Function<String> func1 = newFunction(params);
 		execute(func1, 1000);
 
-		Function func2 = newFunction(params);
+		Function<String> func2 = newFunction(params);
 		func2.skip(1000);
 
 		assertThat(func1.execute()).isEqualTo(func2.execute());
