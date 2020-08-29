@@ -41,6 +41,14 @@ public class ValueReplacer {
 	}
 
 	public static String replace(String source, Map<String, String> context) {
+		return replace(source, context, false);
+	}
+
+	public static String replaceIfPresent(String source, Map<String, String> context) {
+		return replace(source, context, true);
+	}
+
+	public static String replace(String source, Map<String, String> context, boolean onlyPresent) {
 		if (source == null || context == null) {
 			return source;
 		}
@@ -57,7 +65,9 @@ public class ValueReplacer {
 				previous = c;
 				sb.deleteCharAt(sb.length() - 1);
 			} else if (c == '}' && matched) {
-				sb.append(getValue(key.toString(), context));
+				String k = key.toString();
+				String defaultValue = onlyPresent ? "${" + k + "}" : k;
+				sb.append(context.getOrDefault(k, defaultValue));
 				key = new StringBuilder();
 				matched = false;
 			} else if (matched) {
@@ -68,9 +78,5 @@ public class ValueReplacer {
 			}
 		}
 		return sb.toString();
-	}
-
-	private static String getValue(String key, Map<String, String> context) {
-		return context.getOrDefault(key, key);
 	}
 }
