@@ -7,8 +7,8 @@ import java.io.Closeable;
  */
 public interface Function<T> extends Closeable, Jumpable {
 
-	void init(Input ctx);
+	void init(Input input);
 
-	T execute(Input ctx);
+	T execute(Input input);
 
 }

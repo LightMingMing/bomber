@@ -10,8 +10,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.bomber.functions.util.MissingArgumentException;
 import org.springframework.util.StringUtils;
+
+import com.bomber.functions.util.MissingArgumentException;
 
 public abstract class AbstractFunctionContext implements FunctionContext {
 
@@ -101,6 +102,6 @@ public abstract class AbstractFunctionContext implements FunctionContext {
 			input().getAll().forEach((k, v) -> temp.put(k, replace(v, output.getAll())));
 			return new Input(temp);
 		}
-		return Input.EMPTY;
+		return input();
 	}
 }

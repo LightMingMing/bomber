@@ -10,7 +10,7 @@ public class Counter extends StringFunction {
 	private int counter = 0;
 
 	@Override
-	public String execute(Input ctx) {
+	public String execute(Input input) {
 		return (counter++) + "";
 	}
 

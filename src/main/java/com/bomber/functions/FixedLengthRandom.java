@@ -42,7 +42,7 @@ public class FixedLengthRandom extends StringFunction {
 	}
 
 	@Override
-	public String execute(Input ctx) {
+	public String execute(Input input) {
 		if (this.length <= MAX_LENGTH) {
 			return Long.toString(random(this.length));
 		} else {

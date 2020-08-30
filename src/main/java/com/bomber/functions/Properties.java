@@ -18,7 +18,7 @@ public class Properties extends MapFunction {
 	}
 
 	@Override
-	public Map<String, String> execute(Input ctx) {
+	public Map<String, String> execute(Input input) {
 		return properties;
 	}
 
