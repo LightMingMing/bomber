@@ -8,6 +8,8 @@
 
 *.iml
 
+out
+
 build
 
 classes
