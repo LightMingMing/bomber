@@ -12,8 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.bomber.functions.FunctionExecutor;
-import com.bomber.functions.FunctionOption;
+import com.bomber.functions.core.DefaultFunctionExecutor;
+import com.bomber.functions.core.FunctionContext;
+import com.bomber.functions.core.FunctionExecutor;
 import com.bomber.manager.PayloadManager;
 import com.bomber.model.Payload;
 import com.bomber.model.PayloadOption;
@@ -53,9 +54,13 @@ public class PayloadController {
 		if (payload == null) {
 			throw new IllegalArgumentException("payload does not exist");
 		}
-		List<FunctionOption> options = payload.getOptions().stream().map(PayloadOption::map)
-				.collect(Collectors.toList());
-		FunctionExecutor executor = new FunctionExecutor(options, columns);
-		return executor.execute(offset, limit);
+		List<FunctionContext> all = payload.getOptions().stream().map(PayloadOption::map).collect(Collectors.toList());
+
+		FunctionExecutor executor = new DefaultFunctionExecutor(all, columns);
+		try {
+			return executor.execute(offset, limit);
+		} finally {
+			executor.shutdown();
+		}
 	}
 }

@@ -1,8 +1,7 @@
 package com.bomber.model;
 
-import static com.bomber.functions.FunctionHelper.getFunctionMetadata;
+import static com.bomber.functions.util.FunctionHelper.getFunctionMetadata;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,8 +13,10 @@ import javax.persistence.Transient;
 import org.ironrhino.core.metadata.Readonly;
 import org.ironrhino.core.metadata.UiConfig;
 
-import com.bomber.functions.FunctionMetadata;
-import com.bomber.functions.FunctionOption;
+import com.bomber.functions.core.DefaultFunctionContext;
+import com.bomber.functions.core.FunctionContext;
+import com.bomber.functions.core.FunctionMetadata;
+import com.bomber.functions.core.Input;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Getter;
@@ -33,7 +34,7 @@ public class PayloadOption {
 	@Getter
 	@Setter
 	@Column(nullable = false)
-	@UiConfig(alias = "functionName", type = "select", listKey = "key", listValue = "value", listOptions = "statics['com.bomber.functions.FunctionHelper'].getLabelValues()", cssClass = "function-type")
+	@UiConfig(alias = "functionName", type = "select", listKey = "key", listValue = "value", listOptions = "statics['com.bomber.functions.util.FunctionHelper'].getLabelValues()", cssClass = "function-type")
 	private String functionName;
 
 	@Setter
@@ -69,17 +70,16 @@ public class PayloadOption {
 		return fm == null ? null : fm.getOptionalArgs();
 	}
 
-	public FunctionOption map() {
-		Map<String, String> params;
+	public FunctionContext map() {
+		Input input = Input.EMPTY;
 		if (argumentValues != null && !argumentValues.isEmpty()) {
-			params = new HashMap<>();
+			Map<String, String> params = new HashMap<>();
 			for (String each : argumentValues) {
 				String[] pair = each.split("=", 2);
 				params.put(pair[0], pair[1]);
 			}
-		} else {
-			params = Collections.emptyMap();
+			input = new Input(params);
 		}
-		return new FunctionOption(key, functionName, params);
+		return new DefaultFunctionContext(key, functionName, input);
 	}
 }

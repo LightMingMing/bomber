@@ -73,14 +73,16 @@ $(function () {
                 const textarea = $tr.find('.argument-values')
                 if (textarea.length !== 0) {
                     let content = []
-                    if (data.requiredArgs !== undefined) {
+                    let required = data.requiredArgs
+                    if (required !== undefined && required.length > 0) {
                         content.push("# required args")
                         let args = data.requiredArgs.split(/,\s+/)
                         for (let i in args) {
                             content.push(args[i] + "=")
                         }
                     }
-                    if (data.optionalArgs !== undefined) {
+                    let optional = data.optionalArgs
+                    if (optional !== undefined && optional.length > 0) {
                         content.push("# optional args")
                         let args = data.optionalArgs.split(/,\s+/)
                         for (let i in args) {
