@@ -51,4 +51,9 @@ public class Payload extends BaseEntity {
 
 	@Version
 	private int version = -1;
+
+	@Override
+	public String toString() {
+		return name;
+	}
 }
