@@ -217,6 +217,9 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		if (!makeEntityValid()) {
 			return INPUT;
 		}
+
+		boolean deleteFile = httpSample.getCsvFile() == null && StringUtils.isEmpty(httpSample.getCsvFilePath());
+
 		httpSample = getEntity();
 
 		int i = 0;
@@ -242,6 +245,11 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 
 			httpSample.setCsvFilePath(filePath);
 			logger.info("Upload file '{}'", filePath);
+		}
+
+		if (deleteFile) {
+			fileStorage.delete(httpSample.getCsvFilePath());
+			httpSample.setCsvFilePath(null);
 		}
 
 		httpSample.setVariableNames(StringUtils.trimAllWhitespace(httpSample.getVariableNames()));
