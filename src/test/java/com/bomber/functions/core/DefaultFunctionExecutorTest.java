@@ -1,6 +1,6 @@
 package com.bomber.functions.core;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.spy;
@@ -11,10 +11,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.Test;
+
+import com.bomber.functions.Bad;
 import com.bomber.functions.Counter;
 import com.bomber.functions.Properties;
 import com.bomber.functions.Sum;
-import org.junit.Test;
 
 public class DefaultFunctionExecutorTest {
 
@@ -56,5 +58,27 @@ public class DefaultFunctionExecutorTest {
 
 		executor.shutdown();
 		then(sum).should().close();
+	}
+
+	@Test
+	public void testClose() throws IOException {
+		Bad bad1 = spy(new Bad());
+		Bad bad2 = spy(new Bad());
+		Counter counter = spy(new Counter());
+
+		FunctionContext f1 = new DefaultFunctionContext("f1", bad1);
+		FunctionContext f2 = new DefaultFunctionContext("f2", counter);
+		FunctionContext f3 = new DefaultFunctionContext("f3", bad2);
+
+		FunctionExecutor executor = new DefaultFunctionExecutor(Arrays.asList(f1, f2, f3));
+		try {
+			assertThat(executor.execute());
+		} finally {
+			executor.shutdown();
+		}
+
+		then(bad1).should().close();
+		then(bad2).should().close();
+		then(counter).should().close();
 	}
 }
