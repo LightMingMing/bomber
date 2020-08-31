@@ -10,11 +10,15 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 import com.bomber.functions.util.MissingArgumentException;
 
 public abstract class AbstractFunctionContext implements FunctionContext {
+
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	protected boolean started = false;
 
@@ -91,8 +95,8 @@ public abstract class AbstractFunctionContext implements FunctionContext {
 	private void invokeClose() {
 		try {
 			function().close();
-		} catch (Exception e) {
-			// TODO log
+		} catch (Throwable e) {
+			logger.warn("Failed to close a function '" + name() + "'", e);
 		}
 	}
 
