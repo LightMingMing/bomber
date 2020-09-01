@@ -5,6 +5,7 @@ import java.util.concurrent.TimeUnit;
 import com.bomber.functions.core.FuncInfo;
 import com.bomber.functions.core.Input;
 import com.bomber.functions.core.StringFunction;
+import io.micrometer.core.instrument.util.StringUtils;
 import org.ironrhino.core.cache.CacheManager;
 import org.ironrhino.core.spring.http.client.RestTemplate;
 import org.ironrhino.core.util.ApplicationContextUtils;
@@ -76,7 +77,7 @@ public class OAuth2 extends StringFunction {
 	}
 
 	private String getKey() {
-		return clientId;
+		return StringUtils.isEmpty(username) ? clientId : username;
 	}
 
 	private int timeToLive(Token token) {
