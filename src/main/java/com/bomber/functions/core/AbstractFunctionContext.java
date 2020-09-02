@@ -29,7 +29,7 @@ public abstract class AbstractFunctionContext implements FunctionContext {
 			return input().keySet();
 		}
 		String retArg = metadata().getRetArg();
-		if (!StringUtils.isEmpty(retArg)) {
+		if (StringUtils.hasText(retArg)) {
 			Set<String> outputKeys = new HashSet<>();
 			String arg = metadata().getRetArg();
 			if (input().containsKey(arg)) {

@@ -5,7 +5,7 @@ import java.util.concurrent.TimeUnit;
 import com.bomber.functions.core.FuncInfo;
 import com.bomber.functions.core.Input;
 import com.bomber.functions.core.StringFunction;
-import io.micrometer.core.instrument.util.StringUtils;
+
 import org.ironrhino.core.cache.CacheManager;
 import org.ironrhino.core.spring.http.client.RestTemplate;
 import org.ironrhino.core.util.ApplicationContextUtils;
@@ -17,6 +17,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.HttpClientErrorException;
 
 @FuncInfo(requiredArgs = "accessTokenEndpoint, grant_type, client_id, client_secret", optionalArgs = "username, password, device_id, device_name")
