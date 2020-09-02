@@ -247,7 +247,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 			logger.info("Upload file '{}'", filePath);
 		}
 
-		if (deleteFile) {
+		if (deleteFile && StringUtils.hasText(httpSample.getCsvFilePath())) {
 			fileStorage.delete(httpSample.getCsvFilePath());
 			httpSample.setCsvFilePath(null);
 		}
