@@ -275,7 +275,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 			return ERROR;
 		}
 
-		List<Integer> numberOfThreadsList = Arrays.stream(threadGroup.split(", *")).map(Integer::parseInt).sorted()
+		List<Integer> numberOfThreadsList = Arrays.stream(threadGroup.trim().split(", *")).map(Integer::parseInt).sorted()
 				.collect(Collectors.toList());
 
 		BomberContext ctx = new BomberContext();
