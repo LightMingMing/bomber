@@ -32,13 +32,13 @@
             </div>
         </div>
         <div id="control-group-scope" class="control-group">
-            <label class="control-label" for="scope">${getText('scope')}</label>
+            <label class="control-label" for="scope">${getText('payload')}${getText('scope')}</label>
             <div class="controls">
                 <select id="scope" name="scope">
-                    <option label="request" selected>Request</option>
-                    <option label="thread">Thread</option>
-                    <option label="group">Group</option>
-                    <option label="benchmark">Benchmark</option>
+                    <option label="${getText('Request')}" selected>Request</option>
+                    <option label="${getText('Thread')}">Thread</option>
+                    <option label="${getText('Group')}">Group</option>
+                    <option label="${getText('Benchmark')}">Benchmark</option>
                 </select>
             </div>
         </div>
