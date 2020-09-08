@@ -18,6 +18,7 @@ import java.util.StringJoiner;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import com.bomber.engine.Scope;
 import org.ironrhino.core.fs.FileStorage;
 import org.ironrhino.core.metadata.AutoConfig;
 import org.ironrhino.core.struts.EntityAction;
@@ -99,6 +100,8 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 	@Getter
 	@Setter
 	private String name;
+	@Setter
+	private String scope;
 
 	@Getter
 	private String requestMessage;
@@ -295,6 +298,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		ctx.setName(name);
 		ctx.setRequestsPerThread(requestsPerThread);
 		ctx.setThreadGroup(numberOfThreadsList);
+		ctx.setScope(Scope.valueOf(scope));
 		bomberEngine.execute(ctx);
 
 		addActionMessage("Bombing is ongoing!");

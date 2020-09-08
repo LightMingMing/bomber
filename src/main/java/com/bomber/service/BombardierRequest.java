@@ -32,4 +32,6 @@ public class BombardierRequest {
 	private String variableNames;
 
 	private int startLine;
+
+	private String scope;
 }

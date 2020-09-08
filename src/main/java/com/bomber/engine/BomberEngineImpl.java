@@ -217,14 +217,23 @@ public class BomberEngineImpl implements BomberEngine {
 		bombingRecordManager.save(record);
 
 		int requestCount = 0;
+		int threadCount = 0;
 
 		List<Integer> threadGroup = ctx.getThreadGroup();
 
 		for (int i = 0; i < ctx.getThreadGroupCursor(); i++) {
 			requestCount += threadGroup.get(i) * ctx.getRequestsPerThread();
+			threadCount += threadGroup.get(i);
 		}
 
 		BombardierRequest request = convertToBombardierRequest(httpSampleSnapshot);
+		if (ctx.getScope() == Scope.Request) {
+			request.setScope("request");
+		} else if (ctx.getScope() == Scope.Thread) {
+			request.setScope("thread");
+		} else {
+			request.setScope("benchmark");
+		}
 		for (int i = ctx.getThreadGroupCursor(); i < threadGroup.size(); i++) {
 			int numberOfThreads = threadGroup.get(i);
 			int numberOfRequests = numberOfThreads * ctx.getRequestsPerThread();
@@ -243,7 +252,16 @@ public class BomberEngineImpl implements BomberEngine {
 			try {
 				request.setNumberOfConnections(numberOfThreads);
 				request.setNumberOfRequests(numberOfRequests);
-				request.setStartLine(requestCount);
+				if (ctx.getScope() == Scope.Request) {
+					request.setStartLine(requestCount);
+				} else if (ctx.getScope() == Scope.Thread) {
+					request.setStartLine(threadCount);
+				} else if (ctx.getScope() == Scope.Group) {
+					request.setStartLine(i);
+				} else {
+					// TODO support custom start line ?
+					request.setStartLine(0);
+				}
 
 				Date startTime = new Date();
 				BombardierResponse response = bombardierService.execute(request);
@@ -275,6 +293,7 @@ public class BomberEngineImpl implements BomberEngine {
 				return;
 			}
 			requestCount += numberOfRequests;
+			threadCount += numberOfThreads;
 		}
 
 		record.setStatus(COMPLETED);

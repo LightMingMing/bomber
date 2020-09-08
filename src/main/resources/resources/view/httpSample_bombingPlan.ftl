@@ -31,6 +31,17 @@
                        style="width: 40px">
             </div>
         </div>
+        <div id="control-group-scope" class="control-group">
+            <label class="control-label" for="scope">${getText('scope')}</label>
+            <div class="controls">
+                <select id="scope" name="scope">
+                    <option label="request" selected>Request</option>
+                    <option label="thread">Thread</option>
+                    <option label="group">Group</option>
+                    <option label="benchmark">Benchmark</option>
+                </select>
+            </div>
+        </div>
         <div class="form-actions">
             <button type="submit" class="btn btn-primary">${getText('execute')}</button>
         </div>

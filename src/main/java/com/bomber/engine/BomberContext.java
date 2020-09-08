@@ -39,6 +39,10 @@ public class BomberContext {
 	@Setter
 	private int activeThreads;
 
+	@Getter
+	@Setter
+	private Scope scope = Scope.Request;
+
 	@Setter
 	private volatile boolean paused;
 
