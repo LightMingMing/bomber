@@ -49,7 +49,7 @@ public class ValueReplacer {
 	}
 
 	public static String replace(String source, Map<String, String> context, boolean onlyPresent) {
-		if (source == null || context == null) {
+		if (source == null || source.isEmpty() || context == null || context.isEmpty()) {
 			return source;
 		}
 		StringBuilder sb = new StringBuilder();

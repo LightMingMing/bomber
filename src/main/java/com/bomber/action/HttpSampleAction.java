@@ -2,23 +2,21 @@ package com.bomber.action;
 
 import static com.bomber.util.ValueReplacer.replace;
 
-import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URI;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.StringJoiner;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-import com.bomber.engine.Scope;
 import org.ironrhino.core.fs.FileStorage;
 import org.ironrhino.core.metadata.AutoConfig;
 import org.ironrhino.core.struts.EntityAction;
@@ -41,15 +39,16 @@ import org.springframework.web.util.HtmlUtils;
 
 import com.bomber.engine.BomberContext;
 import com.bomber.engine.BomberEngine;
+import com.bomber.engine.Scope;
 import com.bomber.functions.core.DefaultFunctionExecutor;
 import com.bomber.functions.core.FunctionContext;
 import com.bomber.functions.core.FunctionExecutor;
 import com.bomber.manager.HttpSampleManager;
-import com.bomber.model.ApplicationInstance;
 import com.bomber.model.HttpHeader;
 import com.bomber.model.HttpSample;
 import com.bomber.model.Payload;
 import com.bomber.model.PayloadOption;
+import com.bomber.util.FileUtils;
 import com.opensymphony.xwork2.interceptor.annotations.InputConfig;
 
 import lombok.Getter;
@@ -122,26 +121,6 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 			headers.add(httpHeader.getName(), replace(httpHeader.getValue(), context));
 		}
 		return headers;
-	}
-
-	private static Map<String, String> parseFirstLine(InputStream inputStream, String[] fieldNames) throws IOException {
-		try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
-			String firstLine = reader.readLine();
-
-			if (firstLine == null || "".equals(firstLine)) {
-				throw new IllegalArgumentException("文件首行为空");
-			}
-
-			String[] fieldValues = firstLine.split(",");
-			if (fieldNames.length != fieldValues.length) {
-				throw new IllegalArgumentException("变量数与文件列数不匹配");
-			}
-			Map<String, String> variables = new HashMap<>();
-			for (int i = 0; i < fieldNames.length; i++) {
-				variables.put(fieldNames[i], fieldValues[i]);
-			}
-			return variables;
-		}
 	}
 
 	private static String convertToString(MultiValueMap<String, String> map) {
@@ -309,44 +288,67 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		return SUCCESS;
 	}
 
+	private Map<String, String> readVariablesFromFile(String filePath, int lineNumber, String[] variableNames)
+			throws IOException {
+		try (InputStream inputStream = fileStorage.open(filePath)) {
+			if (inputStream == null) {
+				throw new FileNotFoundException("文件不存在");
+			}
+			String line = FileUtils.readSpecificLine(inputStream, lineNumber);
+			String[] values = line.trim().split(", *");
+			if (values.length != variableNames.length) {
+				throw new IllegalArgumentException("变量数与文件列数不匹配");
+			}
+			Map<String, String> variables = new HashMap<>();
+			for (int i = 0; i < variableNames.length; i++) {
+				variables.put(variableNames[i], values[i]);
+			}
+			return variables;
+		}
+	}
+
+	private Map<String, String> getPayload(HttpSample httpSample, int index) throws IOException {
+		if (httpSample.getPayload() != null) {
+			Payload payload = httpSample.getPayload();
+			List<FunctionContext> all = payload.getOptions().stream().map(PayloadOption::map)
+					.collect(Collectors.toList());
+			FunctionExecutor executor = new DefaultFunctionExecutor(all);
+			try {
+				return new DefaultFunctionExecutor(all).execute(index, 1).get(0);
+			} finally {
+				executor.shutdown();
+			}
+		} else {
+			String filePath = httpSample.getCsvFilePath();
+			String names = httpSample.getVariableNames();
+			if (StringUtils.hasLength(filePath) && StringUtils.hasLength(names)) {
+				return readVariablesFromFile(filePath, index, names.split(", *"));
+			}
+			return Collections.emptyMap();
+		}
+	}
+
+	private RequestEntity<String> createRequestEntity(HttpSample httpSample, int index) throws IOException {
+		Map<String, String> context = getPayload(httpSample, index);
+
+		String path = httpSample.getPath();
+		String url = httpSample.getApplicationInstance().getUrl() + (path.startsWith("/") ? path : "/" + path);
+		URI uri = URI.create(replace(url, context));
+
+		HttpMethod method = httpSample.getMethod();
+
+		MultiValueMap<String, String> headers = convertToHttpHeaders(httpSample.getHeaders(), context);
+
+		String body = replace(httpSample.getBody(), context);
+
+		return new RequestEntity<>(body, headers, method, uri);
+	}
+
 	public String singleShot() {
 		httpSample = httpSampleManager.get(this.getUid());
-		String path = httpSample.getPath();
-		ApplicationInstance app = httpSample.getApplicationInstance();
+		Objects.requireNonNull(httpSample);
 		try {
-			Map<String, String> context = null;
-			String filePath = httpSample.getCsvFilePath();
-			String fieldNames = httpSample.getVariableNames();
-			if (StringUtils.hasLength(filePath) && StringUtils.hasLength(fieldNames)) {
-				try (InputStream inputStream = fileStorage.open(filePath)) {
-					if (inputStream == null) {
-						throw new FileNotFoundException("文件不存在");
-					}
-					context = parseFirstLine(inputStream, fieldNames.split(","));
-				}
-			} else if (httpSample.getPayload() != null) {
-				Payload payload = httpSample.getPayload();
-				List<FunctionContext> all = payload.getOptions().stream().map(PayloadOption::map)
-						.collect(Collectors.toList());
-				FunctionExecutor executor = new DefaultFunctionExecutor(all);
-				try {
-					context = new DefaultFunctionExecutor(all).execute();
-				} finally {
-					executor.shutdown();
-				}
-			}
-
-			String url = app.getUrl() + (path.startsWith("/") ? path : "/" + path);
-			URI uri = URI.create(replace(url, context));
-
-			HttpMethod method = httpSample.getMethod();
-
-			MultiValueMap<String, String> headers = convertToHttpHeaders(httpSample.getHeaders(), context);
-
-			String body = replace(httpSample.getBody(), context);
-
-			RequestEntity<String> requestEntity = new RequestEntity<>(body, headers, method, uri);
-
+			RequestEntity<String> requestEntity = createRequestEntity(httpSample, 0);
 			this.requestMessage = convertToString(requestEntity);
 			logger.info("Request entity:\n{}", requestMessage);
 
