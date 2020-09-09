@@ -386,6 +386,19 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		return "json";
 	}
 
+	public String singleShotV2() {
+		httpSample = httpSampleManager.get(this.getUid());
+		Objects.requireNonNull(httpSample);
+		try {
+			RequestEntity<String> requestEntity = createRequestEntity(httpSample, 0);
+			this.requestMessage = convertToString(requestEntity);
+		} catch (Exception e) {
+			this.errorMessage = e.toString();
+			logger.warn(e.getMessage());
+		}
+		return "singleShotV2";
+	}
+
 	@Getter
 	@Setter
 	static class Request {

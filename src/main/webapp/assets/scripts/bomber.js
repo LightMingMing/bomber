@@ -95,3 +95,21 @@ $(function () {
         })
     })
 });
+
+$(function () {
+    $(document).on('change', 'input.payload-index', function () {
+        const $this = $(this)
+        const payloadIndex = $this.val()
+        if (payloadIndex === '' || payloadIndex < 0)
+            return;
+        const uid = $("input.uid").val()
+        $.ajax({
+            type: "GET",
+            contentType: "application/json",
+            url: CONTEXT_PATH + "/httpSample/previewRequest?id=" + uid + "&payloadIndex=" + payloadIndex,
+            success: function (data) {
+                $("code.request").html(data.content)
+            }
+        })
+    })
+});
