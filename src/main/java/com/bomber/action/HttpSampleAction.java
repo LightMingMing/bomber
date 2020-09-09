@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 
 import org.ironrhino.core.fs.FileStorage;
 import org.ironrhino.core.metadata.AutoConfig;
+import org.ironrhino.core.metadata.JsonConfig;
 import org.ironrhino.core.struts.EntityAction;
 import org.ironrhino.core.util.CodecUtils;
 import org.ironrhino.core.util.JsonUtils;
@@ -101,6 +102,11 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 	private String name;
 	@Setter
 	private String scope;
+
+	@Setter
+	private int payloadIndex = 0;
+	@Getter
+	private Request request;
 
 	@Getter
 	private String requestMessage;
@@ -368,5 +374,26 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 			logger.warn(e.getMessage());
 		}
 		return "singleShot";
+	}
+
+	@JsonConfig(root = "request")
+	public String previewRequest() throws IOException {
+		httpSample = httpSampleManager.get(this.getUid());
+		Objects.requireNonNull(httpSample);
+		RequestEntity<String> requestEntity = createRequestEntity(httpSample, this.payloadIndex);
+		this.requestMessage = convertToString(requestEntity);
+		this.request = new Request(this.requestMessage);
+		return "json";
+	}
+
+	@Getter
+	@Setter
+	static class Request {
+
+		private String content;
+
+		public Request(String content) {
+			this.content = content;
+		}
 	}
 }
