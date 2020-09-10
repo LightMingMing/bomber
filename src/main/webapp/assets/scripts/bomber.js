@@ -97,6 +97,10 @@ $(function () {
 });
 
 $(function () {
+    $(document).on('focus', 'input.payload-index', function () {
+        $(this).select()
+    })
+
     $(document).on('change', 'input.payload-index', function () {
         const $this = $(this)
         const payloadIndex = $this.val()
@@ -109,6 +113,28 @@ $(function () {
             url: CONTEXT_PATH + "/httpSample/previewRequest?id=" + uid + "&payloadIndex=" + payloadIndex,
             success: function (data) {
                 $("code.request").html(data.content)
+            }
+        })
+    })
+
+    $(document).on('click', 'button.execute', function () {
+        const payloadIndex = $('input.payload-index').val()
+        const uid = $('input.uid').val()
+        $.ajax({
+            type: "GET",
+            contentType: "application/json",
+            url: CONTEXT_PATH + "/httpSample/executeRequest?id=" + uid + "&payloadIndex=" + payloadIndex,
+            success: function (data) {
+                if (data.content !== undefined) {
+                    $("#error").addClass("hidden")
+                    $("#response").removeClass("hidden")
+                    $("code.response").html(data.content)
+                    $("span.elapsedTimeInMillis").html(data.elapsedTimeInMillis)
+                } else {
+                    $("#response").addClass("hidden")
+                    $("#error").removeClass("hidden")
+                    $("code.error").html(data.error)
+                }
             }
         })
     })

@@ -107,6 +107,8 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 	private int payloadIndex = 0;
 	@Getter
 	private Request request;
+	@Getter
+	private Response response;
 
 	@Getter
 	private String requestMessage;
@@ -275,8 +277,8 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 			return ERROR;
 		}
 
-		List<Integer> numberOfThreadsList = Arrays.stream(threadGroup.trim().split(", *")).map(Integer::parseInt).sorted()
-				.collect(Collectors.toList());
+		List<Integer> numberOfThreadsList = Arrays.stream(threadGroup.trim().split(", *")).map(Integer::parseInt)
+				.sorted().collect(Collectors.toList());
 
 		BomberContext ctx = new BomberContext();
 		ctx.setSampleId(httpSample.getId());
@@ -399,6 +401,37 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		return "singleShotV2";
 	}
 
+	@JsonConfig(root = "response")
+	public String executeRequest() throws IOException {
+		httpSample = httpSampleManager.get(this.getUid());
+		Objects.requireNonNull(httpSample);
+
+		this.response = new Response();
+		try {
+			RequestEntity<String> requestEntity = createRequestEntity(httpSample, this.payloadIndex);
+			String requestMessage = convertToString(requestEntity);
+			logger.info("Request entity:\n{}", requestMessage);
+
+			long startTime = System.nanoTime();
+			ResponseEntity<String> responseEntity = stringMessageRestTemplate.exchange(requestEntity, String.class);
+			long elapsedTimeInMillis = (System.nanoTime() - startTime) / 1_000_000;
+
+			String responseMessage = convertToString(responseEntity);
+			logger.info("Response entity:\n{}", responseMessage);
+			response.setContent(responseMessage);
+			response.setElapsedTimeInMillis(elapsedTimeInMillis);
+		} catch (HttpClientErrorException e) {
+			// eg. 404 Not Found
+			response.setContent(
+					e.getStatusCode().toString() + "\n" + HtmlUtils.htmlEscape(e.getResponseBodyAsString()));
+			logger.warn(e.getMessage());
+		} catch (Exception e) {
+			response.setError(e.toString());
+			logger.warn(e.getMessage());
+		}
+		return "json";
+	}
+
 	@Getter
 	@Setter
 	static class Request {
@@ -408,5 +441,17 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		public Request(String content) {
 			this.content = content;
 		}
+	}
+
+	@Getter
+	@Setter
+	static class Response {
+
+		private String content;
+
+		private String error;
+
+		private long elapsedTimeInMillis;
+
 	}
 }
