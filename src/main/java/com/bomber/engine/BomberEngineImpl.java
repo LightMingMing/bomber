@@ -87,9 +87,11 @@ public class BomberEngineImpl implements BomberEngine {
 		BombardierResponse.LatencyStats latency = response.getLatency();
 		record.setAvg(latency.getAvg());
 		record.setMax(latency.getMax());
+		record.setMin(latency.getMin());
 		record.setStdDev(latency.getStdDev());
 
 		BombardierResponse.Percentiles percentiles = latency.getPercentiles();
+		record.setPoint25(percentiles.getPoint25());
 		record.setPoint50(percentiles.getPoint50());
 		record.setPoint75(percentiles.getPoint75());
 		record.setPoint90(percentiles.getPoint90());

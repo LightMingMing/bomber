@@ -42,6 +42,8 @@ public class BombardierResponse {
 
 		private double max;
 
+		private double min;
+
 		private double avg;
 
 		private double stdDev;
@@ -52,6 +54,9 @@ public class BombardierResponse {
 	@Getter
 	@Setter
 	public static class Percentiles {
+
+		@JsonProperty("0.25")
+		private double point25;
 
 		@JsonProperty("0.5")
 		private double point50;

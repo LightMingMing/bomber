@@ -60,7 +60,13 @@ public class SummaryReport extends BaseEntity {
 	private double avg;
 
 	@UiConfig(excludedFromQuery = true, hiddenInList = @Hidden(true), template = TIME_UNIT_TEMPLATE)
+	private double min;
+
+	@UiConfig(excludedFromQuery = true, hiddenInList = @Hidden(true), template = TIME_UNIT_TEMPLATE)
 	private double max;
+
+	@UiConfig(alias = "25%", width = "50px", excludedFromQuery = true, template = TIME_UNIT_TEMPLATE, cellDynamicAttributes = CENTER_ATTRIBUTE)
+	private double point25;
 
 	@UiConfig(alias = "50%", width = "50px", excludedFromQuery = true, template = TIME_UNIT_TEMPLATE, cellDynamicAttributes = CENTER_ATTRIBUTE)
 	private double point50;
