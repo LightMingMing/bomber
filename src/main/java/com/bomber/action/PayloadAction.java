@@ -137,11 +137,11 @@ public class PayloadAction extends EntityAction<Payload> {
 						this.addActionError("line " + i + " is invalid");
 						return INPUT;
 					}
-					if (pair[1].isEmpty()) {
+					if (pair[1].trim().isEmpty()) {
 						continue;
 					}
 					// TODO strong check ?
-					args.add(line);
+					args.add(pair[0].trim() + "=" + pair[1].trim());
 				}
 				option.setArgumentValues(args);
 			}
