@@ -100,6 +100,17 @@ public class PayloadAction extends EntityAction<Payload> {
 		return joiner.toString();
 	}
 
+	// shortcut to create
+	public String quickCreate() {
+		payload = payloadManager.get(this.getUid());
+		payload.setId(null);
+		List<PayloadOption> options = payload.getOptions();
+		if (options != null && !options.isEmpty()) {
+			options.forEach(option -> option.setContent(formatArgumentValues(option)));
+		}
+		return INPUT;
+	}
+
 	@Override
 	protected String doInput() throws Exception {
 		String parent = super.doInput();

@@ -25,7 +25,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "payload")
-@Richtable(showQueryForm = true, celleditable = false, actionColumnButtons = "<@btn view='view'/> <@btn view='input' label='edit'/> <@btn view='preview' label='preview'/>", order = "createDate desc")
+@Richtable(showQueryForm = true, celleditable = false, actionColumnButtons = "<@btn view='view'/> <@btn view='input' label='edit'/>  <@btn view='quickCreate' label='clone'/> <@btn view='preview' label='preview'/>", order = "createDate desc")
 public class Payload extends BaseEntity {
 
 	private static final long serialVersionUID = -6844125829687712537L;
