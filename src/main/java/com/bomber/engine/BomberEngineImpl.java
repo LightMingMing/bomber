@@ -141,7 +141,7 @@ public class BomberEngineImpl implements BomberEngine {
 		record.setThreadGroupCursor(ctx.getThreadGroupCursor());
 		record.setRequestsPerThread(ctx.getRequestsPerThread());
 		record.setHttpSample(httpSample);
-		record.setStartTime(new Date());
+		// record.setStartTime(new Date());
 		record.setStatus(READY);
 
 		bombingRecordManager.save(record);
@@ -154,6 +154,10 @@ public class BomberEngineImpl implements BomberEngine {
 			@Override
 			public void afterCommit() {
 				bombingExecutor.execute(() -> {
+					// start time not create time
+					record.setStartTime(new Date());
+					bombingRecordManager.save(record);
+
 					registry.registerBomberContext(ctx);
 					try {
 						doExecute(ctx);
