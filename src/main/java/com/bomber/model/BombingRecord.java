@@ -31,6 +31,7 @@ import lombok.Setter;
 public class BombingRecord extends BaseEntity {
 
 	protected static final String ACTION_COLUMN_BUTTONS = "<@btn view='view'/><@btn view='input' label='edit'/>"
+			+ "<a href='<@url value='/summaryReport?bombingRecord='/>${(entity.id)!}' rel='richtable' class='btn'>${getText('summaryReport')}</a>"
 			+ "<a href='<@url value='/bombingRecord/displayChart?recordId='/>${(entity.id)!}' target='_blank' class='btn'>${getText('chart')}</a>"
 			+ "<#if (entity.status.name() == 'RUNNING')><@btn action='pauseExecute' label='pause'/></#if>"
 			+ "<#if (entity.status.name() == 'PAUSE' || entity.status.name() == 'FAILURE')><@btn action='continueExecute' label='continue'/></#if>";

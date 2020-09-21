@@ -38,7 +38,8 @@ public class HttpSample extends BaseEntity {
 	protected static final String ACTION_COLUMN_BUTTONS = "<@btn view='view'/>"
 			+ "<@btn view='input' label='edit' windowoptions='{\"minWidth\":\"750\"}'/>"
 			+ "<@btn view='quickCreate' label='clone'/> <@btn view='singleShotV2'/>"
-			+ "<@btn view='bomb' label='bomb' windowoptions='{\"minHeight\":\"200\"}'/>";
+			+ "<@btn view='bomb' label='bomb' windowoptions='{\"minHeight\":\"200\"}'/>"
+			+ "<a href='<@url value='/bombingRecord?httpSample='/>${(entity.id)!}' rel='richtable' class='btn'>${getText('bombingRecord')}</a>";
 
 	private static final String HEADERS_TEMPLATE = "<#if value?has_content><#list value as header><span style='color:#d73a49;font-weight:bold'>${header.name}:</span> ${header.value}<#sep><br></#list></#if>";
 
