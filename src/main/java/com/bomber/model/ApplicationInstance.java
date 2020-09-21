@@ -21,7 +21,7 @@ import lombok.Setter;
 @Entity
 @AutoConfig
 @Table(name = "application_instance")
-@Richtable(showQueryForm = true, celleditable = false, order = "appName asc", actionColumnButtons = "<@btn view='view'/><@btn view='input' label='edit'/> <@btn view='quickCreate' label='clone'/>")
+@Richtable(showQueryForm = true, celleditable = false, order = "appName asc", actionColumnButtons = "<@btn view='view'/><@btn view='input' label='edit'/> <@btn view='quickCreate' label='copy'/>")
 public class ApplicationInstance extends BaseEntity {
 
 	private static final long serialVersionUID = -7191653658982379180L;
