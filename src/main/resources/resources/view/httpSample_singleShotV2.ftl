@@ -16,14 +16,24 @@
             </div>
         </div>
     </div>
-    <div>
-        <div class="control-group">
-            <div class="form-inline">
-                <input type="number" name="payloadIndex" class="input-small required payload-index" min="0">
-                <button type="button" class="btn btn-primary execute">Execute</button>
+    <#if mutable>
+        <div class="form-horizontal">
+            <div id="control-group-payload-index" class="control-group">
+                <label class="control-label" for="payload-index"><span data-content="通过设置有效载荷索引, 使用不同的变量进行调试"
+                                                                       class="poped glyphicon glyphicon-question-sign"></span>有效载荷索引</label>
+                <div class="controls">
+                    <input type="number" id="payload-index" name="payloadIndex"
+                           class="input-small required payload-index" min="0"
+                           value="0">
+                    <button type="button" class="btn btn-primary execute">${getText('execute')}</button>
+                </div>
             </div>
         </div>
-    </div>
+    <#else>
+        <div class="control-group">
+            <button type="button" class="btn btn-primary execute">${getText('execute')}</button>
+        </div>
+    </#if>
     <div id="response" class="hidden">
         <div id="control-group-response" class="control-group">
             <label class="control-label" style="font-weight: bold;font-style: italic">响应</label>

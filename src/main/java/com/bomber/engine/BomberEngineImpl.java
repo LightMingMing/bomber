@@ -103,13 +103,9 @@ public class BomberEngineImpl implements BomberEngine {
 	}
 
 	protected static HttpSampleSnapshot buildHttpSampleSnapshot(HttpSample sample) {
-		ApplicationInstance app = sample.getApplicationInstance();
-
-		String path = sample.getPath();
-
 		HttpSampleSnapshot snapshot = new HttpSampleSnapshot();
 		snapshot.setMethod(sample.getMethod());
-		snapshot.setUrl(app.getUrl() + (path.startsWith("/") ? path : "/" + path));
+		snapshot.setUrl(sample.getUrl());
 		snapshot.setBody(sample.getBody());
 
 		List<HttpHeader> headerList = sample.getHeaders();

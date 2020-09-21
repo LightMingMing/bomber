@@ -7,6 +7,24 @@ import java.util.Set;
 
 public class ValueReplacer {
 
+	public static boolean containsReplaceableKeys(String source) {
+		if (source == null || source.isEmpty()) {
+			return false;
+		}
+		char p = ' '; // previous
+		boolean matched = false;
+
+		for (char c : source.toCharArray()) {
+			if (c == '{' && p == '$') {
+				matched = true;
+			} else if (c == '}' && matched) {
+				return true;
+			}
+			p = c;
+		}
+		return false;
+	}
+
 	public static Set<String> readReplaceableKeys(Collection<String> sources) {
 		Set<String> result = new LinkedHashSet<>();
 		for (String source : sources) {

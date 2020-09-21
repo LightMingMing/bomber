@@ -1,5 +1,6 @@
 package com.bomber.action;
 
+import static com.bomber.util.ValueReplacer.containsReplaceableKeys;
 import static com.bomber.util.ValueReplacer.replace;
 
 import java.io.FileNotFoundException;
@@ -15,6 +16,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.StringJoiner;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.ironrhino.core.fs.FileStorage;
@@ -103,6 +105,8 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 	@Setter
 	private String scope;
 
+	@Getter
+	private boolean mutable = true;
 	@Setter
 	private int payloadIndex = 0;
 	@Getter
@@ -120,13 +124,13 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 	private long elapsedTimeInMillis;
 
 	private static MultiValueMap<String, String> convertToHttpHeaders(List<HttpHeader> httpHeaderList,
-			Map<String, String> context) {
+			Function<String, String> mapper) {
 		if (httpHeaderList == null) {
 			return null;
 		}
 		MultiValueMap<String, String> headers = new HttpHeaders();
 		for (HttpHeader httpHeader : httpHeaderList) {
-			headers.add(httpHeader.getName(), replace(httpHeader.getValue(), context));
+			headers.add(httpHeader.getName(), mapper.apply(httpHeader.getValue()));
 		}
 		return headers;
 	}
@@ -199,6 +203,26 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 			suffix = ".txt";
 		}
 		return prefix + CodecUtils.nextId(4) + suffix;
+	}
+
+	private static boolean isMutable(HttpSample httpSample) {
+		if (containsReplaceableKeys(httpSample.getPath())) {
+			return true;
+		}
+		for (HttpHeader header : httpSample.getHeaders()) {
+			if (containsReplaceableKeys(header.getValue())) {
+				return true;
+			}
+		}
+		return containsReplaceableKeys(httpSample.getBody());
+	}
+
+	private static RequestEntity<String> createRequestEntity(HttpSample sample, Function<String, String> mapper) {
+		URI uri = URI.create(mapper.apply(sample.getUrl()));
+		HttpMethod method = sample.getMethod();
+		MultiValueMap<String, String> headers = convertToHttpHeaders(sample.getHeaders(), mapper);
+		String body = mapper.apply(sample.getBody());
+		return new RequestEntity<>(body, headers, method, uri);
 	}
 
 	@Override
@@ -336,27 +360,22 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		}
 	}
 
-	private RequestEntity<String> createRequestEntity(HttpSample httpSample, int index) throws IOException {
-		Map<String, String> context = getPayload(httpSample, index);
-
-		String path = httpSample.getPath();
-		String url = httpSample.getApplicationInstance().getUrl() + (path.startsWith("/") ? path : "/" + path);
-		URI uri = URI.create(replace(url, context));
-
-		HttpMethod method = httpSample.getMethod();
-
-		MultiValueMap<String, String> headers = convertToHttpHeaders(httpSample.getHeaders(), context);
-
-		String body = replace(httpSample.getBody(), context);
-
-		return new RequestEntity<>(body, headers, method, uri);
+	private RequestEntity<String> createRequestEntity() throws IOException {
+		this.mutable = isMutable(this.httpSample);
+		if (this.mutable) {
+			Map<String, String> context = getPayload(httpSample, this.payloadIndex);
+			return createRequestEntity(httpSample, value -> replace(value, context));
+		} else {
+			return createRequestEntity(httpSample, String::toString);
+		}
 	}
 
+	@Deprecated
 	public String singleShot() {
 		httpSample = httpSampleManager.get(this.getUid());
 		Objects.requireNonNull(httpSample);
 		try {
-			RequestEntity<String> requestEntity = createRequestEntity(httpSample, 0);
+			RequestEntity<String> requestEntity = createRequestEntity();
 			this.requestMessage = convertToString(requestEntity);
 			logger.info("Request entity:\n{}", requestMessage);
 
@@ -382,7 +401,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 	public String previewRequest() throws IOException {
 		httpSample = httpSampleManager.get(this.getUid());
 		Objects.requireNonNull(httpSample);
-		RequestEntity<String> requestEntity = createRequestEntity(httpSample, this.payloadIndex);
+		RequestEntity<String> requestEntity = createRequestEntity();
 		this.requestMessage = convertToString(requestEntity);
 		this.request = new Request(this.requestMessage);
 		return "json";
@@ -392,7 +411,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		httpSample = httpSampleManager.get(this.getUid());
 		Objects.requireNonNull(httpSample);
 		try {
-			RequestEntity<String> requestEntity = createRequestEntity(httpSample, 0);
+			RequestEntity<String> requestEntity = createRequestEntity();
 			this.requestMessage = convertToString(requestEntity);
 		} catch (Exception e) {
 			this.errorMessage = e.toString();
@@ -408,7 +427,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 
 		this.response = new Response();
 		try {
-			RequestEntity<String> requestEntity = createRequestEntity(httpSample, this.payloadIndex);
+			RequestEntity<String> requestEntity = createRequestEntity();
 			String requestMessage = convertToString(requestEntity);
 			logger.info("Request entity:\n{}", requestMessage);
 

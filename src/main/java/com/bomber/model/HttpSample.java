@@ -3,6 +3,7 @@ package com.bomber.model;
 import java.io.File;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -111,4 +112,9 @@ public class HttpSample extends BaseEntity {
 	@Column(insertable = false)
 	@UiConfig(hiddenInList = @Hidden(true), hiddenInInput = @Hidden(true), excludedFromQuery = true)
 	private Date modifyDate;
+
+	public String getUrl() {
+		Objects.requireNonNull(applicationInstance);
+		return applicationInstance.getUrl() + (path.startsWith("/") ? path : "/" + path);
+	}
 }
