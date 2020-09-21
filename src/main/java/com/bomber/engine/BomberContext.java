@@ -43,6 +43,10 @@ public class BomberContext {
 	@Setter
 	private Scope scope = Scope.Request;
 
+	@Getter
+	@Setter
+	private int startPayloadIndex;
+
 	@Setter
 	private volatile boolean paused;
 

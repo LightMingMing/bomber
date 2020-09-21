@@ -33,25 +33,35 @@
             <div class="controls" style="margin-left: 140px;">
                 <input type="number" id="requestsPerThread" name="requestsPerThread" maxlength="255" min="1"
                        max="${maxRequestsPerThread!500}" autocomplete="off" value="${requestsPerThread!10}"
-                       style="width: 40px">
-                <span>&nbsp;</span><span id="total-requests">${totalRequests!0}</span>
+                       class="input-small required">
+                <span> </span><span id="total-requests">${totalRequests!0}</span>
             </div>
         </div>
-        <div id="control-group-scope" class="control-group">
-            <label class="control-label" for="scope" style="width: 120px;"><span
-                        data-content="${getText('payloadScope.desc')}"
-                        class="poped glyphicon glyphicon-question-sign"/>${getText('payload')}${getText('scope')}
-            </label>
-            <div class="controls" style="margin-left: 140px;">
-                <select id="scope" name="scope">
-                    <option label="${getText('Request')}" selected>Request</option>
-                    <option label="${getText('Thread')}">Thread</option>
-                    <option label="${getText('Group')}">Group</option>
-                    <option label="${getText('Benchmark')}">Benchmark</option>
-                </select>
-                <span>&nbsp;</span><span id="total-payloads">${totalPayloads!0}</span>
+        <#if mutable>
+            <div id="control-group-start-payload-index" class="control-group">
+                <label class="control-label" for="start-payload-index"
+                       style="width: 120px;">${getText('startPayloadIndex')}</label>
+                <div class="controls" style="margin-left: 140px;">
+                    <input type="number" id="start-payload-index" name="startPayloadIndex"
+                           class="input-small required" min="0" value="0">
+                </div>
             </div>
-        </div>
+            <div id="control-group-scope" class="control-group">
+                <label class="control-label" for="scope" style="width: 120px;"><span
+                            data-content="${getText('payloadScope.desc')}"
+                            class="poped glyphicon glyphicon-question-sign"/>${getText('payload')}${getText('scope')}
+                </label>
+                <div class="controls" style="margin-left: 140px;">
+                    <select id="scope" name="scope">
+                        <option label="${getText('Request')}" selected>Request</option>
+                        <option label="${getText('Thread')}">Thread</option>
+                        <option label="${getText('Group')}">Group</option>
+                        <option label="${getText('Benchmark')}">Benchmark</option>
+                    </select>
+                    <span>&nbsp;</span><span id="total-payloads">${totalPayloads!0}</span>
+                </div>
+            </div>
+        </#if>
         <div class="form-actions" style="padding-left: 140px">
             <button type="submit" class="btn btn-primary">${getText('execute')}</button>
         </div>

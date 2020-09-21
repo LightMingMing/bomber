@@ -28,7 +28,6 @@ import com.bomber.converter.HttpHeaderListConverter;
 import com.bomber.manager.BombingRecordManager;
 import com.bomber.manager.HttpSampleManager;
 import com.bomber.manager.SummaryReportManager;
-import com.bomber.model.ApplicationInstance;
 import com.bomber.model.BombingRecord;
 import com.bomber.model.HttpHeader;
 import com.bomber.model.HttpSample;
@@ -141,6 +140,8 @@ public class BomberEngineImpl implements BomberEngine {
 		record.setThreadGroupCursor(ctx.getThreadGroupCursor());
 		record.setRequestsPerThread(ctx.getRequestsPerThread());
 		record.setHttpSample(httpSample);
+		record.setScope(ctx.getScope());
+		record.setStartPayloadIndex(ctx.getStartPayloadIndex());
 		// record.setStartTime(new Date());
 		record.setStatus(READY);
 
@@ -190,6 +191,8 @@ public class BomberEngineImpl implements BomberEngine {
 		ctx.setThreadGroupCursor(record.getThreadGroupCursor());
 		ctx.setRequestsPerThread(record.getRequestsPerThread());
 		ctx.setActiveThreads(record.getActiveThreads());
+		ctx.setScope(record.getScope());
+		ctx.setStartPayloadIndex(record.getStartPayloadIndex());
 
 		TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
 			@Override
@@ -254,16 +257,16 @@ public class BomberEngineImpl implements BomberEngine {
 			try {
 				request.setNumberOfConnections(numberOfThreads);
 				request.setNumberOfRequests(numberOfRequests);
+
+				int startLine = ctx.getStartPayloadIndex();
 				if (ctx.getScope() == Scope.Request) {
-					request.setStartLine(requestCount);
+					startLine += requestCount;
 				} else if (ctx.getScope() == Scope.Thread) {
-					request.setStartLine(threadCount);
+					startLine += threadCount;
 				} else if (ctx.getScope() == Scope.Group) {
-					request.setStartLine(i);
-				} else {
-					// TODO support custom start line ?
-					request.setStartLine(0);
+					startLine += i;
 				}
+				request.setStartLine(startLine);
 
 				Date startTime = new Date();
 				BombardierResponse response = bombardierService.execute(request);
@@ -309,6 +312,9 @@ public class BomberEngineImpl implements BomberEngine {
 		request.setUrl(snapshot.getUrl());
 		request.setHeaders(snapshot.getHeaders());
 		request.setBody(snapshot.getBody());
+
+		if (!snapshot.isMutable())
+			return request;
 
 		String payloadFile = snapshot.getVariableFilePath();
 		String variableNames = snapshot.getVariableNames();

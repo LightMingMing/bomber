@@ -104,6 +104,9 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 	private String name;
 	@Setter
 	private String scope;
+	@Setter
+	private int startPayloadIndex = 0;
+
 	@Getter
 	private int totalRequests;
 	@Getter
@@ -285,6 +288,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 
 	public String inputBombingPlan() {
 		httpSample = httpSampleManager.get(this.getUid());
+		mutable = isMutable(httpSample);
 		threadGroup = threadGroupCache.getOrDefault(this.getUid(), DEFAULT_THREAD_GROUP);
 		requestsPerThread = requestsPerThreadCache.getOrDefault(this.getUid(), DEFAULT_REQUESTS_PRE_THREAD);
 
@@ -317,7 +321,10 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		ctx.setName(name);
 		ctx.setRequestsPerThread(requestsPerThread);
 		ctx.setThreadGroup(numberOfThreadsList);
-		ctx.setScope(Scope.valueOf(scope));
+		if (scope != null && !scope.isEmpty()) {
+			ctx.setScope(Scope.valueOf(scope));
+		}
+		ctx.setStartPayloadIndex(startPayloadIndex);
 		bomberEngine.execute(ctx);
 
 		addActionMessage("Bombing is ongoing!");

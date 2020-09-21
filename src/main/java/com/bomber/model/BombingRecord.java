@@ -14,6 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Min;
 
+import com.bomber.engine.Scope;
 import org.ironrhino.core.metadata.Hidden;
 import org.ironrhino.core.metadata.Readonly;
 import org.ironrhino.core.metadata.Richtable;
@@ -73,6 +74,12 @@ public class BombingRecord extends BaseEntity {
 
 	@UiConfig(hidden = true, excludedFromQuery = true, readonly = @Readonly(true))
 	private int activeThreads = 0;
+
+	@UiConfig(hidden = true)
+	private Scope scope;
+
+	@UiConfig(hidden = true)
+	private int startPayloadIndex = 0;
 
 	@Min(1)
 	@UiConfig(width = "150px", excludedFromQuery = true, readonly = @Readonly(true), cellDynamicAttributes = CENTER_ATTRIBUTE)

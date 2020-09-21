@@ -1,5 +1,7 @@
 package com.bomber.engine;
 
+import static com.bomber.util.ValueReplacer.containsReplaceableKeys;
+
 import org.springframework.http.HttpMethod;
 
 import lombok.Getter;
@@ -22,5 +24,17 @@ public class HttpSampleSnapshot {
 	private String variableFilePath;
 
 	private String payloadId;
+
+	public boolean isMutable() {
+		if (containsReplaceableKeys(url)) {
+			return true;
+		}
+		for (String header : headers) {
+			if (containsReplaceableKeys(header)) {
+				return true;
+			}
+		}
+		return containsReplaceableKeys(body);
+	}
 
 }
