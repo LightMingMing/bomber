@@ -76,7 +76,7 @@ $(function () {
                     let required = data.requiredArgs
                     if (required !== undefined && required.length > 0) {
                         content.push("# required args")
-                        let args = data.requiredArgs.split(/,\s+/)
+                        let args = data.requiredArgs.split(/,\s*/)
                         for (let i in args) {
                             content.push(args[i] + "=")
                         }
@@ -84,7 +84,7 @@ $(function () {
                     let optional = data.optionalArgs
                     if (optional !== undefined && optional.length > 0) {
                         content.push("# optional args")
-                        let args = data.optionalArgs.split(/,\s+/)
+                        let args = data.optionalArgs.split(/,\s*/)
                         for (let i in args) {
                             content.push(args[i] + "=")
                         }
@@ -97,7 +97,7 @@ $(function () {
 });
 
 $(function () {
-    $(document).on('focus', 'input.payload-index', function () {
+    $(document).on('focus', 'input.payload-index, #requestsPerThread', function () {
         $(this).select()
     })
 
@@ -137,5 +137,30 @@ $(function () {
                 }
             }
         })
+    })
+
+    $(document).on('change', '#threadGroup, #requestsPerThread, #scope', function () {
+        threadGroup = $("#threadGroup").val().split(/,\s*/)
+        requestsPerThread = $("#requestsPerThread").val()
+        scope = $("#scope").val()
+
+        let totalThreads = 0;
+        for (let i = 0; i < threadGroup.length; i++) {
+            totalThreads += parseInt(threadGroup[i]);
+        }
+        totalRequests = totalThreads * requestsPerThread;
+        totalPayloads = 0;
+        if (scope === 'Request') {
+            totalPayloads = totalRequests
+        } else if (scope === 'Thread') {
+            totalPayloads = totalThreads;
+        } else if (scope === 'Group') {
+            totalPayloads = threadGroup.length
+        } else if (scope === 'Benchmark') {
+            totalPayloads = 1;
+        }
+
+        $("#total-requests").text("" + totalRequests)
+        $("#total-payloads").text("" + totalPayloads)
     })
 });

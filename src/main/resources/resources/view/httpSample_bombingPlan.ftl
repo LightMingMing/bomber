@@ -34,6 +34,7 @@
                 <input type="number" id="requestsPerThread" name="requestsPerThread" maxlength="255" min="1"
                        max="${maxRequestsPerThread!500}" autocomplete="off" value="${requestsPerThread!10}"
                        style="width: 40px">
+                <span>&nbsp;</span><span id="total-requests">${totalRequests!0}</span>
             </div>
         </div>
         <div id="control-group-scope" class="control-group">
@@ -48,6 +49,7 @@
                     <option label="${getText('Group')}">Group</option>
                     <option label="${getText('Benchmark')}">Benchmark</option>
                 </select>
+                <span>&nbsp;</span><span id="total-payloads">${totalPayloads!0}</span>
             </div>
         </div>
         <div class="form-actions" style="padding-left: 140px">

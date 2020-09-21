@@ -104,6 +104,10 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 	private String name;
 	@Setter
 	private String scope;
+	@Getter
+	private int totalRequests;
+	@Getter
+	private int totalPayloads;
 
 	@Getter
 	private boolean mutable = true;
@@ -283,6 +287,10 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		httpSample = httpSampleManager.get(this.getUid());
 		threadGroup = threadGroupCache.getOrDefault(this.getUid(), DEFAULT_THREAD_GROUP);
 		requestsPerThread = requestsPerThreadCache.getOrDefault(this.getUid(), DEFAULT_REQUESTS_PRE_THREAD);
+
+		totalRequests = Arrays.stream(threadGroup.trim().split(", *")).map(Integer::parseInt).reduce(Integer::sum)
+				.orElse(0) * requestsPerThread;
+		totalPayloads = this.totalRequests; // default payload scope is request
 		return "bombingPlan";
 	}
 
