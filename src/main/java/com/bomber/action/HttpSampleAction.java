@@ -2,6 +2,8 @@ package com.bomber.action;
 
 import static com.bomber.http.StringEntityRender.renderPlainText;
 import static com.bomber.util.ValueReplacer.replace;
+import static java.util.Objects.isNull;
+import static org.springframework.util.StringUtils.isEmpty;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -160,45 +162,56 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		return new RequestEntity<>(body, headers, method, uri);
 	}
 
-	@Override
-	@Transactional
-	public String save() throws Exception {
-		if (!makeEntityValid()) {
-			return INPUT;
-		}
-
-		boolean deleteFile = httpSample.getCsvFile() == null && StringUtils.isEmpty(httpSample.getCsvFilePath());
-
-		httpSample = getEntity();
-
-		int i = 0;
-		for (HttpHeader header : httpSample.getHeaders()) {
+	private boolean headersValid() {
+		List<HttpHeader> headers = httpSample.getHeaders();
+		for (int i = 0; i < headers.size(); i++) {
+			HttpHeader header = headers.get(i);
 			if (header.getName() == null) {
 				this.addFieldError("headers[" + i + "].name", "required");
-				return INPUT;
+				return false;
 			}
 			if (header.getValue() == null) {
 				this.addFieldError("headers[" + i + "].value", "required");
-				return INPUT;
+				return false;
 			}
-			i++;
+		}
+		return true;
+	}
 
-			if ("Content-Type".equals(header.getName()) && header.getValue().contains("json")) {
-				httpSample.setBody(JsonUtils.prettify(httpSample.getBody()));
+	// return true if not upload new file and file path is set to empty
+	private boolean shouldDeleteOldFile() {
+		return isNull(httpSample.getCsvFile()) && isEmpty(httpSample.getCsvFilePath());
+	}
+
+	@Override
+	@Transactional
+	public String save() throws Exception {
+		if (!makeEntityValid() || !headersValid()) {
+			return INPUT;
+		}
+
+		boolean shouldDelete = shouldDeleteOldFile();
+		httpSample = getEntity();
+		if (shouldDelete && !isEmpty(httpSample.getCsvFilePath())) {
+			fileStorage.delete(httpSample.getCsvFilePath());
+			httpSample.setCsvFilePath(null);
+		}
+
+		if (!isEmpty(httpSample.getBody())) {
+			for (HttpHeader header : httpSample.getHeaders()) {
+				if (header.getName().equals("Content-Type") && header.getValue().contains("json")) {
+					httpSample.setBody(JsonUtils.prettify(httpSample.getBody()));
+					break;
+				}
 			}
 		}
 
+		// upload file
 		if (httpSample.getCsvFile() != null) {
 			String filePath = generateFilePath(httpSample.getCsvFileFileName());
 			fileStorage.write(httpSample.getCsvFile(), filePath);
-
 			httpSample.setCsvFilePath(filePath);
 			logger.info("Upload file '{}'", filePath);
-		}
-
-		if (deleteFile && StringUtils.hasText(httpSample.getCsvFilePath())) {
-			fileStorage.delete(httpSample.getCsvFilePath());
-			httpSample.setCsvFilePath(null);
 		}
 
 		httpSample.setVariableNames(StringUtils.trimAllWhitespace(httpSample.getVariableNames()));
