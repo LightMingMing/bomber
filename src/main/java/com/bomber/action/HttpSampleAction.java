@@ -1,5 +1,6 @@
 package com.bomber.action;
 
+import static com.bomber.http.StringEntityRender.renderPlainText;
 import static com.bomber.util.ValueReplacer.containsReplaceableKeys;
 import static com.bomber.util.ValueReplacer.replace;
 
@@ -7,7 +8,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -19,6 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.bomber.http.StringEntityRender;
 import org.ironrhino.core.fs.FileStorage;
 import org.ironrhino.core.metadata.AutoConfig;
 import org.ironrhino.core.metadata.JsonConfig;
@@ -30,7 +31,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -140,63 +140,6 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 			headers.add(httpHeader.getName(), mapper.apply(httpHeader.getValue()));
 		}
 		return headers;
-	}
-
-	private static String convertToString(MultiValueMap<String, String> map) {
-		StringJoiner joiner = new StringJoiner("\n");
-		map.forEach(
-				(key, value) -> joiner.add(key + ": " + (value.size() == 1 ? value.get(0) : String.join(", ", value))));
-		return joiner.toString();
-	}
-
-	private static String convertToString(RequestEntity<String> requestEntity) {
-		StringBuilder sb = new StringBuilder();
-
-		sb.append(requestEntity.getMethod());
-		sb.append(' ');
-		sb.append(requestEntity.getUrl().toString());
-
-		HttpHeaders httpHeaders = requestEntity.getHeaders();
-		if (httpHeaders.size() > 0) {
-			sb.append('\n');
-			sb.append(convertToString(httpHeaders));
-		}
-
-		String body = requestEntity.getBody();
-		if (body != null) {
-			sb.append("\n\n");
-			sb.append(requestEntity.getBody());
-		}
-		return sb.toString();
-	}
-
-	private static String convertToString(ResponseEntity<String> responseEntity) {
-		StringBuilder sb = new StringBuilder();
-
-		sb.append(responseEntity.getStatusCode().toString());
-
-		HttpHeaders httpHeaders = responseEntity.getHeaders();
-		if (httpHeaders.size() > 0) {
-			sb.append('\n');
-			sb.append(convertToString(httpHeaders));
-		}
-
-		String body = responseEntity.getBody();
-		if (body != null) {
-			MediaType contentType = responseEntity.getHeaders().getContentType();
-			if (contentType != null) {
-				if (contentType.includes(MediaType.APPLICATION_JSON)) {
-					body = JsonUtils.prettify(body);
-				} else if (contentType.includes(MediaType.TEXT_HTML) || contentType.includes(MediaType.TEXT_XML)) {
-					List<Charset> charsets = responseEntity.getHeaders().getAcceptCharset();
-					String charset = charsets.isEmpty() ? "utf-8" : charsets.get(0).name();
-					body = HtmlUtils.htmlEscape(body, charset);
-				}
-			}
-			sb.append("\n\n");
-			sb.append(body);
-		}
-		return sb.toString();
 	}
 
 	private static String generateFilePath(String fileName) {
@@ -391,14 +334,14 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		Objects.requireNonNull(httpSample);
 		try {
 			RequestEntity<String> requestEntity = createRequestEntity();
-			this.requestMessage = convertToString(requestEntity);
+			this.requestMessage = renderPlainText(requestEntity);
 			logger.info("Request entity:\n{}", requestMessage);
 
 			long startTime = System.nanoTime();
 			ResponseEntity<String> responseEntity = stringMessageRestTemplate.exchange(requestEntity, String.class);
 			this.elapsedTimeInMillis = (System.nanoTime() - startTime) / 1_000_000;
 
-			this.responseMessage = convertToString(responseEntity);
+			this.responseMessage = renderPlainText(responseEntity);
 			logger.info("Response entity:\n{}", responseMessage);
 		} catch (HttpClientErrorException e) {
 			// eg. 404 Not Found
@@ -417,7 +360,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		httpSample = httpSampleManager.get(this.getUid());
 		Objects.requireNonNull(httpSample);
 		RequestEntity<String> requestEntity = createRequestEntity();
-		this.requestMessage = convertToString(requestEntity);
+		this.requestMessage = renderPlainText(requestEntity);
 		this.request = new Request(this.requestMessage);
 		return "json";
 	}
@@ -427,7 +370,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		Objects.requireNonNull(httpSample);
 		try {
 			RequestEntity<String> requestEntity = createRequestEntity();
-			this.requestMessage = convertToString(requestEntity);
+			this.requestMessage = renderPlainText(requestEntity);
 		} catch (Exception e) {
 			this.errorMessage = e.toString();
 			logger.warn(e.getMessage());
@@ -443,14 +386,14 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		this.response = new Response();
 		try {
 			RequestEntity<String> requestEntity = createRequestEntity();
-			String requestMessage = convertToString(requestEntity);
+			String requestMessage = renderPlainText(requestEntity);
 			logger.info("Request entity:\n{}", requestMessage);
 
 			long startTime = System.nanoTime();
 			ResponseEntity<String> responseEntity = stringMessageRestTemplate.exchange(requestEntity, String.class);
 			long elapsedTimeInMillis = (System.nanoTime() - startTime) / 1_000_000;
 
-			String responseMessage = convertToString(responseEntity);
+			String responseMessage = renderPlainText(responseEntity);
 			logger.info("Response entity:\n{}", responseMessage);
 			response.setContent(responseMessage);
 			response.setElapsedTimeInMillis(elapsedTimeInMillis);
