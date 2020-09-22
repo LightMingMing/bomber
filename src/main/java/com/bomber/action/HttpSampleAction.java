@@ -323,7 +323,8 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 			Map<String, String> context = getPayload(httpSample, this.payloadIndex);
 			return createRequestEntity(httpSample, value -> replace(value, context));
 		} else {
-			return createRequestEntity(httpSample, String::toString);
+			// String::toString will cause NPE if value is null
+			return createRequestEntity(httpSample, value -> value);
 		}
 	}
 
