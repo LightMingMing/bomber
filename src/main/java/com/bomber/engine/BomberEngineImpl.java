@@ -142,7 +142,7 @@ public class BomberEngineImpl implements BomberEngine {
 		record.setHttpSample(httpSample);
 		record.setScope(ctx.getScope());
 		record.setStartPayloadIndex(ctx.getStartPayloadIndex());
-		// record.setStartTime(new Date());
+		record.setCreateTime(new Date());
 		record.setStatus(READY);
 
 		bombingRecordManager.save(record);
@@ -155,10 +155,6 @@ public class BomberEngineImpl implements BomberEngine {
 			@Override
 			public void afterCommit() {
 				bombingExecutor.execute(() -> {
-					// start time not create time
-					record.setStartTime(new Date());
-					bombingRecordManager.save(record);
-
 					registry.registerBomberContext(ctx);
 					try {
 						doExecute(ctx);
@@ -218,6 +214,12 @@ public class BomberEngineImpl implements BomberEngine {
 		HttpSampleSnapshot httpSampleSnapshot = ctx.getHttpSampleSnapshot();
 
 		BombingRecord record = bombingRecordManager.get(ctx.getId());
+		if (record == null) {
+			return; // is removed
+		}
+		if (record.getStartTime() == null) {
+			record.setStartTime(new Date()); // start time
+		}
 		record.setStatus(RUNNING);
 		bombingRecordManager.save(record);
 

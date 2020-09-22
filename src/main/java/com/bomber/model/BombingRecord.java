@@ -28,7 +28,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "bombing_record")
-@Richtable(showQueryForm = true, celleditable = false, downloadable = false, order = "startTime desc", actionColumnButtons = ACTION_COLUMN_BUTTONS, bottomButtons = BOTTOM_BUTTONS)
+@Richtable(showQueryForm = true, celleditable = false, downloadable = false, order = "createTime desc", actionColumnButtons = ACTION_COLUMN_BUTTONS, bottomButtons = BOTTOM_BUTTONS)
 public class BombingRecord extends BaseEntity {
 
 	protected static final String ACTION_COLUMN_BUTTONS = "<@btn view='view'/><@btn view='input' label='edit'/>"
@@ -87,6 +87,9 @@ public class BombingRecord extends BaseEntity {
 
 	@UiConfig(width = "150px", readonly = @Readonly(true), template = STATUS_TEMPLATE, cellDynamicAttributes = CENTER_ATTRIBUTE)
 	private BombingStatus status;
+
+	@UiConfig(hiddenInList = @Hidden(true), readonly = @Readonly(true))
+	private Date createTime;
 
 	@UiConfig(width = "150px", queryWithRange = true, readonly = @Readonly(true))
 	private Date startTime;
