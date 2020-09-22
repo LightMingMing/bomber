@@ -1,5 +1,7 @@
 package com.bomber.model;
 
+import static com.bomber.util.ValueReplacer.isReplaceable;
+
 import java.io.File;
 import java.util.Date;
 import java.util.List;
@@ -116,5 +118,10 @@ public class HttpSample extends BaseEntity {
 	public String getUrl() {
 		Objects.requireNonNull(applicationInstance);
 		return applicationInstance.getUrl() + (path.startsWith("/") ? path : "/" + path);
+	}
+
+	public boolean isMutable() {
+		return isReplaceable(path) || isReplaceable(body)
+				|| headers.stream().anyMatch(header -> isReplaceable(header.getValue()));
 	}
 }

@@ -1,7 +1,6 @@
 package com.bomber.action;
 
 import static com.bomber.http.StringEntityRender.renderPlainText;
-import static com.bomber.util.ValueReplacer.containsReplaceableKeys;
 import static com.bomber.util.ValueReplacer.replace;
 
 import java.io.FileNotFoundException;
@@ -14,12 +13,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.StringJoiner;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.bomber.http.StringEntityRender;
 import org.ironrhino.core.fs.FileStorage;
 import org.ironrhino.core.metadata.AutoConfig;
 import org.ironrhino.core.metadata.JsonConfig;
@@ -155,18 +152,6 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		return prefix + CodecUtils.nextId(4) + suffix;
 	}
 
-	private static boolean isMutable(HttpSample httpSample) {
-		if (containsReplaceableKeys(httpSample.getPath())) {
-			return true;
-		}
-		for (HttpHeader header : httpSample.getHeaders()) {
-			if (containsReplaceableKeys(header.getValue())) {
-				return true;
-			}
-		}
-		return containsReplaceableKeys(httpSample.getBody());
-	}
-
 	private static RequestEntity<String> createRequestEntity(HttpSample sample, Function<String, String> mapper) {
 		URI uri = URI.create(mapper.apply(sample.getUrl()));
 		HttpMethod method = sample.getMethod();
@@ -231,7 +216,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 
 	public String inputBombingPlan() {
 		httpSample = httpSampleManager.get(this.getUid());
-		mutable = isMutable(httpSample);
+		mutable = httpSample.isMutable();
 		threadGroup = threadGroupCache.getOrDefault(this.getUid(), DEFAULT_THREAD_GROUP);
 		requestsPerThread = requestsPerThreadCache.getOrDefault(this.getUid(), DEFAULT_REQUESTS_PRE_THREAD);
 
@@ -319,8 +304,9 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 	}
 
 	private RequestEntity<String> createRequestEntity() throws IOException {
-		this.mutable = isMutable(this.httpSample);
-		if (this.mutable) {
+		httpSample = httpSampleManager.get(this.getUid());
+		Objects.requireNonNull(httpSample);
+		if (httpSample.isMutable()) {
 			Map<String, String> context = getPayload(httpSample, this.payloadIndex);
 			return createRequestEntity(httpSample, value -> replace(value, context));
 		} else {
@@ -330,8 +316,6 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 
 	@Deprecated
 	public String singleShot() {
-		httpSample = httpSampleManager.get(this.getUid());
-		Objects.requireNonNull(httpSample);
 		try {
 			RequestEntity<String> requestEntity = createRequestEntity();
 			this.requestMessage = renderPlainText(requestEntity);
@@ -355,35 +339,25 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		return "singleShot";
 	}
 
-	@JsonConfig(root = "request")
-	public String previewRequest() throws IOException {
-		httpSample = httpSampleManager.get(this.getUid());
-		Objects.requireNonNull(httpSample);
-		RequestEntity<String> requestEntity = createRequestEntity();
-		this.requestMessage = renderPlainText(requestEntity);
-		this.request = new Request(this.requestMessage);
-		return "json";
-	}
-
 	public String singleShotV2() {
-		httpSample = httpSampleManager.get(this.getUid());
-		Objects.requireNonNull(httpSample);
 		try {
-			RequestEntity<String> requestEntity = createRequestEntity();
-			this.requestMessage = renderPlainText(requestEntity);
+			requestMessage = renderPlainText(createRequestEntity());
 		} catch (Exception e) {
-			this.errorMessage = e.toString();
+			errorMessage = e.toString();
 			logger.warn(e.getMessage());
 		}
 		return "singleShotV2";
 	}
 
-	@JsonConfig(root = "response")
-	public String executeRequest() throws IOException {
-		httpSample = httpSampleManager.get(this.getUid());
-		Objects.requireNonNull(httpSample);
+	@JsonConfig(root = "request")
+	public String previewRequest() throws IOException {
+		request = new Request(renderPlainText(createRequestEntity()));
+		return "json";
+	}
 
-		this.response = new Response();
+	@JsonConfig(root = "response")
+	public String executeRequest() {
+		response = new Response();
 		try {
 			RequestEntity<String> requestEntity = createRequestEntity();
 			String requestMessage = renderPlainText(requestEntity);

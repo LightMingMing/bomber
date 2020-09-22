@@ -106,6 +106,7 @@ public class BomberEngineImpl implements BomberEngine {
 		snapshot.setMethod(sample.getMethod());
 		snapshot.setUrl(sample.getUrl());
 		snapshot.setBody(sample.getBody());
+		snapshot.setMutable(sample.isMutable());
 
 		List<HttpHeader> headerList = sample.getHeaders();
 		if (headerList != null && !headerList.isEmpty()) {
@@ -116,12 +117,14 @@ public class BomberEngineImpl implements BomberEngine {
 			snapshot.setHeaders(headers);
 		}
 
-		snapshot.setVariableNames(sample.getVariableNames());
-		snapshot.setVariableFilePath(sample.getCsvFilePath());
+		if (sample.isMutable()) {
+			snapshot.setVariableNames(sample.getVariableNames());
+			snapshot.setVariableFilePath(sample.getCsvFilePath());
 
-		Payload payload = sample.getPayload();
-		if (payload != null) {
-			snapshot.setPayloadId(payload.getId());
+			Payload payload = sample.getPayload();
+			if (payload != null) {
+				snapshot.setPayloadId(payload.getId());
+			}
 		}
 		return snapshot;
 	}

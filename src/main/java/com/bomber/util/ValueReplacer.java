@@ -7,7 +7,7 @@ import java.util.Set;
 
 public class ValueReplacer {
 
-	public static boolean containsReplaceableKeys(String source) {
+	public static boolean isReplaceable(String source) {
 		if (source == null || source.isEmpty()) {
 			return false;
 		}
