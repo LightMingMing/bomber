@@ -6,7 +6,6 @@ import static com.bomber.model.BombingStatus.PAUSE;
 import static com.bomber.model.BombingStatus.RUNNING;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 
@@ -78,7 +77,7 @@ public class BomberEngineImpl implements BomberEngine {
 		return record;
 	}
 
-	protected static BombardierRequest createBombardierRequest(HttpSampleSnapshot snapshot) {
+	protected static BombardierRequest createBombardierRequest(HttpSampleSnapshot snapshot, Scope scope) {
 		BombardierRequest request = new BombardierRequest();
 		request.setMethod(snapshot.getMethod());
 		request.setUrl(snapshot.getUrl());
@@ -87,7 +86,28 @@ public class BomberEngineImpl implements BomberEngine {
 		request.setPayloadFile(snapshot.getPayloadFile());
 		request.setVariableNames(snapshot.getVariableNames());
 		request.setPayloadUrl(snapshot.getPayloadUrl());
+		if (scope == Scope.Request) {
+			request.setScope("request");
+		} else if (scope == Scope.Thread) {
+			request.setScope("thread");
+		} else {
+			request.setScope("benchmark");
+		}
 		return request;
+	}
+
+	public static Counter createCounter(BomberContext ctx) {
+		Scope scope = ctx.getScope();
+		if (scope == Scope.Request) {
+			return new RequestCounter(ctx.getStart(), ctx.getThreadGroups(), ctx.getThreadGroupCursor(),
+					ctx.getRequestsPerThread());
+		} else if (scope == Scope.Thread) {
+			return new ThreadCounter(ctx.getStart(), ctx.getThreadGroups(), ctx.getThreadGroupCursor());
+		} else if (scope == Scope.Group) {
+			return new ThreadGroupCounter(ctx.getStart(), ctx.getThreadGroupCursor());
+		} else {
+			return new BenchmarkCounter(ctx.getStart());
+		}
 	}
 
 	@Override
@@ -120,26 +140,12 @@ public class BomberEngineImpl implements BomberEngine {
 		record.setStatus(RUNNING);
 		bombingRecordManager.save(record);
 
-		int requestCount = 0;
-		int threadCount = 0;
+		BombardierRequest request = createBombardierRequest(httpSampleSnapshot, ctx.getScope());
 
-		List<Integer> threadGroups = ctx.getThreadGroups();
+		Counter counter = createCounter(ctx);
 
-		for (int i = 0; i < ctx.getThreadGroupCursor(); i++) {
-			requestCount += threadGroups.get(i) * ctx.getRequestsPerThread();
-			threadCount += threadGroups.get(i);
-		}
-
-		BombardierRequest request = createBombardierRequest(httpSampleSnapshot);
-		if (ctx.getScope() == Scope.Request) {
-			request.setScope("request");
-		} else if (ctx.getScope() == Scope.Thread) {
-			request.setScope("thread");
-		} else {
-			request.setScope("benchmark");
-		}
-		for (int i = ctx.getThreadGroupCursor(); i < threadGroups.size(); i++) {
-			int numberOfThreads = threadGroups.get(i);
+		for (int i = ctx.getThreadGroupCursor(); i < ctx.getThreadGroups().size(); i++) {
+			int numberOfThreads = ctx.getThreadGroups().get(i);
 			int numberOfRequests = numberOfThreads * ctx.getRequestsPerThread();
 
 			ctx.setActiveThreads(numberOfThreads);
@@ -156,16 +162,7 @@ public class BomberEngineImpl implements BomberEngine {
 			try {
 				request.setNumberOfConnections(numberOfThreads);
 				request.setNumberOfRequests(numberOfRequests);
-
-				int startLine = ctx.getStartPayloadIndex();
-				if (ctx.getScope() == Scope.Request) {
-					startLine += requestCount;
-				} else if (ctx.getScope() == Scope.Thread) {
-					startLine += threadCount;
-				} else if (ctx.getScope() == Scope.Group) {
-					startLine += i;
-				}
-				request.setStartLine(startLine);
+				request.setStartLine(counter.getAndCount());
 
 				Date startTime = new Date();
 				BombardierResponse response = bombardierService.execute(request);
@@ -196,8 +193,6 @@ public class BomberEngineImpl implements BomberEngine {
 				bombingRecordManager.save(record);
 				return;
 			}
-			requestCount += numberOfRequests;
-			threadCount += numberOfThreads;
 		}
 
 		record.setStatus(COMPLETED);

@@ -94,7 +94,7 @@ public class BomberServiceImpl implements BomberService {
 		ctx.setRequestsPerThread(record.getRequestsPerThread());
 		ctx.setActiveThreads(record.getActiveThreads());
 		ctx.setScope(record.getScope());
-		ctx.setStartPayloadIndex(record.getStartPayloadIndex());
+		ctx.setStart(record.getStartPayloadIndex());
 		return ctx;
 	}
 

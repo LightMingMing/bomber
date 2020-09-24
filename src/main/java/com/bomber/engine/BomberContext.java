@@ -41,7 +41,7 @@ public class BomberContext {
 
 	@Getter
 	@Setter
-	private int startPayloadIndex;
+	private int start;
 
 	@Setter
 	private volatile boolean paused;
