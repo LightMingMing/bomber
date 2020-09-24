@@ -7,6 +7,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 public class BombardierRequest {
@@ -19,7 +21,7 @@ public class BombardierRequest {
 	@JsonProperty("method")
 	private HttpMethod method;
 
-	private String[] headers;
+	private List<String> headers;
 
 	private String url;
 

@@ -17,15 +17,11 @@ public class BomberContext {
 
 	@Getter
 	@Setter
-	private String sampleId;
-
-	@Getter
-	@Setter
 	private HttpSampleSnapshot httpSampleSnapshot;
 
 	@Getter
 	@Setter
-	private List<Integer> threadGroup;
+	private List<Integer> threadGroups;
 
 	@Getter
 	@Setter

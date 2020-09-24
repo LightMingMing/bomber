@@ -39,8 +39,6 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.HtmlUtils;
 
-import com.bomber.engine.BomberContext;
-import com.bomber.engine.BomberEngine;
 import com.bomber.engine.Scope;
 import com.bomber.functions.core.DefaultFunctionExecutor;
 import com.bomber.functions.core.FunctionContext;
@@ -50,6 +48,8 @@ import com.bomber.model.HttpHeader;
 import com.bomber.model.HttpSample;
 import com.bomber.model.Payload;
 import com.bomber.model.PayloadOption;
+import com.bomber.service.BomberRequest;
+import com.bomber.service.BomberService;
 import com.bomber.util.FileUtils;
 import com.opensymphony.xwork2.interceptor.annotations.InputConfig;
 
@@ -80,7 +80,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 	private HttpSampleManager httpSampleManager;
 
 	@Autowired
-	private BomberEngine bomberEngine;
+	private BomberService bomberService;
 
 	@Autowired
 	private RestTemplate stringMessageRestTemplate;
@@ -239,7 +239,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		return "bombingPlan";
 	}
 
-	@Transactional
+	// Don't @Transactional
 	@InputConfig(methodName = "inputBombingPlan")
 	public String bomb() {
 		if (name == null || "".equals(name)) {
@@ -257,16 +257,14 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		List<Integer> numberOfThreadsList = Arrays.stream(threadGroup.trim().split(", *")).map(Integer::parseInt)
 				.sorted().collect(Collectors.toList());
 
-		BomberContext ctx = new BomberContext();
-		ctx.setSampleId(httpSample.getId());
-		ctx.setName(name);
-		ctx.setRequestsPerThread(requestsPerThread);
-		ctx.setThreadGroup(numberOfThreadsList);
-		if (scope != null && !scope.isEmpty()) {
-			ctx.setScope(Scope.valueOf(scope));
-		}
-		ctx.setStartPayloadIndex(startPayloadIndex);
-		bomberEngine.execute(ctx);
+		BomberRequest request = new BomberRequest();
+		request.setHttpSampleId(httpSample.getId());
+		request.setName(name);
+		request.setRequestsPerThread(requestsPerThread);
+		request.setThreadGroups(numberOfThreadsList);
+		request.setPayloadIndex(startPayloadIndex);
+		request.setScope(StringUtils.isEmpty(scope) ? Scope.Request : Scope.valueOf(scope));
+		bomberService.execute(request);
 
 		addActionMessage("Bombing is ongoing!");
 

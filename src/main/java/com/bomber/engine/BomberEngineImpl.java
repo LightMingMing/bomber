@@ -1,50 +1,32 @@
 package com.bomber.engine;
 
-import static com.bomber.api.controller.PayloadController.getPayloadApiUrl;
 import static com.bomber.model.BombingStatus.COMPLETED;
 import static com.bomber.model.BombingStatus.FAILURE;
 import static com.bomber.model.BombingStatus.PAUSE;
-import static com.bomber.model.BombingStatus.READY;
 import static com.bomber.model.BombingStatus.RUNNING;
 
-import java.net.URI;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 
 import org.ironrhino.rest.RestStatus;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionSynchronization;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
-import org.springframework.util.StringUtils;
 
-import com.bomber.converter.HttpHeaderListConverter;
 import com.bomber.manager.BombingRecordManager;
-import com.bomber.manager.HttpSampleManager;
 import com.bomber.manager.SummaryReportManager;
 import com.bomber.model.BombingRecord;
-import com.bomber.model.HttpHeader;
-import com.bomber.model.HttpSample;
-import com.bomber.model.Payload;
 import com.bomber.model.SummaryReport;
 import com.bomber.rpc.BombardierRequest;
 import com.bomber.rpc.BombardierResponse;
 import com.bomber.rpc.BombardierService;
-import com.bomber.util.ValueReplacer;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
 public class BomberEngineImpl implements BomberEngine {
-
-	private final HttpSampleManager httpSampleManager;
 
 	private final BombingRecordManager bombingRecordManager;
 
@@ -56,13 +38,8 @@ public class BomberEngineImpl implements BomberEngine {
 
 	private final BomberContextRegistry registry;
 
-	@Value("${fileStorage.uri}")
-	protected URI uri;
-
-	public BomberEngineImpl(HttpSampleManager httpSampleManager, BombingRecordManager bombingRecordManager,
-			SummaryReportManager summaryReportManager, BombardierService bombardierService,
-			BomberContextRegistry registry, ExecutorService bombingExecutor) {
-		this.httpSampleManager = httpSampleManager;
+	public BomberEngineImpl(BombingRecordManager bombingRecordManager, SummaryReportManager summaryReportManager,
+			BombardierService bombardierService, BomberContextRegistry registry, ExecutorService bombingExecutor) {
 		this.bombingRecordManager = bombingRecordManager;
 		this.summaryReportManager = summaryReportManager;
 		this.bombardierService = bombardierService;
@@ -101,116 +78,33 @@ public class BomberEngineImpl implements BomberEngine {
 		return record;
 	}
 
-	protected static HttpSampleSnapshot buildHttpSampleSnapshot(HttpSample sample) {
-		HttpSampleSnapshot snapshot = new HttpSampleSnapshot();
-		snapshot.setMethod(sample.getMethod());
-		snapshot.setUrl(sample.getUrl());
-		snapshot.setBody(sample.getBody());
-		snapshot.setMutable(sample.isMutable());
-
-		List<HttpHeader> headerList = sample.getHeaders();
-		if (headerList != null && !headerList.isEmpty()) {
-			String[] headers = new String[headerList.size()];
-			for (int i = 0; i < headerList.size(); i++) {
-				headers[i] = HttpHeaderListConverter.convertToString(headerList.get(i));
-			}
-			snapshot.setHeaders(headers);
-		}
-
-		if (sample.isMutable()) {
-			snapshot.setVariableNames(sample.getVariableNames());
-			snapshot.setVariableFilePath(sample.getCsvFilePath());
-
-			Payload payload = sample.getPayload();
-			if (payload != null) {
-				snapshot.setPayloadId(payload.getId());
-			}
-		}
-		return snapshot;
+	protected static BombardierRequest createBombardierRequest(HttpSampleSnapshot snapshot) {
+		BombardierRequest request = new BombardierRequest();
+		request.setMethod(snapshot.getMethod());
+		request.setUrl(snapshot.getUrl());
+		request.setHeaders(snapshot.getHeaders());
+		request.setBody(snapshot.getBody());
+		request.setPayloadFile(snapshot.getPayloadFile());
+		request.setVariableNames(snapshot.getVariableNames());
+		request.setPayloadUrl(snapshot.getPayloadUrl());
+		return request;
 	}
 
 	@Override
-	@Transactional
 	public void execute(@NonNull BomberContext ctx) {
-		HttpSample httpSample = httpSampleManager.get(ctx.getSampleId());
-		if (httpSample == null) {
-			throw new IllegalArgumentException("httpSample does not exist");
-		}
-
-		BombingRecord record = new BombingRecord();
-		record.setName(ctx.getName());
-		record.setThreadGroup(ctx.getThreadGroup());
-		record.setThreadGroupCursor(ctx.getThreadGroupCursor());
-		record.setRequestsPerThread(ctx.getRequestsPerThread());
-		record.setHttpSample(httpSample);
-		record.setScope(ctx.getScope());
-		record.setStartPayloadIndex(ctx.getStartPayloadIndex());
-		record.setCreateTime(new Date());
-		record.setStatus(READY);
-
-		bombingRecordManager.save(record);
-		ctx.setId(record.getId());
-
-		HttpSampleSnapshot snapshot = buildHttpSampleSnapshot(httpSample);
-		ctx.setHttpSampleSnapshot(snapshot);
-
-		TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
-			@Override
-			public void afterCommit() {
-				bombingExecutor.execute(() -> {
-					registry.registerBomberContext(ctx);
-					try {
-						doExecute(ctx);
-					} finally {
-						registry.unregisterBomberContext(ctx);
-					}
-				});
+		bombingExecutor.execute(() -> {
+			registry.registerBomberContext(ctx);
+			try {
+				doExecute(ctx);
+			} finally {
+				registry.unregisterBomberContext(ctx);
 			}
 		});
 	}
 
 	@Override
-	@Transactional
-	public void continueExecute(String ctxId) {
-		BombingRecord record = bombingRecordManager.get(ctxId);
-		if (record == null || (record.getStatus() != PAUSE && record.getStatus() != FAILURE)) {
-			return;
-		}
-		record.setStatus(READY);
-		bombingRecordManager.save(record);
-
-		HttpSample httpSample = record.getHttpSample();
-		HttpSampleSnapshot snapshot = buildHttpSampleSnapshot(httpSample);
-
-		BomberContext ctx = new BomberContext(ctxId);
-		ctx.setSampleId(httpSample.getId());
-		ctx.setHttpSampleSnapshot(snapshot);
-		ctx.setName(record.getName());
-		ctx.setThreadGroup(record.getThreadGroup());
-		ctx.setThreadGroupCursor(record.getThreadGroupCursor());
-		ctx.setRequestsPerThread(record.getRequestsPerThread());
-		ctx.setActiveThreads(record.getActiveThreads());
-		ctx.setScope(record.getScope());
-		ctx.setStartPayloadIndex(record.getStartPayloadIndex());
-
-		TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
-			@Override
-			public void afterCommit() {
-				bombingExecutor.execute(() -> {
-					registry.registerBomberContext(ctx);
-					try {
-						doExecute(ctx);
-					} finally {
-						registry.unregisterBomberContext(ctx);
-					}
-				});
-			}
-		});
-	}
-
-	@Override
-	public void pauseExecute(String ctxId) {
-		Optional.ofNullable(registry.get(ctxId)).ifPresent(BomberContext::pause);
+	public void pauseExecute(String id) {
+		Optional.ofNullable(registry.get(id)).ifPresent(BomberContext::pause);
 	}
 
 	private void doExecute(BomberContext ctx) {
@@ -229,14 +123,14 @@ public class BomberEngineImpl implements BomberEngine {
 		int requestCount = 0;
 		int threadCount = 0;
 
-		List<Integer> threadGroup = ctx.getThreadGroup();
+		List<Integer> threadGroup = ctx.getThreadGroups();
 
 		for (int i = 0; i < ctx.getThreadGroupCursor(); i++) {
 			requestCount += threadGroup.get(i) * ctx.getRequestsPerThread();
 			threadCount += threadGroup.get(i);
 		}
 
-		BombardierRequest request = convertToBombardierRequest(httpSampleSnapshot);
+		BombardierRequest request = createBombardierRequest(httpSampleSnapshot);
 		if (ctx.getScope() == Scope.Request) {
 			request.setScope("request");
 		} else if (ctx.getScope() == Scope.Thread) {
@@ -310,45 +204,4 @@ public class BomberEngineImpl implements BomberEngine {
 		record.setEndTime(new Date());
 		bombingRecordManager.save(record);
 	}
-
-	protected BombardierRequest convertToBombardierRequest(HttpSampleSnapshot snapshot) {
-		BombardierRequest request = new BombardierRequest();
-		request.setMethod(snapshot.getMethod());
-		request.setUrl(snapshot.getUrl());
-		request.setHeaders(snapshot.getHeaders());
-		request.setBody(snapshot.getBody());
-
-		if (!snapshot.isMutable())
-			return request;
-
-		String payloadFile = snapshot.getVariableFilePath();
-		String variableNames = snapshot.getVariableNames();
-
-		if (StringUtils.hasLength(payloadFile) && StringUtils.hasLength(variableNames)) {
-			request.setPayloadFile(uri.getPath() + payloadFile);
-			request.setVariableNames(variableNames);
-		}
-
-		String payloadId = snapshot.getPayloadId();
-		if (StringUtils.hasLength(payloadId)) {
-			request.setPayloadUrl(getPayloadApiUrl(payloadId));
-			if (StringUtils.hasLength(variableNames)) {
-				request.setVariableNames(variableNames);
-			} else {
-				Set<String> variables = new HashSet<>(ValueReplacer.readReplaceableKeys(snapshot.getUrl()));
-				String[] headers = snapshot.getHeaders();
-				if (headers != null) {
-					for (String header : snapshot.getHeaders()) {
-						variables.addAll(ValueReplacer.readReplaceableKeys(header));
-					}
-				}
-				if (snapshot.getBody() != null) {
-					variables.addAll(ValueReplacer.readReplaceableKeys(snapshot.getBody()));
-				}
-				request.setVariableNames(String.join(",", variables));
-			}
-		}
-		return request;
-	}
-
 }
