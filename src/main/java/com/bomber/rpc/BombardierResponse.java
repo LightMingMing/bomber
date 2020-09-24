@@ -1,4 +1,4 @@
-package com.bomber.service;
+package com.bomber.rpc;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

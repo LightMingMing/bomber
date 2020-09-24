@@ -33,9 +33,9 @@ import com.bomber.model.HttpHeader;
 import com.bomber.model.HttpSample;
 import com.bomber.model.Payload;
 import com.bomber.model.SummaryReport;
-import com.bomber.service.BombardierRequest;
-import com.bomber.service.BombardierResponse;
-import com.bomber.service.BombardierService;
+import com.bomber.rpc.BombardierRequest;
+import com.bomber.rpc.BombardierResponse;
+import com.bomber.rpc.BombardierService;
 import com.bomber.util.ValueReplacer;
 
 import lombok.extern.slf4j.Slf4j;

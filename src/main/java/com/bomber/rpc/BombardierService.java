@@ -1,4 +1,4 @@
-package com.bomber.service;
+package com.bomber.rpc;
 
 import org.ironrhino.rest.client.RestApi;
 import org.springframework.web.bind.annotation.PostMapping;
