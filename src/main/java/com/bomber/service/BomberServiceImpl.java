@@ -48,7 +48,7 @@ public class BomberServiceImpl implements BomberService {
 	private static BombingRecord createBombingRecord(BomberRequest request, HttpSample httpSample) {
 		BombingRecord record = new BombingRecord();
 		record.setName(request.getName());
-		record.setThreadGroup(request.getThreadGroups());
+		record.setThreadGroups(request.getThreadGroups());
 		record.setRequestsPerThread(request.getRequestsPerThread());
 		record.setHttpSample(httpSample);
 		record.setScope(request.getScope());
@@ -89,7 +89,7 @@ public class BomberServiceImpl implements BomberService {
 		BomberContext ctx = new BomberContext(record.getId());
 		ctx.setHttpSampleSnapshot(createHttpSampleSnapshot(record.getHttpSample()));
 		ctx.setName(record.getName());
-		ctx.setThreadGroups(record.getThreadGroup());
+		ctx.setThreadGroups(record.getThreadGroups());
 		ctx.setThreadGroupCursor(record.getThreadGroupCursor());
 		ctx.setRequestsPerThread(record.getRequestsPerThread());
 		ctx.setActiveThreads(record.getActiveThreads());

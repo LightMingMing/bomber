@@ -123,11 +123,11 @@ public class BomberEngineImpl implements BomberEngine {
 		int requestCount = 0;
 		int threadCount = 0;
 
-		List<Integer> threadGroup = ctx.getThreadGroups();
+		List<Integer> threadGroups = ctx.getThreadGroups();
 
 		for (int i = 0; i < ctx.getThreadGroupCursor(); i++) {
-			requestCount += threadGroup.get(i) * ctx.getRequestsPerThread();
-			threadCount += threadGroup.get(i);
+			requestCount += threadGroups.get(i) * ctx.getRequestsPerThread();
+			threadCount += threadGroups.get(i);
 		}
 
 		BombardierRequest request = createBombardierRequest(httpSampleSnapshot);
@@ -138,8 +138,8 @@ public class BomberEngineImpl implements BomberEngine {
 		} else {
 			request.setScope("benchmark");
 		}
-		for (int i = ctx.getThreadGroupCursor(); i < threadGroup.size(); i++) {
-			int numberOfThreads = threadGroup.get(i);
+		for (int i = ctx.getThreadGroupCursor(); i < threadGroups.size(); i++) {
+			int numberOfThreads = threadGroups.get(i);
 			int numberOfRequests = numberOfThreads * ctx.getRequestsPerThread();
 
 			ctx.setActiveThreads(numberOfThreads);

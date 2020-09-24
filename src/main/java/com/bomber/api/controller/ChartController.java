@@ -132,7 +132,7 @@ public class ChartController {
 		YAxis<Double> tpsYAxis = new YAxis<>("TPS (r/s)");
 
 		// 交集
-		Set<Integer> threads = bombingRecords.stream().map(BombingRecord::getThreadGroup).map(HashSet::new)
+		Set<Integer> threads = bombingRecords.stream().map(BombingRecord::getThreadGroups).map(HashSet::new)
 				.reduce((set1, set2) -> {
 					set1.retainAll(set2);
 					return set1;

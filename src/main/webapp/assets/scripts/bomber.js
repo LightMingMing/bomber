@@ -139,14 +139,14 @@ $(function () {
         })
     })
 
-    $(document).on('change', '#threadGroup, #requestsPerThread, #scope', function () {
-        threadGroup = $("#threadGroup").val().split(/,\s*/)
+    $(document).on('change', '#threadGroups, #requestsPerThread, #scope', function () {
+        threadGroups = $("#threadGroups").val().split(/,\s*/)
         requestsPerThread = $("#requestsPerThread").val()
         scope = $("#scope").val()
 
         let totalThreads = 0;
-        for (let i = 0; i < threadGroup.length; i++) {
-            totalThreads += parseInt(threadGroup[i]);
+        for (let i = 0; i < threadGroups.length; i++) {
+            totalThreads += parseInt(threadGroups[i]);
         }
         totalRequests = totalThreads * requestsPerThread;
         totalPayloads = 0;

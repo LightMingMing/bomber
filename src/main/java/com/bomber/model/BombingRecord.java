@@ -40,7 +40,7 @@ public class BombingRecord extends BaseEntity {
 	protected static final String BOTTOM_BUTTONS = "<button type='button' class='btn' data-shown='selected' onclick=\"redirectTo('<@url value='/bombingRecord/compare?recordIds='/>' + checkedIds())\">${getText('compare')}</button>"
 			+ "<@btn action='delete' confirm=true/> <@btn class='reload'/> <@btn class='filter'/>";
 
-	private static final String THREAD_GROUP_TEMPLATE = "<#list value as threads>"
+	private static final String THREAD_GROUPS_TEMPLATE = "<#list value as threads>"
 			+ "<#if (entity.status.name() == 'COMPLETED' || threads_index != entity.threadGroupCursor)><span class='label'>${threads}</span><#sep> "
 			+ "<#elseif (entity.status.name() == 'READY')><span class='label label-info'>${threads}</span><#sep> "
 			+ "<#elseif (entity.status.name() == 'RUNNING')><span class='label label-warning'>${threads}</span><#sep> "
@@ -66,8 +66,8 @@ public class BombingRecord extends BaseEntity {
 	private String name;
 
 	@Column(nullable = false)
-	@UiConfig(template = THREAD_GROUP_TEMPLATE, excludedFromQuery = true, readonly = @Readonly(true), cellDynamicAttributes = "{\"style\":\"min-width:200px\"}")
-	private List<Integer> threadGroup;
+	@UiConfig(template = THREAD_GROUPS_TEMPLATE, excludedFromQuery = true, readonly = @Readonly(true), cellDynamicAttributes = "{\"style\":\"min-width:200px\"}")
+	private List<Integer> threadGroups;
 
 	@UiConfig(hidden = true, excludedFromQuery = true, readonly = @Readonly(true))
 	private int threadGroupCursor = 0;

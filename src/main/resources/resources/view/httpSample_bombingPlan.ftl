@@ -16,13 +16,13 @@
                 <input type="text" id="name" name="name" maxlength="32" autocomplete="off" style="width: 200px">
             </div>
         </div>
-        <div id="control-group-threadGroup" class="control-group">
-            <label class="control-label" for="threadGroup" style="width: 120px;"><span
-                        data-content="${getText('threadGroup.desc')}"
-                        class="poped glyphicon glyphicon-question-sign"/>${getText('threadGroup')}</label>
+        <div id="control-group-threadGroups" class="control-group">
+            <label class="control-label" for="threadGroups" style="width: 120px;"><span
+                        data-content="${getText('threadGroups.desc')}"
+                        class="poped glyphicon glyphicon-question-sign"/>${getText('threadGroups')}</label>
             <div class="controls" style="margin-left: 140px;">
-                <input type="text" id="threadGroup" name="threadGroup" maxlength="255" autocomplete="off"
-                       value="${threadGroup!1}" style="width: 400px">
+                <input type="text" id="threadGroups" name="threadGroups" maxlength="255" autocomplete="off"
+                       value="${threadGroups!1}" style="width: 400px">
             </div>
         </div>
         <div id="control-group-requests-per-thread" class="control-group">

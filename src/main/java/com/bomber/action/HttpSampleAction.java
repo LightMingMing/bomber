@@ -65,11 +65,11 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 
 	private static final int MAX_REQUESTS_PRE_THREAD = 500;
 
-	private static final String DEFAULT_THREAD_GROUP = "1, 2, 5, 10, 20, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500";
+	private static final String DEFAULT_THREAD_GROUPS = "1, 2, 5, 10, 20, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500";
 
 	private static final int DEFAULT_REQUESTS_PRE_THREAD = 10;
 
-	private static final Map<String, String> threadGroupCache = new ConcurrentHashMap<>(16);
+	private static final Map<String, String> threadGroupsCache = new ConcurrentHashMap<>(16);
 
 	private static final Map<String, Integer> requestsPerThreadCache = new ConcurrentHashMap<>(16);
 
@@ -94,7 +94,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 
 	@Setter
 	@Getter
-	private String threadGroup = DEFAULT_THREAD_GROUP;
+	private String threadGroups = DEFAULT_THREAD_GROUPS;
 	@Setter
 	@Getter
 	private int requestsPerThread = DEFAULT_REQUESTS_PRE_THREAD;
@@ -230,10 +230,10 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 	public String inputBombingPlan() {
 		httpSample = httpSampleManager.get(this.getUid());
 		mutable = httpSample.isMutable();
-		threadGroup = threadGroupCache.getOrDefault(this.getUid(), DEFAULT_THREAD_GROUP);
+		threadGroups = threadGroupsCache.getOrDefault(this.getUid(), DEFAULT_THREAD_GROUPS);
 		requestsPerThread = requestsPerThreadCache.getOrDefault(this.getUid(), DEFAULT_REQUESTS_PRE_THREAD);
 
-		totalRequests = Arrays.stream(threadGroup.trim().split(", *")).map(Integer::parseInt).reduce(Integer::sum)
+		totalRequests = Arrays.stream(threadGroups.trim().split(", *")).map(Integer::parseInt).reduce(Integer::sum)
 				.orElse(0) * requestsPerThread;
 		totalPayloads = this.totalRequests; // default payload scope is request
 		return "bombingPlan";
@@ -254,7 +254,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 			return ERROR;
 		}
 
-		List<Integer> numberOfThreadsList = Arrays.stream(threadGroup.trim().split(", *")).map(Integer::parseInt)
+		List<Integer> numberOfThreadsList = Arrays.stream(threadGroups.trim().split(", *")).map(Integer::parseInt)
 				.sorted().collect(Collectors.toList());
 
 		BomberRequest request = new BomberRequest();
@@ -268,7 +268,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 
 		addActionMessage("Bombing is ongoing!");
 
-		threadGroupCache.put(httpSample.getId(),
+		threadGroupsCache.put(httpSample.getId(),
 				numberOfThreadsList.stream().map(i -> i + "").collect(Collectors.joining(", ")));
 		requestsPerThreadCache.put(httpSample.getId(), requestsPerThread);
 		return SUCCESS;
