@@ -48,6 +48,9 @@ repositories {
 }
 
 dependencies {
+
+    jmhCompile sourceSets.main.output
+
     annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
 
     providedCompile("javax.servlet:javax.servlet-api:4.0.0")
