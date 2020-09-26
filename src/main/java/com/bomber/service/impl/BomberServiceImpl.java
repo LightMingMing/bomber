@@ -1,4 +1,4 @@
-package com.bomber.service;
+package com.bomber.service.impl;
 
 import static com.bomber.api.controller.PayloadController.getPayloadApiUrl;
 import static com.bomber.model.BombingStatus.FAILURE;
@@ -25,6 +25,8 @@ import com.bomber.manager.HttpSampleManager;
 import com.bomber.model.BombingRecord;
 import com.bomber.model.HttpHeader;
 import com.bomber.model.HttpSample;
+import com.bomber.service.BomberRequest;
+import com.bomber.service.BomberService;
 
 @Service
 public class BomberServiceImpl implements BomberService {
