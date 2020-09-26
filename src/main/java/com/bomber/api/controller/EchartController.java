@@ -62,7 +62,7 @@ public class EchartController {
 
 		Series<Double> tpsSeries = new Series<>(0);
 		Series<Double> durationSeries = new Series<>(1);
-		summaryReportManager.listByBombingRecord(id).stream().sorted(comparingNumberOfThreads()).forEach(summary -> {
+		summaryReportManager.list(id).stream().sorted(comparingNumberOfThreads()).forEach(summary -> {
 			xAxis.add(summary.getNumberOfThreads());
 			tpsSeries.add(summary.getTps());
 			durationSeries.add(summary.getAvg());

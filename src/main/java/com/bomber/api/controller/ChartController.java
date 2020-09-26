@@ -74,7 +74,7 @@ public class ChartController {
 		durationYAxis.add(avg);
 		tpsYAxis.add(tps);
 
-		summaryReportManager.listByBombingRecord(id).stream().sorted(comparingNumberOfThreads()).forEach(summary -> {
+		summaryReportManager.list(id).stream().sorted(comparingNumberOfThreads()).forEach(summary -> {
 			xAxis.add(summary.getNumberOfThreads());
 			tps.add(summary.getTps());
 			avg.add(summary.getAvg());
@@ -107,7 +107,7 @@ public class ChartController {
 		Axis<Double> point99 = new Axis<>(name + " 99%", ChartType.LINE);
 		durationYAxis.add(point50, point75, point90, point95, point99);
 
-		summaryReportManager.listByBombingRecord(id).stream().sorted(comparingNumberOfThreads()).forEach(summary -> {
+		summaryReportManager.list(id).stream().sorted(comparingNumberOfThreads()).forEach(summary -> {
 			xAxis.add(summary.getNumberOfThreads());
 			point50.add(summary.getPoint50());
 			point75.add(summary.getPoint75());
@@ -145,7 +145,7 @@ public class ChartController {
 
 			boolean finalThreadsAdded = threadsAdded;
 
-			summaryReportManager.listByBombingRecord(bombingRecord.getId()).stream()
+			summaryReportManager.list(bombingRecord.getId()).stream()
 					.filter(summary -> threads.contains(summary.getNumberOfThreads()))
 					.sorted(comparingNumberOfThreads()).forEach(summary -> {
 						if (!finalThreadsAdded) {
