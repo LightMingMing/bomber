@@ -155,7 +155,7 @@ $(function () {
         } else if (scope === 'Thread') {
             totalPayloads = totalThreads;
         } else if (scope === 'Group') {
-            totalPayloads = threadGroup.length
+            totalPayloads = threadGroups.length
         } else if (scope === 'Benchmark') {
             totalPayloads = 1;
         }
