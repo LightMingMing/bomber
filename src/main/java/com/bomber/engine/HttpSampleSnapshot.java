@@ -1,17 +1,15 @@
 package com.bomber.engine;
 
-import java.util.Collection;
+import static com.bomber.util.ValueReplacer.readReplaceableKeys;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.bomber.util.ValueReplacer;
 import org.springframework.http.HttpMethod;
 
 import lombok.Getter;
 import lombok.Setter;
-
-import static com.bomber.util.ValueReplacer.readReplaceableKeys;
 
 @Getter
 @Setter
