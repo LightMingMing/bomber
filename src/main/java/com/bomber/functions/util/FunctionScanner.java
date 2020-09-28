@@ -17,7 +17,7 @@ public class FunctionScanner {
 
 	@SuppressWarnings("unchecked")
 	public static Collection<Class<Function<?>>> scan(String[] packages) {
-		return ClassScanner.scanAssignable(ClassScanner.getAppPackages(), Function.class).stream()
+		return ClassScanner.scanAssignable(packages, Function.class).stream()
 				.filter(clazz -> !isInterfaceOrAbstract(clazz)).map(clazz -> (Class<Function<?>>) clazz)
 				.collect(Collectors.toList());
 	}
