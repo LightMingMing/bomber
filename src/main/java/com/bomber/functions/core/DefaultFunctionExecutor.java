@@ -15,6 +15,11 @@ public class DefaultFunctionExecutor implements FunctionExecutor {
 
 	public DefaultFunctionExecutor(Collection<FunctionContext> disordered, Collection<String> chooses) {
 		this.ordered = DefaultDependencyHandler.DEFAULT.handle(disordered, chooses);
+		init();
+	}
+
+	protected void init() {
+		ordered.forEach(FunctionContext::fireInit);
 	}
 
 	@Override

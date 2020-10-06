@@ -54,17 +54,24 @@ public abstract class AbstractFunctionContext implements FunctionContext {
 	}
 
 	@Override
+	public void fireInit() {
+		if (!started) {
+			invokeInit();
+			started = true;
+		}
+	}
+
+	private void invokeInit() {
+		function().init(input());
+	}
+
+	@Override
 	public void fireExecute(Output output) {
 		this.invokeExecute(output);
 	}
 
 	@SuppressWarnings("unchecked")
 	private void invokeExecute(Output output) {
-		if (!started) {
-			function().init(input());
-			started = true;
-		}
-
 		Object ret = function().execute(newInput(output));
 
 		if (ret instanceof String) {
@@ -80,10 +87,6 @@ public abstract class AbstractFunctionContext implements FunctionContext {
 	}
 
 	private void invokeJump(int steps) {
-		if (!started) {
-			function().init(input());
-			started = true;
-		}
 		function().jump(steps);
 	}
 

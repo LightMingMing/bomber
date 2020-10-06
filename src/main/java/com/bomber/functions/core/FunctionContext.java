@@ -16,6 +16,8 @@ public interface FunctionContext {
 
 	Set<String> retKeys();
 
+	void fireInit();
+
 	void fireExecute(Output output);
 
 	void fireJump(int steps);
