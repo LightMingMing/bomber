@@ -8,6 +8,7 @@ import lombok.Setter;
 public class SummaryReportVo {
 	private int threads;
 	private double tps;
+	private double avg;
 	private double min;
 	private double p25;
 	private double p50;

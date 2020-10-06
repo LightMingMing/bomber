@@ -31,6 +31,7 @@ public class SummaryReportController {
 		SummaryReportVo reportVo = new SummaryReportVo();
 		reportVo.setThreads(report.getNumberOfThreads());
 		reportVo.setTps(report.getTps());
+		reportVo.setAvg(report.getAvg());
 		reportVo.setMin(report.getMin());
 		reportVo.setP25(report.getPoint25());
 		reportVo.setP50(report.getPoint50());
