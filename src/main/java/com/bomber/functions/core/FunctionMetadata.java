@@ -21,6 +21,8 @@ public class FunctionMetadata {
 
 	private String retArg;
 
+	private boolean parallel;
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o)

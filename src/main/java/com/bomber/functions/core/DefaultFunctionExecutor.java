@@ -1,6 +1,7 @@
 package com.bomber.functions.core;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -31,12 +32,22 @@ public class DefaultFunctionExecutor implements FunctionExecutor {
 
 	@Override
 	public List<Map<String, String>> execute(int offset, int limit) {
-		List<Map<String, String>> list = new ArrayList<>(limit);
-		ordered.forEach(each -> each.fireJump(offset));
+		Output[] outputs = new Output[limit];
 		for (int i = 0; i < limit; i++) {
-			list.add(execute());
+			outputs[i] = new Output();
 		}
-		return list;
+		for (FunctionContext ctx : ordered) {
+			if (ctx.metadata().isParallel()) {
+				Arrays.stream(outputs).parallel().forEach(ctx::fireExecute);
+			} else {
+				Arrays.stream(outputs).forEach(ctx::fireExecute);
+			}
+		}
+		List<Map<String, String>> result = new ArrayList<>();
+		for (Output output : outputs) {
+			result.add(output.getAll());
+		}
+		return result;
 	}
 
 	@Override

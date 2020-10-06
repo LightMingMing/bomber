@@ -25,7 +25,7 @@ import com.bomber.functions.core.MapFunction;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
-@FuncInfo(requiredArgs = "url, user, password, sql, ret", optionalArgs = "args, argTypes", retArg = "ret")
+@FuncInfo(requiredArgs = "url, user, password, sql, ret", optionalArgs = "args, argTypes", retArg = "ret", parallel = true)
 public class SQLQuery extends MapFunction {
 
 	private static final Map<String, Integer> jdbcTypeForName;

@@ -1,6 +1,6 @@
 package com.bomber.functions.core;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.spy;
@@ -8,13 +8,16 @@ import static org.mockito.Mockito.times;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ForkJoinPool;
 
 import org.junit.Test;
 
 import com.bomber.functions.Bad;
 import com.bomber.functions.Counter;
+import com.bomber.functions.DelayThreadName;
 import com.bomber.functions.Properties;
 import com.bomber.functions.Sum;
 
@@ -37,6 +40,21 @@ public class DefaultFunctionExecutorTest {
 
 		executor.shutdown();
 		then(sum).should().close();
+	}
+
+	@Test
+	public void testParallelExecute() {
+		final int parallelism = ForkJoinPool.getCommonPoolParallelism();
+		final int count = parallelism * 5;
+		final int delay = 100;
+		FunctionContext f = new DefaultFunctionContext("t", new DelayThreadName(), "delay", delay + "");
+
+		FunctionExecutor executor = new DefaultFunctionExecutor(Collections.singleton(f));
+
+		long startTime = System.nanoTime();
+		executor.execute(0, count);
+		long took = (System.nanoTime() - startTime) / 1_000_000;
+		assertThat(took).isLessThan(count * delay / parallelism + 100);
 	}
 
 	@Test

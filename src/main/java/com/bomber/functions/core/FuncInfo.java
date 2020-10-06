@@ -20,4 +20,6 @@ public @interface FuncInfo {
 	boolean retAllArgs() default false;
 
 	String retArg() default "";
+
+	boolean parallel() default false;
 }
