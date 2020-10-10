@@ -40,7 +40,7 @@ public class HttpSample extends BaseEntity {
 
 	protected static final String ACTION_COLUMN_BUTTONS = "<@btn view='view'/>"
 			+ "<@btn view='input' label='edit' windowoptions='{\"minWidth\":\"750\"}'/>"
-			+ "<@btn view='quickCreate' label='copy'/> <@btn view='singleShotV2' label='singleShot'/>"
+			+ "<@btn view='quickCreate' label='copy'/> <@btn view='singleShot' label='singleShot'/>"
 			+ "<@btn view='bomb' label='bomb' windowoptions='{\"minHeight\":\"200\"}'/>"
 			+ "<a href='<@url value='/bombingRecord?httpSample='/>${(entity.id)!}' rel='richtable' class='btn'>${getText('bombingRecord')}</a>";
 

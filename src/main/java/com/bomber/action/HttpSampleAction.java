@@ -325,14 +325,14 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		}
 	}
 
-	public String singleShotV2() {
+	public String singleShot() {
 		try {
 			requestMessage = renderPlainText(createRequestEntity());
 		} catch (Exception e) {
 			errorMessage = e.toString();
 			logger.warn(e.getMessage());
 		}
-		return "singleShotV2";
+		return "singleShot";
 	}
 
 	@JsonConfig(root = "request")
