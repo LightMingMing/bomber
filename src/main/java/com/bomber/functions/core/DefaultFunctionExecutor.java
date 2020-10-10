@@ -36,7 +36,9 @@ public class DefaultFunctionExecutor implements FunctionExecutor {
 		for (int i = 0; i < limit; i++) {
 			outputs[i] = new Output();
 		}
+
 		for (FunctionContext ctx : ordered) {
+			ctx.fireJump(offset);
 			if (ctx.metadata().isParallel()) {
 				Arrays.stream(outputs).parallel().forEach(ctx::fireExecute);
 			} else {

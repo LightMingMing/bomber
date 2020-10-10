@@ -18,6 +18,8 @@ public final class FunctionHelper {
 
 	private static final Map<String, FunctionMetadata> functionMetadataMap = new LinkedHashMap<>();
 
+	private static final Map<Class<Function<?>>, FunctionMetadata> functionMetadataForType = new LinkedHashMap<>();
+
 	static {
 		FunctionScanner.scan(ClassScanner.getAppPackages()).forEach(clazz -> {
 			String name = generateFunctionName(clazz);
@@ -38,6 +40,7 @@ public final class FunctionHelper {
 
 			functionTypeMap.put(name, clazz);
 			functionMetadataMap.put(name, fm);
+			functionMetadataForType.put(clazz, fm);
 		});
 	}
 
@@ -53,8 +56,14 @@ public final class FunctionHelper {
 		return functionMetadataMap.get(requireNonNull(name, "name"));
 	}
 
+	private static FunctionMetadata getFunctionMetadataFromParent(Class<Function<?>> clazz) {
+		return functionMetadataForType.keySet().stream().filter(c -> c.isAssignableFrom(clazz)).findFirst()
+				.map(functionMetadataForType::get).orElse(null);
+	}
+
 	public static FunctionMetadata getFunctionMetadata(Class<Function<?>> clazz) {
-		return functionMetadataMap.get(generateFunctionName(requireNonNull(clazz, "clazz")));
+		FunctionMetadata metadata = functionMetadataForType.get(requireNonNull(clazz, "clazz"));
+		return metadata != null ? metadata : getFunctionMetadataFromParent(clazz);
 	}
 
 	@SuppressWarnings("unchecked")
