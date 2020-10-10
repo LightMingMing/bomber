@@ -5,6 +5,8 @@ import java.util.Set;
 
 import com.bomber.functions.util.FunctionHelper;
 
+import static java.util.Objects.requireNonNull;
+
 public class DefaultFunctionContext extends AbstractFunctionContext {
 
 	private final FunctionMetadata metadata;
@@ -38,13 +40,10 @@ public class DefaultFunctionContext extends AbstractFunctionContext {
 	}
 
 	public DefaultFunctionContext(String name, Function<?> function, Input input) {
-		Objects.requireNonNull(name, "name");
-		Objects.requireNonNull(input, "input");
-		Objects.requireNonNull(function, "function");
+		this.name = requireNonNull(name, "name");
+		this.input = requireNonNull(input, "input");
+		this.function = requireNonNull(function, "function");
 
-		this.name = name;
-		this.input = input;
-		this.function = function;
 		this.metadata = FunctionHelper.getFunctionMetadata(function);
 		this.retKeys = readRetKeys();
 	}

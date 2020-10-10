@@ -315,8 +315,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 	}
 
 	private RequestEntity<String> createRequestEntity() throws IOException {
-		httpSample = httpSampleManager.get(this.getUid());
-		Objects.requireNonNull(httpSample, "httpSample");
+		httpSample = Objects.requireNonNull(httpSampleManager.get(this.getUid()), "httpSample");
 		if (mutable = httpSample.isMutable()) {
 			Map<String, String> context = getPayload(httpSample, this.payloadIndex);
 			return createRequestEntity(httpSample, value -> replace(value, context));

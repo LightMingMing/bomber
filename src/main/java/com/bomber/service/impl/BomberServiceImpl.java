@@ -4,11 +4,11 @@ import static com.bomber.api.controller.PayloadController.getPayloadApiUrl;
 import static com.bomber.model.BombingStatus.FAILURE;
 import static com.bomber.model.BombingStatus.PAUSE;
 import static com.bomber.model.BombingStatus.READY;
+import static java.util.Objects.requireNonNull;
 
 import java.net.URI;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -102,8 +102,7 @@ public class BomberServiceImpl implements BomberService {
 
 	@Override
 	public void execute(@NonNull BomberRequest request) {
-		HttpSample httpSample = httpSampleManager.get(request.getHttpSampleId());
-		Objects.requireNonNull(httpSample, "httpSample");
+		HttpSample httpSample = requireNonNull(httpSampleManager.get(request.getHttpSampleId()), "httpSample");
 
 		BombingRecord record = createBombingRecord(request, httpSample);
 		bombingRecordManager.save(record);

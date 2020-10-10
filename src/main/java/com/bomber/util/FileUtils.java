@@ -1,5 +1,7 @@
 package com.bomber.util;
 
+import org.springframework.util.Assert;
+
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.BufferedReader;
@@ -12,9 +14,7 @@ public class FileUtils {
 
 	public static String readSpecificLine(InputStream stream, int lineNumber) throws IOException {
 		Objects.requireNonNull(stream, "stream");
-		if (lineNumber < 0) {
-			throw new IllegalArgumentException("Line number must greater than or equals to 0");
-		}
+		Assert.isTrue(lineNumber >= 0, "Line number must be a non-negative value");
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream, UTF_8))) {
 			int count = 0;
 			for (;;) {

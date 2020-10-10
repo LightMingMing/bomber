@@ -1,15 +1,16 @@
 package com.bomber.functions.util;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Objects;
 
-import com.bomber.functions.core.FunctionMetadata;
 import org.ironrhino.core.util.ClassScanner;
 
 import com.bomber.functions.core.FuncInfo;
 import com.bomber.functions.core.Function;
+import com.bomber.functions.core.FunctionMetadata;
 
 public final class FunctionHelper {
 
@@ -45,24 +46,20 @@ public final class FunctionHelper {
 	}
 
 	public static Class<Function<?>> getFunctionType(String name) {
-		Objects.requireNonNull(name, "name");
-		return functionTypeMap.get(name);
+		return functionTypeMap.get(requireNonNull(name, "name"));
 	}
 
 	public static FunctionMetadata getFunctionMetadata(String name) {
-		Objects.requireNonNull(name, "name");
-		return functionMetadataMap.get(name);
+		return functionMetadataMap.get(requireNonNull(name, "name"));
 	}
 
 	public static FunctionMetadata getFunctionMetadata(Class<Function<?>> clazz) {
-		Objects.requireNonNull(clazz, "clazz");
-		return functionMetadataMap.get(generateFunctionName(clazz));
+		return functionMetadataMap.get(generateFunctionName(requireNonNull(clazz, "clazz")));
 	}
 
 	@SuppressWarnings("unchecked")
 	public static FunctionMetadata getFunctionMetadata(Function<?> function) {
-		Objects.requireNonNull(function, "function");
-		return getFunctionMetadata((Class<Function<?>>) function.getClass());
+		return getFunctionMetadata((Class<Function<?>>) requireNonNull(function, "function").getClass());
 	}
 
 	public static Map<String, String> getLabelValues() {
@@ -72,15 +69,12 @@ public final class FunctionHelper {
 	}
 
 	public static Function<?> createQuietly(String name) {
-		Class<Function<?>> type = getFunctionType(name);
-		Objects.requireNonNull(type, "function '" + name + "' not found");
-		return createQuietly(type);
+		return createQuietly(requireNonNull(getFunctionType(name), "function '" + name + "' not found"));
 	}
 
 	public static Function<?> createQuietly(Class<Function<?>> type) {
-		Objects.requireNonNull(type, "type");
 		try {
-			return type.newInstance();
+			return requireNonNull(type, "type").newInstance();
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new RuntimeException(e);
 		}
