@@ -45,23 +45,23 @@ public final class FunctionHelper {
 	}
 
 	public static Class<Function<?>> getFunctionType(String name) {
-		Objects.requireNonNull(name);
+		Objects.requireNonNull(name, "name");
 		return functionTypeMap.get(name);
 	}
 
 	public static FunctionMetadata getFunctionMetadata(String name) {
-		Objects.requireNonNull(name);
+		Objects.requireNonNull(name, "name");
 		return functionMetadataMap.get(name);
 	}
 
 	public static FunctionMetadata getFunctionMetadata(Class<Function<?>> clazz) {
-		Objects.requireNonNull(clazz);
+		Objects.requireNonNull(clazz, "clazz");
 		return functionMetadataMap.get(generateFunctionName(clazz));
 	}
 
 	@SuppressWarnings("unchecked")
 	public static FunctionMetadata getFunctionMetadata(Function<?> function) {
-		Objects.requireNonNull(function);
+		Objects.requireNonNull(function, "function");
 		return getFunctionMetadata((Class<Function<?>>) function.getClass());
 	}
 
@@ -73,11 +73,12 @@ public final class FunctionHelper {
 
 	public static Function<?> createQuietly(String name) {
 		Class<Function<?>> type = getFunctionType(name);
+		Objects.requireNonNull(type, "function '" + name + "' not found");
 		return createQuietly(type);
 	}
 
 	public static Function<?> createQuietly(Class<Function<?>> type) {
-		Objects.requireNonNull(type);
+		Objects.requireNonNull(type, "type");
 		try {
 			return type.newInstance();
 		} catch (InstantiationException | IllegalAccessException e) {

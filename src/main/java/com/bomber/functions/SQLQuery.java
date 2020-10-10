@@ -51,7 +51,7 @@ public class SQLQuery extends MapFunction {
 	private String[] ret;
 
 	public static int getJdbcType(String name) {
-		Objects.requireNonNull(name);
+		Objects.requireNonNull(name, "name");
 		Integer type = jdbcTypeForName.get(name.toUpperCase());
 		if (type == null) {
 			throw new IllegalArgumentException("Invalid jdbc type '" + name + "'");

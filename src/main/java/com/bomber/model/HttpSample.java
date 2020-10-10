@@ -116,7 +116,7 @@ public class HttpSample extends BaseEntity {
 	private Date modifyDate;
 
 	public String getUrl() {
-		Objects.requireNonNull(applicationInstance);
+		Objects.requireNonNull(applicationInstance, "applicationInstance");
 		return applicationInstance.getUrl() + (path.startsWith("/") ? path : "/" + path);
 	}
 

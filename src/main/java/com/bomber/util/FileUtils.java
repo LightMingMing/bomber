@@ -11,7 +11,7 @@ import java.util.Objects;
 public class FileUtils {
 
 	public static String readSpecificLine(InputStream stream, int lineNumber) throws IOException {
-		Objects.requireNonNull(stream);
+		Objects.requireNonNull(stream, "stream");
 		if (lineNumber < 0) {
 			throw new IllegalArgumentException("Line number must greater than or equals to 0");
 		}

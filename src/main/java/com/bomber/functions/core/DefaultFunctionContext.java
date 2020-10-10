@@ -38,9 +38,9 @@ public class DefaultFunctionContext extends AbstractFunctionContext {
 	}
 
 	public DefaultFunctionContext(String name, Function<?> function, Input input) {
-		Objects.requireNonNull(name);
-		Objects.requireNonNull(input);
-		Objects.requireNonNull(function);
+		Objects.requireNonNull(name, "name");
+		Objects.requireNonNull(input, "input");
+		Objects.requireNonNull(function, "function");
 
 		this.name = name;
 		this.input = input;
