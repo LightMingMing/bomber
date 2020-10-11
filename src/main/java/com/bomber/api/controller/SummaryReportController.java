@@ -1,5 +1,6 @@
 package com.bomber.api.controller;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,6 +17,9 @@ import com.bomber.service.SummaryReportService;
 @RequestMapping("/summaryReport")
 public class SummaryReportController {
 
+	protected final static Comparator<SummaryReport> comparator = Comparator
+			.comparingInt(SummaryReport::getNumberOfThreads).thenComparing(SummaryReport::getStartTime);
+
 	private final SummaryReportService bombingRecordService;
 
 	public SummaryReportController(SummaryReportService bombingRecordService) {
@@ -23,8 +27,9 @@ public class SummaryReportController {
 	}
 
 	@GetMapping("/list")
-	public List<SummaryReportVo> getSummaryReports(@RequestParam("recordId") String recordId) {
-		return bombingRecordService.list(recordId).stream().map(this::map).collect(Collectors.toList());
+	public List<SummaryReportVo> list(@RequestParam("recordId") String recordId) {
+		return bombingRecordService.list(recordId).stream().sorted(comparator).map(this::map)
+				.collect(Collectors.toList());
 	}
 
 	protected SummaryReportVo map(SummaryReport report) {
