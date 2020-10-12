@@ -30,6 +30,10 @@ public class BombingRecordAction extends EntityAction<BombingRecord> {
 		return "chart";
 	}
 
+	public String displayChartByG2() {
+		return "chartByG2";
+	}
+
 	public String compare() {
 		return "compare";
 	}
