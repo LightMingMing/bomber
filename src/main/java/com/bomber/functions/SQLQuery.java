@@ -134,57 +134,57 @@ public class SQLQuery extends MapFunction {
 	private void setArgument(PreparedStatement pstmt, String argument, int targetSqlType, int index)
 			throws SQLException {
 		switch (targetSqlType) {
-			case Types.INTEGER :
-				pstmt.setInt(index, Integer.parseInt(argument));
-				break;
-			case Types.DECIMAL :
-			case Types.NUMERIC :
-				pstmt.setBigDecimal(index, new BigDecimal(argument));
-				break;
-			case Types.DOUBLE :
-			case Types.FLOAT :
-				pstmt.setDouble(index, Double.parseDouble(argument));
-				break;
-			case Types.CHAR :
-			case Types.LONGVARCHAR :
-			case Types.VARCHAR :
-				pstmt.setString(index, argument);
-				break;
-			case Types.BIT :
-			case Types.BOOLEAN :
-				pstmt.setBoolean(index, Boolean.parseBoolean(argument));
-				break;
-			case Types.BIGINT :
-				pstmt.setLong(index, Long.parseLong(argument));
-				break;
-			case Types.DATE :
-				pstmt.setDate(index, Date.valueOf(argument));
-				break;
-			case Types.REAL :
-				pstmt.setFloat(index, Float.parseFloat(argument));
-				break;
-			case Types.TINYINT :
-				pstmt.setByte(index, Byte.parseByte(argument));
-				break;
-			case Types.SMALLINT :
-				pstmt.setShort(index, Short.parseShort(argument));
-				break;
-			case Types.TIMESTAMP :
-				pstmt.setTimestamp(index, Timestamp.valueOf(argument));
-				break;
-			case Types.TIME :
-				pstmt.setTime(index, Time.valueOf(argument));
-				break;
-			case Types.BINARY :
-			case Types.VARBINARY :
-			case Types.LONGVARBINARY :
-				pstmt.setBytes(index, argument.getBytes());
-				break;
-			case Types.NULL :
-				pstmt.setNull(index, targetSqlType);
-				break;
-			default :
-				pstmt.setObject(index, argument, targetSqlType);
+		case Types.INTEGER:
+			pstmt.setInt(index, Integer.parseInt(argument));
+			break;
+		case Types.DECIMAL:
+		case Types.NUMERIC:
+			pstmt.setBigDecimal(index, new BigDecimal(argument));
+			break;
+		case Types.DOUBLE:
+		case Types.FLOAT:
+			pstmt.setDouble(index, Double.parseDouble(argument));
+			break;
+		case Types.CHAR:
+		case Types.LONGVARCHAR:
+		case Types.VARCHAR:
+			pstmt.setString(index, argument);
+			break;
+		case Types.BIT:
+		case Types.BOOLEAN:
+			pstmt.setBoolean(index, Boolean.parseBoolean(argument));
+			break;
+		case Types.BIGINT:
+			pstmt.setLong(index, Long.parseLong(argument));
+			break;
+		case Types.DATE:
+			pstmt.setDate(index, Date.valueOf(argument));
+			break;
+		case Types.REAL:
+			pstmt.setFloat(index, Float.parseFloat(argument));
+			break;
+		case Types.TINYINT:
+			pstmt.setByte(index, Byte.parseByte(argument));
+			break;
+		case Types.SMALLINT:
+			pstmt.setShort(index, Short.parseShort(argument));
+			break;
+		case Types.TIMESTAMP:
+			pstmt.setTimestamp(index, Timestamp.valueOf(argument));
+			break;
+		case Types.TIME:
+			pstmt.setTime(index, Time.valueOf(argument));
+			break;
+		case Types.BINARY:
+		case Types.VARBINARY:
+		case Types.LONGVARBINARY:
+			pstmt.setBytes(index, argument.getBytes());
+			break;
+		case Types.NULL:
+			pstmt.setNull(index, targetSqlType);
+			break;
+		default:
+			pstmt.setObject(index, argument, targetSqlType);
 		}
 	}
 
