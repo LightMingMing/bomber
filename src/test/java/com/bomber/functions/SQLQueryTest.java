@@ -3,13 +3,33 @@ package com.bomber.functions;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 
 import com.bomber.functions.core.Input;
+import com.bomber.sql.CachedDataSourceManager;
+import com.bomber.util.MockApplicationInitializer;
 
 @Ignore
+@WebAppConfiguration
+@RunWith(SpringRunner.class)
+@ContextConfiguration(classes = CachedDataSourceManager.class)
 public class SQLQueryTest {
+
+	@Autowired
+	private ApplicationContext ctx;
+
+	@Before
+	public void setup() {
+		MockApplicationInitializer.setApplicationContext(ctx);
+	}
 
 	public Map<String, String> mysqlConfig() {
 		Map<String, String> params = new HashMap<>();

@@ -19,11 +19,13 @@ import java.util.Objects;
 
 import javax.sql.DataSource;
 
+import org.ironrhino.core.util.ApplicationContextUtils;
+import org.springframework.context.ApplicationContext;
+
 import com.bomber.functions.core.FuncInfo;
 import com.bomber.functions.core.Input;
 import com.bomber.functions.core.MapFunction;
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
+import com.bomber.sql.DataSourceManager;
 
 @FuncInfo(requiredArgs = "url, user, password, sql, ret", optionalArgs = "args, argTypes", retArg = "ret", parallel = true)
 public class SQLQuery extends MapFunction {
@@ -59,17 +61,21 @@ public class SQLQuery extends MapFunction {
 		return type;
 	}
 
+	protected DataSourceManager getDataSourceManager() {
+		ApplicationContext context = ApplicationContextUtils.getApplicationContext();
+		if (context == null) {
+			throw new IllegalStateException("SQLQuery function should be running in a web application");
+		}
+		return context.getBean(DataSourceManager.class);
+	}
+
 	@Override
 	public void init(Input input) {
 		String url = input.get("url");
 		String user = input.get("user");
 		String password = input.get("password");
 
-		HikariConfig config = new HikariConfig();
-		config.setJdbcUrl(url);
-		config.setUsername(user);
-		config.setPassword(password);
-		this.dataSource = new HikariDataSource(config);
+		this.dataSource = getDataSourceManager().getDataSource(url, user, password);
 
 		String sql = input.get("sql");
 		if (sql.contains("?")) {
@@ -112,9 +118,10 @@ public class SQLQuery extends MapFunction {
 
 	@Override
 	public void close() {
-		if (dataSource != null) {
-			((HikariDataSource) dataSource).close();
-		}
+//		if (dataSource != null) {
+//			((HikariDataSource) dataSource).close();
+//		}
+		dataSource = null;
 	}
 
 	private PreparedStatement getPreparedStatement(Connection connection) throws SQLException {
