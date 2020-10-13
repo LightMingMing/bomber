@@ -124,11 +124,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 	@Getter
 	private String requestMessage;
 	@Getter
-	private String responseMessage;
-	@Getter
 	private String errorMessage;
-	@Getter
-	private long elapsedTimeInMillis;
 
 	private static MultiValueMap<String, String> convertToHttpHeaders(List<HttpHeader> httpHeaderList,
 			Function<String, String> mapper) {
