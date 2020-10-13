@@ -32,7 +32,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.HttpClientErrorException;
@@ -51,6 +50,8 @@ import com.bomber.model.PayloadOption;
 import com.bomber.service.BomberRequest;
 import com.bomber.service.BomberService;
 import com.bomber.util.FileUtils;
+import com.fasterxml.jackson.core.JsonLocation;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.opensymphony.xwork2.interceptor.annotations.InputConfig;
 
 import lombok.Getter;
@@ -183,8 +184,21 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		return isNull(httpSample.getCsvFile()) && isEmpty(httpSample.getCsvFilePath());
 	}
 
+	// TODO validate json in front end
+	private boolean isValidJson(String body) {
+		try {
+			JsonUtils.getObjectMapper().readTree(body);
+			return true;
+		} catch (JsonProcessingException e) {
+			JsonLocation location = e.getLocation();
+			String sb = e.getOriginalMessage() + "at [line: " + location.getLineNr() + "[column: "
+					+ location.getColumnNr();
+			this.addFieldError("body", sb);
+			return false;
+		}
+	}
+
 	@Override
-	@Transactional
 	public String save() throws Exception {
 		if (!makeEntityValid() || !headersValid()) {
 			return INPUT;
@@ -200,6 +214,9 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		if (!isEmpty(httpSample.getBody())) {
 			for (HttpHeader header : httpSample.getHeaders()) {
 				if (header.getName().equals("Content-Type") && header.getValue().contains("json")) {
+					if (!isValidJson(httpSample.getBody())) {
+						return INPUT;
+					}
 					httpSample.setBody(JsonUtils.prettify(httpSample.getBody()));
 					break;
 				}
