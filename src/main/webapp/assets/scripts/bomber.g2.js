@@ -95,3 +95,49 @@ function displayAvg(chartId, data) {
 
     chart.render();
 }
+
+function getIntersectionOnCommonThreads(records) {
+    let commonThreads = new Set()
+    records[0]
+        .filter(r1 => !records.slice(1).some(other => !other.some(r2 => r1.threads === r2.threads)))
+        .forEach(r => commonThreads.add(r.threads))
+    return records.map(record => record.filter(r => commonThreads.has(r.threads)))
+}
+
+function displayCompareChart(chartId, data) {
+    const chart = new G2.Chart({
+        container: chartId,
+        autoFit: true,
+        height: 350,
+    })
+
+    chart.data(data)
+
+    chart.scale({
+        threads: {
+            alias: '并发数',
+            type: 'cat',
+        },
+        tps: {
+            nice: true,
+            alias: '吞吐量',
+            min: 0,
+            sync: true,
+        }
+    });
+
+    chart.tooltip({
+        showCrosshairs: true,
+        shared: true,
+    });
+
+    chart.axis('threads', {
+        title: {}
+    });
+    
+    chart.line().position('threads*tps').color('name')
+
+    chart.point().position('threads*tps').color('name').shape('circle').size(4)
+
+    chart.render()
+}

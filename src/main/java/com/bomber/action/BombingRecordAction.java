@@ -38,6 +38,10 @@ public class BombingRecordAction extends EntityAction<BombingRecord> {
 		return "compare";
 	}
 
+	public String compareByG2() {
+		return "compareByG2";
+	}
+
 	public String pauseExecute() {
 		bomberService.pauseExecute(this.getUid());
 		return SUCCESS;
