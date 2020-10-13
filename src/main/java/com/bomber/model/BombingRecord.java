@@ -69,16 +69,16 @@ public class BombingRecord extends BaseEntity {
 	@UiConfig(template = THREAD_GROUPS_TEMPLATE, excludedFromQuery = true, readonly = @Readonly(true), cellDynamicAttributes = "{\"style\":\"min-width:200px\"}")
 	private List<Integer> threadGroups;
 
-	@UiConfig(hidden = true, excludedFromQuery = true, readonly = @Readonly(true))
+	@UiConfig(hidden = true)
 	private int threadGroupCursor = 0;
 
-	@UiConfig(hidden = true, excludedFromQuery = true, readonly = @Readonly(true))
+	@UiConfig(hidden = true)
 	private int activeThreads = 0;
 
 	@UiConfig(hidden = true)
 	private Scope scope;
 
-	@UiConfig(hidden = true)
+	@UiConfig(hiddenInList = @Hidden(true), readonly = @Readonly(true), excludedFromQuery = true)
 	private int startPayloadIndex = 0;
 
 	@Min(1)
