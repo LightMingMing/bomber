@@ -26,16 +26,8 @@ public class BombingRecordAction extends EntityAction<BombingRecord> {
 	@Getter
 	private String recordIds;
 
-	public String displayChart() {
-		return "chart";
-	}
-
 	public String displayChartByG2() {
 		return "chartByG2";
-	}
-
-	public String compare() {
-		return "compare";
 	}
 
 	public String compareByG2() {
