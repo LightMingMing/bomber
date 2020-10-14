@@ -118,6 +118,7 @@ dependencies {
     compile("javax.transaction:transaction-api:1.1")
     compile("javax.validation:validation-api:2.0.1.Final")
 
+    compile("com.jayway.jsonpath:json-path:2.4.0")
 
     compile("mysql:mysql-connector-java:8.0.20") {
         exclude group: "com.google.protobuf"
