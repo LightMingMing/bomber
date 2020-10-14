@@ -342,7 +342,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		try {
 			requestMessage = renderPlainText(createRequestEntity());
 		} catch (Exception e) {
-			errorMessage = e.toString();
+			errorMessage = HtmlUtils.htmlEscape(e.toString());
 			logger.warn(e.getMessage());
 		}
 		return "singleShot";

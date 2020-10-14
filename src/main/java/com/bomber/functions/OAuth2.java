@@ -2,10 +2,6 @@ package com.bomber.functions;
 
 import java.util.concurrent.TimeUnit;
 
-import com.bomber.functions.core.FuncInfo;
-import com.bomber.functions.core.Input;
-import com.bomber.functions.core.StringFunction;
-
 import org.ironrhino.core.cache.CacheManager;
 import org.ironrhino.core.spring.http.client.RestTemplate;
 import org.ironrhino.core.util.ApplicationContextUtils;
@@ -19,6 +15,10 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.HttpClientErrorException;
+
+import com.bomber.functions.core.FuncInfo;
+import com.bomber.functions.core.Input;
+import com.bomber.functions.core.StringFunction;
 
 @FuncInfo(requiredArgs = "accessTokenEndpoint, grant_type, client_id, client_secret", optionalArgs = "username, password, device_id, device_name")
 public class OAuth2 extends StringFunction {
@@ -103,7 +103,7 @@ public class OAuth2 extends StringFunction {
 		try {
 			return template.postForEntity(accessTokenEndpoint, request, DefaultToken.class).getBody();
 		} catch (HttpClientErrorException e) {
-			throw new RuntimeException(e);
+			throw new RuntimeException("OAuth2 failed to access '" + accessTokenEndpoint + "'", e);
 		}
 	}
 }
