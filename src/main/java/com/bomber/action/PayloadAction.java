@@ -168,24 +168,28 @@ public class PayloadAction extends EntityAction<Payload> {
 		}
 
 		List<FunctionContext> all = payload.getOptions().stream().map(PayloadOption::map).collect(Collectors.toList());
-		this.columns = new ArrayList<>();
-		all.stream().map(FunctionContext::retKeys).forEach(columns::addAll);
 
 		FunctionExecutor executor = new DefaultFunctionExecutor(all);
+		List<Map<String, String>> result;
 		try {
-			StringJoiner joiner = new StringJoiner("\r\n");
-			for (int i = 0; i < rows; i++) {
-				StringJoiner joinerInline = new StringJoiner(", ");
-				Map<String, String> context = executor.execute();
-				for (String column : columns) {
-					joinerInline.add(context.get(column));
-				}
-				joiner.add(joinerInline.toString());
-			}
-			this.content = joiner.toString();
+			result = executor.execute(rows);
 		} finally {
 			executor.shutdown();
 		}
+
+		this.columns = new ArrayList<>();
+		all.stream().map(FunctionContext::retKeys).forEach(columns::addAll);
+
+		StringJoiner joiner = new StringJoiner("\r\n");
+		for (Map<String, String> context : result) {
+			StringJoiner joinerInline = new StringJoiner(", ");
+			for (String column : columns) {
+				joinerInline.add(context.get(column));
+			}
+			joiner.add(joinerInline.toString());
+		}
+		this.content = joiner.toString();
+
 		return "preview";
 	}
 
@@ -201,29 +205,34 @@ public class PayloadAction extends EntityAction<Payload> {
 		List<FunctionContext> all = payload.getOptions().stream().map(PayloadOption::map).collect(Collectors.toList());
 		FunctionExecutor executor = new DefaultFunctionExecutor(all, columns);
 
+		List<Map<String, String>> result;
+		try {
+			result = executor.execute(rows);
+		} finally {
+			executor.shutdown();
+		}
+
 		HttpServletResponse response = ServletActionContext.getResponse();
 		response.setCharacterEncoding("utf-8");
 		response.setHeader("Content-Type", "text/plain");
 		response.setHeader("Content-Disposition", "attachment;filename=" + payload.getId() + ".txt");
-		try {
-			PrintWriter writer = response.getWriter();
-			for (int i = 0; i < rows; i++) {
-				StringJoiner joinerInline = new StringJoiner(", ");
-				Map<String, String> context = executor.execute();
-				for (String column : columns) {
-					joinerInline.add(context.get(column));
-				}
-				writer.write(joinerInline.toString());
 
-				if (i != rows - 1) {
-					writer.write("\r\n");
-				}
-				if (i != 0 && (i & 127) == 0) {
-					writer.flush();
-				}
+		PrintWriter writer = response.getWriter();
+
+		for (int i = 0; i < rows; i++) {
+			StringJoiner joinerInline = new StringJoiner(", ");
+			Map<String, String> context = result.get(i);
+			for (String column : columns) {
+				joinerInline.add(context.get(column));
 			}
-		} finally {
-			executor.shutdown();
+			writer.write(joinerInline.toString());
+
+			if (i != rows - 1) {
+				writer.write("\r\n");
+			}
+			if (i != 0 && (i & 127) == 0) {
+				writer.flush();
+			}
 		}
 		return NONE;
 	}
