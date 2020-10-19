@@ -12,7 +12,7 @@ public class ThreadCounter extends ThreadGroupCounter {
 		this.threadGroups = threadGroups;
 
 		for (int i = 0; i < cursor; i++) {
-			this.threadCount += threadGroups.get(cursor);
+			this.threadCount += threadGroups.get(i);
 		}
 	}
 
