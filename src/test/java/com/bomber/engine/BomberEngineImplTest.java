@@ -34,6 +34,13 @@ public class BomberEngineImplTest {
 		assertThat(counter.getAndCount()).isEqualTo(100);
 		assertThat(counter.getAndCount()).isEqualTo(101);
 		assertThat(counter.getAndCount()).isEqualTo(102);
+
+		ctx.setThreadGroupCursor(10);
+		counter = BomberEngineImpl.createCounter(ctx);
+		assertThat(counter).isInstanceOf(BenchmarkCounter.class);
+		assertThat(counter.getAndCount()).isEqualTo(110);
+		assertThat(counter.getAndCount()).isEqualTo(111);
+		assertThat(counter.getAndCount()).isEqualTo(112);
 	}
 
 	@Test
@@ -49,6 +56,10 @@ public class BomberEngineImplTest {
 		assertThat(counter).isInstanceOf(BenchmarkCounter.class);
 		assertThat(counter.getAndCount()).isEqualTo(100);
 		assertThat(counter.getAndCount()).isEqualTo(101);
+
+		ctx.setThreadGroupCursor(2);
+		counter = BomberEngineImpl.createCounter(ctx);
+		assertThat(counter).isInstanceOf(BenchmarkCounter.class);
 		assertThat(counter.getAndCount()).isEqualTo(106);
 		assertThat(counter.getAndCount()).isEqualTo(116);
 	}
@@ -67,6 +78,10 @@ public class BomberEngineImplTest {
 		assertThat(counter).isInstanceOf(BenchmarkCounter.class);
 		assertThat(counter.getAndCount()).isEqualTo(100);
 		assertThat(counter.getAndCount()).isEqualTo(110);
+
+		ctx.setThreadGroupCursor(2);
+		counter = BomberEngineImpl.createCounter(ctx);
+		assertThat(counter).isInstanceOf(BenchmarkCounter.class);
 		assertThat(counter.getAndCount()).isEqualTo(160);
 		assertThat(counter.getAndCount()).isEqualTo(260);
 	}
