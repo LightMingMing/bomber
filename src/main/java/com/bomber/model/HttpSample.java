@@ -25,6 +25,7 @@ import org.ironrhino.core.metadata.UiConfig;
 import org.ironrhino.core.model.BaseEntity;
 import org.springframework.http.HttpMethod;
 
+import com.bomber.converter.AssertionListConverter;
 import com.bomber.converter.HttpHeaderListConverter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -39,7 +40,7 @@ import lombok.Setter;
 public class HttpSample extends BaseEntity {
 
 	protected static final String ACTION_COLUMN_BUTTONS = "<@btn view='view'/>"
-			+ "<@btn view='input' label='edit' windowoptions='{\"minWidth\":\"750\"}'/>"
+			+ "<@btn view='input' label='edit' windowoptions='{\"width\":\"60%\"}'/>"
 			+ "<@btn view='quickCreate' label='copy'/> <@btn view='singleShot' label='singleShot'/>"
 			+ "<@btn view='bomb' label='bomb' windowoptions='{\"minHeight\":\"200\"}'/>"
 			+ "<a href='<@url value='/bombingRecord?httpSample='/>${(entity.id)!}' rel='richtable' class='btn'>${getText('bombingRecord')}</a>";
@@ -57,62 +58,67 @@ public class HttpSample extends BaseEntity {
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "applicationInstanceId", nullable = false)
-	@UiConfig(width = "200px", shownInPick = true, cellDynamicAttributes = "{\"style\":\"text-align: center\"}")
+	@UiConfig(width = "200px", shownInPick = true, cellDynamicAttributes = "{\"style\":\"text-align: center\"}", group = "basic")
 	private ApplicationInstance applicationInstance;
 
 	@Column(nullable = false)
-	@UiConfig(alias = "requestName", width = "200px", cellDynamicAttributes = "{\"style\":\"text-align: center\"}")
+	@UiConfig(alias = "requestName", width = "200px", cellDynamicAttributes = "{\"style\":\"text-align: center\"}", group = "basic")
 	private String name;
 
 	@Column
-	@UiConfig(templateName = "httpSample_tag", type = "dictionary", cssClass = "chosen", hiddenInList = @Hidden(true), excludedFromQuery = true)
+	@UiConfig(templateName = "httpSample_tag", type = "dictionary", cssClass = "chosen", hiddenInList = @Hidden(true), excludedFromQuery = true, group = "basic")
 	private Set<String> tags;
 
 	@Column(nullable = false)
-	@UiConfig(alias = "requestMethod", width = "100px", cellDynamicAttributes = "{\"style\":\"text-align: center\"}")
+	@UiConfig(alias = "requestMethod", width = "100px", cellDynamicAttributes = "{\"style\":\"text-align: center\"}", group = "basic")
 	private HttpMethod method;
 
 	@Column(nullable = false)
-	@UiConfig(cssClass = "input-xxlarge", shownInPick = true, excludedFromQuery = true, cellDynamicAttributes = "{\"style\":\"font-family:SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;min-width:200px\"}")
+	@UiConfig(cssClass = "input-xxlarge", shownInPick = true, excludedFromQuery = true, cellDynamicAttributes = "{\"style\":\"font-family:SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;min-width:200px\"}", group = "basic")
 	private String path;
 
-	@UiConfig(alias = "headers", width = "250px", listTemplate = HEADERS_TEMPLATE, cellDynamicAttributes = CODE_ATTRIBUTE)
+	@UiConfig(alias = "headers", width = "250px", listTemplate = HEADERS_TEMPLATE, cellDynamicAttributes = CODE_ATTRIBUTE, group = "basic")
 	@Convert(converter = HttpHeaderListConverter.class)
 	private List<HttpHeader> headers;
 
 	@Column(length = 10240)
-	@UiConfig(hiddenInList = @Hidden(true), type = "textarea", viewTemplate = BODY_VIEW_TEMPLATE, inputTemplate = BODY_INPUT_TEMPLATE, excludedFromQuery = true)
+	@UiConfig(hiddenInList = @Hidden(true), type = "textarea", viewTemplate = BODY_VIEW_TEMPLATE, inputTemplate = BODY_INPUT_TEMPLATE, excludedFromQuery = true, group = "basic")
 	private String body;
 
+	@Column(length = 2048)
+	@UiConfig(alias = "assertions", hiddenInList = @Hidden(true), group = "assertion")
+	@Convert(converter = AssertionListConverter.class)
+	private List<Assertion> assertions;
+
 	@Transient
-	@UiConfig(alias = "file", hiddenInList = @Hidden(true), hiddenInView = @Hidden(true))
+	@UiConfig(alias = "file", hiddenInList = @Hidden(true), hiddenInView = @Hidden(true), group = "fileUpload")
 	private File csvFile;
 
 	@Transient
-	@UiConfig(hidden = true)
+	@UiConfig(hidden = true, group = "fileUpload")
 	private String csvFileFileName;
 
-	@UiConfig(alias = "filePath", hiddenInList = @Hidden(true), hiddenInInput = @Hidden(expression = "!value?has_content"), excludedFromQuery = true)
+	@UiConfig(alias = "filePath", hiddenInList = @Hidden(true), hiddenInInput = @Hidden(expression = "!value?has_content"), excludedFromQuery = true, group = "fileUpload")
 	private String csvFilePath;
 
-	@UiConfig(hiddenInList = @Hidden(true), description = "separatedByCommas", excludedFromQuery = true)
+	@UiConfig(hiddenInList = @Hidden(true), description = "separatedByCommas", excludedFromQuery = true, group = "fileUpload")
 	private String variableNames;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "payloadId")
-	@UiConfig(alias = "payload", hiddenInList = @Hidden(true), excludedFromQuery = true)
+	@UiConfig(alias = "payload", hiddenInList = @Hidden(true), excludedFromQuery = true, group = "basic")
 	private Payload payload;
 
 	@JsonIgnore
 	@CreationTimestamp
 	@Column(updatable = false)
-	@UiConfig(hiddenInList = @Hidden(true), hiddenInInput = @Hidden(true), excludedFromQuery = true)
+	@UiConfig(hiddenInList = @Hidden(true), hiddenInInput = @Hidden(true), excludedFromQuery = true, group = "basic")
 	private Date createDate;
 
 	@JsonIgnore
 	@UpdateTimestamp
 	@Column(insertable = false)
-	@UiConfig(hiddenInList = @Hidden(true), hiddenInInput = @Hidden(true), excludedFromQuery = true)
+	@UiConfig(hiddenInList = @Hidden(true), hiddenInInput = @Hidden(true), excludedFromQuery = true, group = "basic")
 	private Date modifyDate;
 
 	public String getUrl() {
