@@ -126,14 +126,18 @@ $(function () {
             url: CONTEXT_PATH + "/httpSample/executeRequest?id=" + uid + "&payloadIndex=" + payloadIndex,
             success: function (data) {
                 if (data.content !== undefined) {
-                    $("#error").addClass("hidden")
                     $("#response").removeClass("hidden")
                     $("code.response").html(data.content)
                     $("span.elapsedTimeInMillis").html(data.elapsedTimeInMillis)
                 } else {
                     $("#response").addClass("hidden")
+                }
+
+                if (data.error !== undefined) {
                     $("#error").removeClass("hidden")
                     $("code.error").html(data.error)
+                } else {
+                    $("#error").addClass("hidden")
                 }
             }
         })

@@ -38,11 +38,15 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.HtmlUtils;
 
+import com.bomber.asserter.AssertResult;
+import com.bomber.asserter.Asserter;
+import com.bomber.asserter.util.Asserters;
 import com.bomber.engine.Scope;
 import com.bomber.functions.core.DefaultFunctionExecutor;
 import com.bomber.functions.core.FunctionContext;
 import com.bomber.functions.core.FunctionExecutor;
 import com.bomber.manager.HttpSampleManager;
+import com.bomber.model.Assertion;
 import com.bomber.model.HttpHeader;
 import com.bomber.model.HttpSample;
 import com.bomber.model.Payload;
@@ -157,6 +161,21 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		MultiValueMap<String, String> headers = convertToHttpHeaders(sample.getHeaders(), mapper);
 		String body = mapper.apply(sample.getBody());
 		return new RequestEntity<>(body, headers, method, uri);
+	}
+
+	private static AssertResult assertThat(String text, Assertion model) {
+		Asserter asserter = Asserters.create(model.getAsserter());
+		com.bomber.asserter.Assertion assertion = new com.bomber.asserter.Assertion();
+		assertion.setCondition(model.getCondition());
+		assertion.setExpression(model.getExpression());
+		assertion.setExpected(model.getExpected());
+		assertion.setText(text);
+		return asserter.run(assertion);
+	}
+
+	public static AssertResult assertThat(String text, List<Assertion> models) {
+		return models.stream().map(model -> assertThat(text, model)).filter(r -> !r.isSuccessful()).findFirst()
+				.orElse(AssertResult.success());
 	}
 
 	private boolean headersValid() {
@@ -366,18 +385,26 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 			ResponseEntity<String> responseEntity = stringMessageRestTemplate.exchange(requestEntity, String.class);
 			long elapsedTimeInMillis = (System.nanoTime() - startTime) / 1_000_000;
 
+			List<Assertion> assertions = httpSample.getAssertions();
+			if (assertions != null) {
+				AssertResult result = assertThat(responseEntity.getBody(), assertions);
+				if (!result.isSuccessful()) {
+					logger.error("Assert failure: {}", result.getError());
+					response.setError("Assert failure:\n\t" + result.getError());
+				}
+			}
+
 			String responseMessage = renderPlainText(responseEntity);
 			logger.info("Response entity:\n{}", responseMessage);
 			response.setContent(responseMessage);
 			response.setElapsedTimeInMillis(elapsedTimeInMillis);
 		} catch (HttpClientErrorException e) {
 			// eg. 404 Not Found
-			response.setContent(
-					e.getStatusCode().toString() + "\n" + HtmlUtils.htmlEscape(e.getResponseBodyAsString()));
-			logger.warn(e.getMessage());
+			response.setError(e.getStatusCode().toString() + "\n" + HtmlUtils.htmlEscape(e.getResponseBodyAsString()));
+			logger.error(e.getMessage());
 		} catch (Exception e) {
 			response.setError(e.toString());
-			logger.warn(e.getMessage());
+			logger.error(e.getMessage());
 		}
 		return "json";
 	}
