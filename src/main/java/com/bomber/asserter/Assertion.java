@@ -13,5 +13,5 @@ public class Assertion {
 
 	private Condition condition;
 
-	private String expectedValue;
+	private String expected;
 }

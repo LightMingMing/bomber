@@ -17,7 +17,7 @@ public class JsonPathAsserterTest {
 		assertThat(asserter.run(assertion).isSuccessful()).isTrue();
 
 		assertion.setCondition(Condition.EQUAL);
-		assertion.setExpectedValue("male");
+		assertion.setExpected("male");
 		assertThat(asserter.run(assertion).isSuccessful()).isTrue();
 
 		assertion.setExpression("$[0]['error']");
