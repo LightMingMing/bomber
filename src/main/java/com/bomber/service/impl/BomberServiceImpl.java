@@ -70,6 +70,8 @@ public class BomberServiceImpl implements BomberService {
 		snapshot.setUrl(sample.getUrl());
 		snapshot.setBody(sample.getBody());
 		snapshot.setHeaders(convertToStringList(sample.getHeaders()));
+		sample.getAssertions().forEach(each -> snapshot.addAssertion(each.getAsserter(), each.getExpression(),
+				each.getCondition().name(), each.getExpected()));
 
 		if (sample.isMutable()) {
 			if (sample.getPayload() != null) {

@@ -86,6 +86,8 @@ public class BomberEngineImpl implements BomberEngine {
 		request.setPayloadFile(snapshot.getPayloadFile());
 		request.setVariableNames(snapshot.getVariableNames());
 		request.setPayloadUrl(snapshot.getPayloadUrl());
+		snapshot.getAssertions().forEach(each -> request.addAssertion(each.getAsserter(), each.getExpression(),
+				each.getCondition(), each.getExpected()));
 		if (scope == Scope.Request) {
 			request.setScope("request");
 		} else if (scope == Scope.Thread) {

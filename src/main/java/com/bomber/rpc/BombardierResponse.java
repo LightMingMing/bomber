@@ -19,6 +19,8 @@ public class BombardierResponse {
 
 	private double tps;
 
+	private int errorCount;
+
 	@Getter
 	@Setter
 	public static class StatusStats {
