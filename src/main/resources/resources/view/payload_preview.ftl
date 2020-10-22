@@ -20,10 +20,22 @@
                 </#list>
             </div>
         </div>
-        <div class="control-group">
-            <label class="control-label" for="rows">行数</label>
-            <div class="controls">
-                <input type="text" id="rows" name="rows" value="1000">
+        <div class="row-fluid">
+            <div class="span4">
+                <div class="control-group">
+                    <label class="control-label" for="rows">行数</label>
+                    <div class="controls">
+                        <input type="text" id="rows" class="input-small" name="rows" value="1000">
+                    </div>
+                </div>
+            </div>
+            <div class="span4">
+                <div class="control-group">
+                    <label class="control-label" for="delimiter">分隔符-默认'${delimiter}'</label>
+                    <div class="controls">
+                        <input type="text" id="delimiter" class="input-small" name="delimiter" value="${delimiter}">
+                    </div>
+                </div>
             </div>
         </div>
         <div class="form-actions">

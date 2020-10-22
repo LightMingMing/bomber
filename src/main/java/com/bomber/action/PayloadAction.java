@@ -33,6 +33,8 @@ public class PayloadAction extends EntityAction<Payload> {
 
 	private static final long serialVersionUID = 7361376054414253701L;
 
+	private static final String DEFAULT_DELIMITER = ",";
+
 	@Autowired
 	private PayloadManager payloadManager;
 
@@ -43,6 +45,10 @@ public class PayloadAction extends EntityAction<Payload> {
 	@Getter
 	@Setter
 	private int rows = 100;
+
+	@Getter
+	@Setter
+	private String delimiter = DEFAULT_DELIMITER;
 
 	@Getter
 	private String content;
@@ -220,7 +226,7 @@ public class PayloadAction extends EntityAction<Payload> {
 		PrintWriter writer = response.getWriter();
 
 		for (int i = 0; i < rows; i++) {
-			StringJoiner joinerInline = new StringJoiner(", ");
+			StringJoiner joinerInline = new StringJoiner(delimiter);
 			Map<String, String> context = result.get(i);
 			for (String column : columns) {
 				joinerInline.add(context.get(column));
