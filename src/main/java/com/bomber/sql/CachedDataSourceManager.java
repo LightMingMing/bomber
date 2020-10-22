@@ -25,7 +25,7 @@ public class CachedDataSourceManager implements DataSourceManager, DisposableBea
 		hikariConfig.setMaximumPoolSize(100);
 		hikariConfig.setConnectionTimeout(10000);
 		hikariConfig.setMaxLifetime(3600000);
-		hikariConfig.setMinimumIdle(1800000);
+		hikariConfig.setIdleTimeout(1800000);
 		return new HikariDataSource(hikariConfig);
 	}
 
