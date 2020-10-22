@@ -1,13 +1,13 @@
 package com.bomber.functions.core;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
 import java.util.List;
 
-import com.bomber.functions.Counter;
 import org.junit.Test;
 
+import com.bomber.functions.Counter;
 import com.bomber.functions.Properties;
 import com.bomber.functions.RetArg;
 import com.bomber.functions.Sum;
@@ -52,6 +52,17 @@ public class DefaultDependencyHandlerTest {
 		assertThat(list).hasSize(2);
 		assertThat(list.get(0)).isEqualTo(f2);
 		assertThat(list.get(1)).isEqualTo(f1);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testDuplicateReturnKeys() {
+		Input i1 = new Input("a", "${a}", "b", "${b}");
+		FunctionContext f1 = new DefaultFunctionContext("c", new Sum(), i1);
+
+		Input i2 = new Input("c", "${a}", "d", "${b}");
+		FunctionContext f2 = new DefaultFunctionContext("properties", new Properties(), i2);
+
+		handler.handle(Arrays.asList(f1, f2));
 	}
 
 }

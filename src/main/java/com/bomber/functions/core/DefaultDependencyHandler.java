@@ -12,6 +12,10 @@ public class DefaultDependencyHandler implements DependencyHandler {
 
 	public static DefaultDependencyHandler DEFAULT = new DefaultDependencyHandler();
 
+	private List<String> intersection(Collection<String> c1, Collection<String> c2) {
+		return c1.stream().filter(c2::contains).collect(Collectors.toList());
+	}
+
 	@Override
 	public List<FunctionContext> handle(Collection<FunctionContext> disordered) {
 		Set<String> found = new HashSet<>();
@@ -25,6 +29,10 @@ public class DefaultDependencyHandler implements DependencyHandler {
 				Set<String> dependentArgs;
 				if ((dependentArgs = next.dependentKeys()).isEmpty() || found.containsAll(dependentArgs)) {
 					ordered.add(next);
+					List<String> intersection = intersection(found, next.retKeys());
+					if (!intersection.isEmpty()) {
+						throw new IllegalArgumentException("Duplicate return keys " + intersection);
+					}
 					found.addAll(next.retKeys());
 					iterator.remove();
 				}
