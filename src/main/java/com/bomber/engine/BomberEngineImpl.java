@@ -74,6 +74,7 @@ public class BomberEngineImpl implements BomberEngine {
 		record.setPoint99(percentiles.getPoint99());
 
 		record.setTps(response.getTps());
+		record.setErrorCount(response.getErrorCount());
 		return record;
 	}
 

@@ -104,6 +104,9 @@ public class SummaryReport extends BaseEntity {
 	@UiConfig(excludedFromQuery = true, hiddenInList = @Hidden(true))
 	private int other;
 
+	@UiConfig(description = "errorCount.desc", excludedFromQuery = true, hiddenInList = @Hidden(true))
+	private int errorCount;
+
 	@Column(nullable = false)
 	@UiConfig(width = "150px", queryWithRange = true)
 	private Date startTime;
@@ -117,11 +120,11 @@ public class SummaryReport extends BaseEntity {
 	private double successRate;
 
 	public double getSuccessCount() {
-		return getReq2xx() + getReq3xx();
+		return errorCount > 0 ? numberOfRequests - errorCount : getReq2xx() + getReq3xx();
 	}
 
 	public double getFailureCount() {
-		return getReq1xx() + getReq4xx() + getReq5xx() + getOther();
+		return errorCount > 0 ? errorCount : getReq1xx() + getReq4xx() + getReq5xx() + getOther();
 	}
 
 	public double getSuccessRate() {

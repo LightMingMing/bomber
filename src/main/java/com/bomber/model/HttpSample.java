@@ -39,7 +39,7 @@ import lombok.Setter;
 @Richtable(showQueryForm = true, celleditable = false, actionColumnButtons = HttpSample.ACTION_COLUMN_BUTTONS, order = "createDate desc")
 public class HttpSample extends BaseEntity {
 
-	protected static final String ACTION_COLUMN_BUTTONS = "<@btn view='view'/>"
+	protected static final String ACTION_COLUMN_BUTTONS = "<@btn view='view' windowoptions='{\"width\":\"60%\"}'/>"
 			+ "<@btn view='input' label='edit' windowoptions='{\"width\":\"60%\"}'/>"
 			+ "<@btn view='quickCreate' label='copy'/> <@btn view='singleShot' label='singleShot'/>"
 			+ "<@btn view='bomb' label='bomb' windowoptions='{\"minHeight\":\"200\"}'/>"
