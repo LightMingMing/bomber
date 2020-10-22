@@ -25,7 +25,27 @@ public class JsonPathAsserterTest {
 		assertThat(asserter.run(assertion).isSuccessful()).isTrue();
 	}
 
+	@Test
+	public void testInteger() {
+		Assertion assertion = new Assertion();
+		assertion.setText(json());
+		assertion.setExpected("20");
+		assertion.setCondition(Condition.EQUAL);
+		assertion.setExpression("$[0].age");
+		assertThat(new JsonPathAsserter().run(assertion).isSuccessful()).isTrue();
+	}
+
+	@Test
+	public void testFloat() {
+		Assertion assertion = new Assertion();
+		assertion.setText(json());
+		assertion.setExpected("100.99");
+		assertion.setCondition(Condition.EQUAL);
+		assertion.setExpression("$[0].deposit");
+		assertThat(new JsonPathAsserter().run(assertion).isSuccessful()).isTrue();
+	}
+
 	public String json() {
-		return "[{\"name\" : \"john\",\"gender\" : \"male\"}]";
+		return "[{\"name\" : \"john\",\"gender\" : \"male\", \"age\" : 20, \"deposit\":100.99}]";
 	}
 }
