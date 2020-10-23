@@ -8,6 +8,8 @@ import javax.sql.DataSource;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.stereotype.Service;
 
+import com.mysql.cj.conf.ConnectionUrl;
+import com.mysql.cj.conf.HostInfo;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
@@ -17,6 +19,12 @@ public class CachedDataSourceManager implements DataSourceManager, DisposableBea
 	private static final int poolSize = Runtime.getRuntime().availableProcessors() * 2;
 
 	private final Map<JdbcConfig, DataSource> cachedDataSources = new ConcurrentHashMap<>();
+
+	// HikariPool-{database}@{host}
+	protected static String generatePoolName(String jdbcUrl) {
+		HostInfo hostInfo = ConnectionUrl.getConnectionUrlInstance(jdbcUrl, null).getMainHost();
+		return hostInfo == null ? null : "HikariPool-" + hostInfo.getDatabase() + "@" + hostInfo.getHost();
+	}
 
 	private DataSource createHikariDataSource(JdbcConfig config) {
 		HikariConfig hikariConfig = new HikariConfig();
@@ -28,6 +36,7 @@ public class CachedDataSourceManager implements DataSourceManager, DisposableBea
 		hikariConfig.setMaximumPoolSize(poolSize);
 		hikariConfig.setConnectionTimeout(10000);
 		hikariConfig.setMaxLifetime(3600000); // 1 hour
+		hikariConfig.setPoolName(generatePoolName(config.getUrl()));
 		return new HikariDataSource(hikariConfig);
 	}
 
