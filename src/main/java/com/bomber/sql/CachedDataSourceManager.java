@@ -14,6 +14,8 @@ import com.zaxxer.hikari.HikariDataSource;
 @Service
 public class CachedDataSourceManager implements DataSourceManager, DisposableBean {
 
+	private static final int poolSize = Runtime.getRuntime().availableProcessors() * 2;
+
 	private final Map<JdbcConfig, DataSource> cachedDataSources = new ConcurrentHashMap<>();
 
 	private DataSource createHikariDataSource(JdbcConfig config) {
@@ -21,11 +23,11 @@ public class CachedDataSourceManager implements DataSourceManager, DisposableBea
 		hikariConfig.setJdbcUrl(config.getUrl());
 		hikariConfig.setUsername(config.getUser());
 		hikariConfig.setPassword(config.getPassword());
-		hikariConfig.setMinimumIdle(Runtime.getRuntime().availableProcessors());
-		hikariConfig.setMaximumPoolSize(100);
+		// Fixed size
+		hikariConfig.setMinimumIdle(poolSize);
+		hikariConfig.setMaximumPoolSize(poolSize);
 		hikariConfig.setConnectionTimeout(10000);
-		hikariConfig.setMaxLifetime(3600000);
-		hikariConfig.setIdleTimeout(1800000);
+		hikariConfig.setMaxLifetime(3600000); // 1 hour
 		return new HikariDataSource(hikariConfig);
 	}
 
