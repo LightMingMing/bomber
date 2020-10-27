@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.Arrays;
 import java.util.List;
 
+import com.bomber.functions.CustomArgs;
 import org.junit.Test;
 
 import com.bomber.functions.Counter;
@@ -63,6 +64,20 @@ public class DefaultDependencyHandlerTest {
 		FunctionContext f2 = new DefaultFunctionContext("properties", new Properties(), i2);
 
 		handler.handle(Arrays.asList(f1, f2));
+	}
+
+	@Test
+	public void testCustomArgs() {
+		Input i1 = new Input("args", "a, b");
+		FunctionContext f1 = new DefaultFunctionContext("f1", new CustomArgs(), i1);
+
+		Input i2 = new Input("a", "1", "b", "2");
+		FunctionContext f2 = new DefaultFunctionContext("properties", new Properties(), i2);
+
+		List<FunctionContext> list = handler.handle(Arrays.asList(f1, f2));
+		assertThat(list).hasSize(2);
+		assertThat(list.get(0)).isEqualTo(f2);
+		assertThat(list.get(1)).isEqualTo(f1);
 	}
 
 }

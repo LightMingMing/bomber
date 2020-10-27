@@ -17,6 +17,8 @@ public class FunctionMetadata {
 
 	private String optionalArgs;
 
+	private String customArg;
+
 	private boolean retAllArgs = false;
 
 	private String retArg;

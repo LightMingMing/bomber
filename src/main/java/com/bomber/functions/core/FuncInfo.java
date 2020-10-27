@@ -5,7 +5,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target({ElementType.TYPE})
+@Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface FuncInfo {
 
@@ -13,9 +13,7 @@ public @interface FuncInfo {
 
 	String optionalArgs() default "";
 
-	String initArgs() default "";
-
-	String runArgs() default "";
+	String customArg() default "";
 
 	boolean retAllArgs() default false;
 

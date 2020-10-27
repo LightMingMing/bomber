@@ -36,6 +36,7 @@ public final class FunctionHelper {
 				fm.setRetAllArgs(funcInfo.retAllArgs());
 				fm.setRetArg(funcInfo.retArg());
 				fm.setParallel(funcInfo.parallel());
+				fm.setCustomArg(funcInfo.customArg());
 			}
 
 			functionTypeMap.put(name, clazz);

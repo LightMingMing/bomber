@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +51,18 @@ public abstract class AbstractFunctionContext implements FunctionContext {
 		if (input().isEmpty()) {
 			return Collections.emptySet();
 		}
-		return readReplaceableKeys(input().values());
+		Set<String> result = readReplaceableKeys(input().values());
+		result.addAll(customerArgs());
+		return result;
+	}
+
+	protected Set<String> customerArgs() {
+		String customArg = metadata().getCustomArg();
+		if (customArg.isEmpty()) {
+			return Collections.emptySet();
+		} else {
+			return Arrays.stream(input().get(customArg).split(", *")).collect(Collectors.toSet());
+		}
 	}
 
 	@Override
@@ -106,6 +118,7 @@ public abstract class AbstractFunctionContext implements FunctionContext {
 	protected Input newInput(Output output) {
 		if (!input().isEmpty() && !output.isEmpty()) {
 			Map<String, String> temp = new HashMap<>();
+			customerArgs().forEach(k -> temp.put(k, output.get(k)));
 			input().getAll().forEach((k, v) -> temp.put(k, replace(v, output.getAll())));
 			return new Input(temp);
 		}
