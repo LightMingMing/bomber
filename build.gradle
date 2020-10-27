@@ -58,8 +58,6 @@ dependencies {
 
     compile fileTree(dir: 'lib', includes: ['*jar'])
 
-    compile("com.belerweb:pinyin4j:2.5.1")
-
     compile("com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}")
     compile("com.fasterxml.jackson.core:jackson-core:${jacksonVersion}")
     compile("com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}")
@@ -81,15 +79,6 @@ dependencies {
     compile("commons-io:commons-io:2.6")
     compile("commons-logging:commons-logging:1.2")
     compile("commons-net:commons-net:3.6")
-
-    compile("io.github.resilience4j:resilience4j-all:1.1.0") {
-        exclude group: "io.github.resilience4j", module: "resilience4j-circularbuffer"
-        exclude group: "io.github.resilience4j", module: "resilience4j-consumer"
-        exclude group: "io.github.resilience4j", module: "resilience4j-cache"
-        exclude group: "io.github.resilience4j", module: "resilience4j-timelimiter"
-        exclude group: "io.vavr", module: "vavr-match"
-        exclude group: "org.slf4j"
-    }
 
     compile("io.lettuce:lettuce-core:5.2.2.RELEASE") {
         exclude group: "io.netty"
@@ -146,13 +135,6 @@ dependencies {
     }
     compile("org.apache.httpcomponents:httpmime:4.5.12") {
         exclude group: "org.apache.httpcomponents"
-    }
-
-    compile("org.apache.kafka:kafka-clients:2.5.0") {
-        exclude group: "com.github.luben"
-        exclude group: "org.lz4"
-        exclude group: "org.slf4j"
-        exclude group: "org.xerial.snappy"
     }
 
     compile("org.aspectj:aspectjweaver:1.9.5")
@@ -214,11 +196,6 @@ dependencies {
     compile("org.springframework.data:spring-data-commons:${springdataVersion}")
     compile("org.springframework.data:spring-data-keyvalue:${springdataVersion}")
     compile("org.springframework.data:spring-data-redis:${springdataVersion}")
-
-    compile("org.springframework.kafka:spring-kafka:2.5.2.RELEASE") {
-        exclude group: "org.apache.kafka"
-        exclude group: "org.springframework"
-    }
 
     compile("org.springframework.retry:spring-retry:1.3.0")
 
