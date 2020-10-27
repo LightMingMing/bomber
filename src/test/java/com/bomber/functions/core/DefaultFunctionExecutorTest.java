@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ForkJoinPool;
 
+import com.bomber.functions.MVEL;
 import org.junit.Test;
 
 import com.bomber.functions.Bad;
@@ -40,6 +41,19 @@ public class DefaultFunctionExecutorTest {
 
 		executor.shutdown();
 		then(sum).should().close();
+	}
+
+	@Test
+	public void testMvel() {
+		FunctionContext f1 = new DefaultFunctionContext("r", new MVEL(), "script", "str.substring(2) + '-' + c", "args",
+				"str, c");
+		FunctionContext f2 = new DefaultFunctionContext("str", new Properties(), "str", "012345");
+		FunctionContext f3 = new DefaultFunctionContext("c", new Counter());
+
+		FunctionExecutor executor = new DefaultFunctionExecutor(Arrays.asList(f1, f2, f3));
+		assertThat(executor.execute().get("r")).isEqualTo("2345-0");
+		assertThat(executor.execute().get("r")).isEqualTo("2345-1");
+		executor.shutdown();
 	}
 
 	@Test
