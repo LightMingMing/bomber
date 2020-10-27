@@ -22,6 +22,11 @@ public class CachedDataSourceManager implements DataSourceManager, DisposableBea
 
 	// HikariPool-{database}@{host}
 	protected static String generatePoolName(String jdbcUrl) {
+		// Avoid UnsupportedConnectionStringException: Connector/J cannot handle a
+		// connection string 'jdbc:h2:mem:test;'
+		if (jdbcUrl.startsWith("jdbc:h2")) {
+			return null;
+		}
 		HostInfo hostInfo = ConnectionUrl.getConnectionUrlInstance(jdbcUrl, null).getMainHost();
 		return hostInfo == null ? null : "HikariPool-" + hostInfo.getDatabase() + "@" + hostInfo.getHost();
 	}
