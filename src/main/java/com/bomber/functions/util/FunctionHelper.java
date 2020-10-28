@@ -84,8 +84,8 @@ public final class FunctionHelper {
 
 	public static Function<?> createQuietly(Class<Function<?>> type) {
 		try {
-			return requireNonNull(type, "type").newInstance();
-		} catch (InstantiationException | IllegalAccessException e) {
+			return requireNonNull(type, "type").getDeclaredConstructor().newInstance();
+		} catch (ReflectiveOperationException e) {
 			throw new RuntimeException(e);
 		}
 	}
