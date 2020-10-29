@@ -18,6 +18,14 @@ function preprocess(data) {
     return result
 }
 
+function formatTime(time) {
+    const num = Number(time)
+    if (num >= 1000) {
+        return (num / 1000).toFixed(2) + "s"
+    }
+    return num.toFixed(0) + "ms"
+}
+
 function displayTps(chartId, data) {
     const chart = new G2.Chart({
         container: chartId,
@@ -47,7 +55,7 @@ function displayTps(chartId, data) {
         title: {}
     });
 
-    chart.line().position('threads*tps');
+    chart.line().position('threads*tps').label('tps');
 
     chart.point().position('threads*tps').shape('circle').size(4);
 
@@ -86,12 +94,16 @@ function displayAvg(chartId, data) {
     chart.axis('avg', {
         label: {
             formatter: (val) => {
-                return val + 'ms';
+                return formatTime(val);
             },
         }
     });
 
-    chart.interval().position('threads*avg');
+    chart.interval().position('threads*avg').label('avg', (avg) => {
+        return {
+            content: formatTime(avg),
+        }
+    });
 
     chart.render();
 }
@@ -134,7 +146,7 @@ function displayCompareChart(chartId, data) {
     chart.axis('threads', {
         title: {}
     });
-    
+
     chart.line().position('threads*tps').color('name')
 
     chart.point().position('threads*tps').color('name').shape('circle').size(4)
