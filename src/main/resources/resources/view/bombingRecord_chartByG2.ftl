@@ -26,8 +26,7 @@
     const recordNameUrl = '<@url value='/api/bombingRecord/getRecordName?id='/>${recordId!}'
     $.get(recordNameUrl, name => $("#recordName").html(name))
     $.get(reportsListUrl, function (data) {
-        displayTps("throughput", data)
-        displayAvg("average", data)
+        displaySummaryReports("throughput", "average", data)
     })
 </script>
 </body>

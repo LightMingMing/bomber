@@ -33,7 +33,7 @@ function displayTps(chartId, data) {
         height: 350,
     });
 
-    chart.data(preprocess(data));
+    chart.data(data);
     chart.scale({
         threads: {
             alias: '并发数',
@@ -60,6 +60,8 @@ function displayTps(chartId, data) {
     chart.point().position('threads*tps').shape('circle').size(4);
 
     chart.render();
+
+    return chart
 }
 
 function displayAvg(chartId, data) {
@@ -69,7 +71,7 @@ function displayAvg(chartId, data) {
         height: 350,
     });
 
-    chart.data(preprocess(data));
+    chart.data(data);
 
     chart.scale({
         threads: {
@@ -106,6 +108,53 @@ function displayAvg(chartId, data) {
     });
 
     chart.render();
+
+    return chart
+}
+
+// Tooltip联动
+function displaySummaryReports(tpsChartId, avgChartId, reports) {
+    const data = preprocess(reports)
+    const charts = [displayTps(tpsChartId, data), displayAvg(avgChartId, data)]
+    charts.forEach(chart => {
+        chart.on("tooltip:show", ev => {
+            chart.tooltipIsShow = true
+            const snapRecords = chart.getSnapRecords({x: ev.x, y: ev.y})
+            if (!snapRecords || !snapRecords.length) {
+                return
+            }
+            const record = snapRecords[0]._origin;
+            charts.filter(other => !other.tooltipIsShow).forEach(other => {
+                const pos = other.getXY(record)
+                if (pos) {
+                    other.tooltipIsShow = true
+                    other.showTooltip(pos)
+                }
+            })
+        });
+
+        chart.on("tooltip:hide", () => {
+            chart.tooltipIsShow = false
+            charts.filter(other => other.tooltipIsShow).forEach(other => {
+                other.tooltipIsShow = false
+                other.hideTooltip();
+            })
+        })
+    })
+
+    charts[0].on("tooltip:change", ev => {
+        //charts[0].tooltipIsShow = true
+        const snapRecords = charts[0].getSnapRecords({x: ev.x, y: ev.y})
+        if (!snapRecords || !snapRecords.length) {
+            return
+        }
+        const record = snapRecords[0]._origin;
+        const pos = charts[1].getXY(record)
+        if (pos) {
+            charts[1].tooltipIsShow = true
+            charts[1].showTooltip(pos)
+        }
+    });
 }
 
 function getIntersectionOnCommonThreads(records) {
