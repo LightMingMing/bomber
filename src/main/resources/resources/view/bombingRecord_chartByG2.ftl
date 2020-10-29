@@ -11,13 +11,13 @@
 </head>
 <body>
 <div class="container">
-    <div style="text-align: center"><span id="recordName" style="font-weight: bold"></span></div>
+    <div><h4 id="recordName" class="center"></h4></div>
     <div style="margin:0 50px 0 50px">
-        <p>吞吐量</p>
+        <div style="margin:10px 0"><span class="label label-success label-no-radius">吞吐量</span></div>
         <div id="throughput"></div>
     </div>
     <div style="margin:0 50px 0 50px">
-        <p>平均响应时间</p>
+        <div style="margin:10px 0"><span class="label label-success label-no-radius">平均响应时间</span></div>
         <div id="average"></div>
     </div>
 </div>

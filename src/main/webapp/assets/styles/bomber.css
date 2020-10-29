@@ -4,3 +4,9 @@ Fix typeahead
 .table.datagrided td {
     position: relative;
 }
+
+.label-no-radius {
+    border-radius: 0;
+    letter-spacing: 2px;
+    padding: 2px 3px 2px 5px;
+}
