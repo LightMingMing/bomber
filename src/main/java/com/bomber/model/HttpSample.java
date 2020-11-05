@@ -59,7 +59,7 @@ public class HttpSample extends BaseEntity {
 	private static final long serialVersionUID = 5801606517538547923L;
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "applicationInstanceId", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+	@JoinColumn(nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
 	@UiConfig(width = "200px", shownInPick = true, cellDynamicAttributes = "{\"style\":\"text-align: center\"}", group = "basic")
 	private ApplicationInstance applicationInstance;
 
@@ -107,7 +107,7 @@ public class HttpSample extends BaseEntity {
 	private String variableNames;
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "payloadId", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+	@JoinColumn(foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
 	@UiConfig(alias = "payload", hiddenInList = @Hidden(true), excludedFromQuery = true, group = "basic")
 	private Payload payload;
 

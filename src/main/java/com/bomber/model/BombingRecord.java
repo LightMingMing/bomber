@@ -60,7 +60,7 @@ public class BombingRecord extends BaseEntity {
 	private static final long serialVersionUID = -7435247147997107193L;
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "httpSampleId", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+	@JoinColumn(nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
 	@UiConfig(width = "200px", template = "<#if value?has_content>${value.name}</#if>", readonly = @Readonly(true), shownInPick = true, cellDynamicAttributes = CENTER_ATTRIBUTE)
 	private HttpSample httpSample;
 
