@@ -3,8 +3,10 @@ package com.bomber.model;
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.ConstraintMode;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -41,7 +43,7 @@ public class SummaryReport extends BaseEntity {
 	private static final String CENTER_ATTRIBUTE = "{\"style\":\"text-align: center\"}";
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "bombingRecordId", nullable = false)
+	@JoinColumn(name = "bombingRecordId", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
 	@UiConfig(alias = "recordName", width = "200px", template = "${(value.httpSample.name)!}-${(value.name)!}", csvTemplate = "${(value.httpSample.name)!} - ${(value.name)!}", cellDynamicAttributes = CENTER_ATTRIBUTE)
 	private BombingRecord bombingRecord;
 

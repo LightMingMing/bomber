@@ -9,9 +9,11 @@ import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.Column;
+import javax.persistence.ConstraintMode;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -57,7 +59,7 @@ public class HttpSample extends BaseEntity {
 	private static final long serialVersionUID = 5801606517538547923L;
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "applicationInstanceId", nullable = false)
+	@JoinColumn(name = "applicationInstanceId", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
 	@UiConfig(width = "200px", shownInPick = true, cellDynamicAttributes = "{\"style\":\"text-align: center\"}", group = "basic")
 	private ApplicationInstance applicationInstance;
 
@@ -105,7 +107,7 @@ public class HttpSample extends BaseEntity {
 	private String variableNames;
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "payloadId")
+	@JoinColumn(name = "payloadId", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
 	@UiConfig(alias = "payload", hiddenInList = @Hidden(true), excludedFromQuery = true, group = "basic")
 	private Payload payload;
 

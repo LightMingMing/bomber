@@ -7,19 +7,22 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.ConstraintMode;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Min;
 
-import com.bomber.engine.Scope;
 import org.ironrhino.core.metadata.Hidden;
 import org.ironrhino.core.metadata.Readonly;
 import org.ironrhino.core.metadata.Richtable;
 import org.ironrhino.core.metadata.UiConfig;
 import org.ironrhino.core.model.BaseEntity;
+
+import com.bomber.engine.Scope;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -57,7 +60,7 @@ public class BombingRecord extends BaseEntity {
 	private static final long serialVersionUID = -7435247147997107193L;
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "httpSampleId", nullable = false)
+	@JoinColumn(name = "httpSampleId", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
 	@UiConfig(width = "200px", template = "<#if value?has_content>${value.name}</#if>", readonly = @Readonly(true), shownInPick = true, cellDynamicAttributes = CENTER_ATTRIBUTE)
 	private HttpSample httpSample;
 
