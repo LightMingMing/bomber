@@ -22,8 +22,6 @@ public class SQLQuery extends AbstractSQLQuery {
 
 	private QueryType queryType;
 
-	private String sql;
-
 	private String[] ret;
 
 	@Override
@@ -34,8 +32,7 @@ public class SQLQuery extends AbstractSQLQuery {
 
 		this.dataSource = getDataSourceManager().getDataSource(url, user, password);
 
-		String sql = input.get("sql");
-		if (sql.contains("?")) {
+		if (input.get("sql").contains("?")) {
 			this.queryType = QueryType.PREPARED_SELECT;
 		} else {
 			this.queryType = QueryType.SELECT;
@@ -45,7 +42,7 @@ public class SQLQuery extends AbstractSQLQuery {
 
 	@Override
 	public Map<String, String> execute(Input input) {
-		this.sql = input.get("sql");
+		String sql = input.get("sql");
 		if (queryType == QueryType.SELECT) {
 			try (Connection connection = dataSource.getConnection();
 					Statement stmt = connection.createStatement();
@@ -62,7 +59,7 @@ public class SQLQuery extends AbstractSQLQuery {
 						+ argsTypes.length + "' not equal");
 			}
 			try (Connection connection = dataSource.getConnection();
-					PreparedStatement stmt = getPreparedStatement(connection)) {
+					PreparedStatement stmt = getPreparedStatement(connection, sql)) {
 				setArguments(stmt, args, argsTypes);
 				try (ResultSet rs = stmt.executeQuery()) {
 					return getMapFromResultSet(rs);
@@ -78,7 +75,7 @@ public class SQLQuery extends AbstractSQLQuery {
 		dataSource = null;
 	}
 
-	private PreparedStatement getPreparedStatement(Connection connection) throws SQLException {
+	private PreparedStatement getPreparedStatement(Connection connection, String sql) throws SQLException {
 		// TODO cache preparedStatement ?
 		return connection.prepareStatement(sql);
 	}
