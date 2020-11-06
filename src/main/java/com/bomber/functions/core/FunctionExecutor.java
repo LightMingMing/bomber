@@ -5,13 +5,11 @@ import java.util.Map;
 
 public interface FunctionExecutor {
 
+	void jump(int steps);
+
 	Map<String, String> execute();
 
-	List<Map<String, String>> execute(int offset, int limit);
-
-	default List<Map<String, String>> execute(int limit) {
-		return execute(0, limit);
-	}
+	List<Map<String, String>> execute(int count);
 
 	void shutdown();
 }

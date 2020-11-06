@@ -31,14 +31,19 @@ public class DefaultFunctionExecutor implements FunctionExecutor {
 	}
 
 	@Override
-	public List<Map<String, String>> execute(int offset, int limit) {
-		Output[] outputs = new Output[limit];
-		for (int i = 0; i < limit; i++) {
+	public void jump(int steps) {
+		if (steps > 0) {
+			ordered.forEach(each -> each.fireJump(steps));
+		}
+	}
+
+	@Override
+	public List<Map<String, String>> execute(int count) {
+		Output[] outputs = new Output[count];
+		for (int i = 0; i < count; i++) {
 			outputs[i] = new Output();
 		}
-
 		for (FunctionContext ctx : ordered) {
-			ctx.fireJump(offset);
 			if (ctx.metadata().isParallel()) {
 				Arrays.stream(outputs).parallel().forEach(ctx::fireExecute);
 			} else {

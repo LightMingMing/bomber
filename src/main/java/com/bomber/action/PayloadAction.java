@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
-import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -18,12 +17,11 @@ import org.ironrhino.core.metadata.AutoConfig;
 import org.ironrhino.core.struts.EntityAction;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.bomber.functions.core.DefaultFunctionExecutor;
 import com.bomber.functions.core.FunctionContext;
-import com.bomber.functions.core.FunctionExecutor;
 import com.bomber.manager.PayloadManager;
 import com.bomber.model.Payload;
 import com.bomber.model.PayloadOption;
+import com.bomber.service.PayloadGenerateService;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -37,6 +35,9 @@ public class PayloadAction extends EntityAction<Payload> {
 
 	@Autowired
 	private PayloadManager payloadManager;
+
+	@Autowired
+	private PayloadGenerateService payloadGenerateService;
 
 	@Getter
 	@Setter
@@ -173,18 +174,10 @@ public class PayloadAction extends EntityAction<Payload> {
 			throw new IllegalArgumentException("payload does not exist");
 		}
 
-		List<FunctionContext> all = payload.getOptions().stream().map(PayloadOption::map).collect(Collectors.toList());
-
-		FunctionExecutor executor = new DefaultFunctionExecutor(all);
-		List<Map<String, String>> result;
-		try {
-			result = executor.execute(rows);
-		} finally {
-			executor.shutdown();
-		}
-
 		this.columns = new ArrayList<>();
-		all.stream().map(FunctionContext::retKeys).forEach(columns::addAll);
+		payload.getOptions().stream().map(PayloadOption::map).map(FunctionContext::retKeys).forEach(columns::addAll);
+
+		List<Map<String, String>> result = payloadGenerateService.generate(this.getUid(), 0, rows);
 
 		StringJoiner joiner = new StringJoiner("\r\n");
 		for (Map<String, String> context : result) {
@@ -203,25 +196,13 @@ public class PayloadAction extends EntityAction<Payload> {
 		if (columns == null || columns.isEmpty()) {
 			throw new IllegalArgumentException("columns is null or empty");
 		}
-		payload = payloadManager.get(this.getUid());
-		if (payload == null) {
-			throw new IllegalArgumentException("payload does not exists");
-		}
 
-		List<FunctionContext> all = payload.getOptions().stream().map(PayloadOption::map).collect(Collectors.toList());
-		FunctionExecutor executor = new DefaultFunctionExecutor(all, columns);
-
-		List<Map<String, String>> result;
-		try {
-			result = executor.execute(rows);
-		} finally {
-			executor.shutdown();
-		}
+		List<Map<String, String>> result = payloadGenerateService.generate(this.getUid(), 0, rows, columns);
 
 		HttpServletResponse response = ServletActionContext.getResponse();
 		response.setCharacterEncoding("utf-8");
 		response.setHeader("Content-Type", "text/plain");
-		response.setHeader("Content-Disposition", "attachment;filename=" + payload.getId() + ".txt");
+		response.setHeader("Content-Disposition", "attachment;filename=" + this.getUid() + ".txt");
 
 		PrintWriter writer = response.getWriter();
 

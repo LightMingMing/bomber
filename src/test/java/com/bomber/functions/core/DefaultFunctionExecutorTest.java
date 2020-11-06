@@ -66,7 +66,7 @@ public class DefaultFunctionExecutorTest {
 		FunctionExecutor executor = new DefaultFunctionExecutor(Collections.singleton(f));
 
 		long startTime = System.nanoTime();
-		executor.execute(0, count);
+		executor.execute(count);
 		long took = (System.nanoTime() - startTime) / 1_000_000;
 		assertThat(took).isLessThan(count * delay / parallelism + 100);
 	}
@@ -79,7 +79,8 @@ public class DefaultFunctionExecutorTest {
 		FunctionContext f3 = new DefaultFunctionContext("b", new Properties(), "b", "100");
 
 		FunctionExecutor executor = new DefaultFunctionExecutor(Arrays.asList(f1, f2, f3));
-		List<Map<String, String>> list = executor.execute(100, 2);
+		executor.jump(100);
+		List<Map<String, String>> list = executor.execute(2);
 
 		assertThat(list).hasSize(2);
 		assertThat(list.get(0)).containsEntry("c", "200");

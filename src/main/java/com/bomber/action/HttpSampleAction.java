@@ -42,17 +42,13 @@ import com.bomber.asserter.AssertResult;
 import com.bomber.asserter.Asserter;
 import com.bomber.asserter.util.Asserters;
 import com.bomber.engine.Scope;
-import com.bomber.functions.core.DefaultFunctionExecutor;
-import com.bomber.functions.core.FunctionContext;
-import com.bomber.functions.core.FunctionExecutor;
 import com.bomber.manager.HttpSampleManager;
 import com.bomber.model.Assertion;
 import com.bomber.model.HttpHeader;
 import com.bomber.model.HttpSample;
-import com.bomber.model.Payload;
-import com.bomber.model.PayloadOption;
 import com.bomber.service.BomberRequest;
 import com.bomber.service.BomberService;
+import com.bomber.service.PayloadGenerateService;
 import com.bomber.util.FileUtils;
 import com.fasterxml.jackson.core.JsonLocation;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -86,6 +82,9 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 
 	@Autowired
 	private BomberService bomberService;
+
+	@Autowired
+	private PayloadGenerateService payloadGenerateService;
 
 	@Autowired
 	private RestTemplate stringMessageRestTemplate;
@@ -327,15 +326,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 
 	private Map<String, String> getPayload(HttpSample httpSample, int index) throws IOException {
 		if (httpSample.getPayload() != null) {
-			Payload payload = httpSample.getPayload();
-			List<FunctionContext> all = payload.getOptions().stream().map(PayloadOption::map)
-					.collect(Collectors.toList());
-			FunctionExecutor executor = new DefaultFunctionExecutor(all);
-			try {
-				return new DefaultFunctionExecutor(all).execute(index, 1).get(0);
-			} finally {
-				executor.shutdown();
-			}
+			return payloadGenerateService.generate(httpSample.getPayload().getId(), index);
 		} else {
 			String filePath = httpSample.getCsvFilePath();
 			String names = httpSample.getVariableNames();
