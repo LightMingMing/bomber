@@ -6,8 +6,6 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.ironrhino.core.util.ClassScanner;
-
 import com.bomber.functions.core.FuncInfo;
 import com.bomber.functions.core.Function;
 import com.bomber.functions.core.FunctionMetadata;
@@ -21,7 +19,7 @@ public final class FunctionHelper {
 	private static final Map<Class<Function<?>>, FunctionMetadata> functionMetadataForType = new LinkedHashMap<>();
 
 	static {
-		FunctionScanner.scan(ClassScanner.getAppPackages()).forEach(clazz -> {
+		FunctionScanner.scan(new String[] { "com.bomber.functions" }).forEach(clazz -> {
 			String name = generateFunctionName(clazz);
 			FunctionMetadata fm;
 
