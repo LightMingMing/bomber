@@ -16,10 +16,10 @@ import javax.sql.DataSource;
 import com.bomber.functions.core.FuncInfo;
 import com.bomber.functions.core.Input;
 
-@FuncInfo(requiredArgs = "url, user, password, sql, ret, count", retArg = "ret")
+@FuncInfo(requiredArgs = "url, user, password, sql, ret", retArg = "ret")
 public class SQLBatchQuery extends AbstractSQLQuery {
 
-	private static final int MAX_BATCH_SIZE = 1 << 10; // 1024
+	protected static final int MAX_BATCH_SIZE = 1 << 10; // 1024
 
 	private DataSource dataSource;
 	private String sql;
@@ -44,8 +44,6 @@ public class SQLBatchQuery extends AbstractSQLQuery {
 
 	@Override
 	public Map<String, String> execute(Input input) {
-		if (totalQuery == 0)
-			totalQuery = Integer.parseInt(input.get("count"));
 		if (cache == null) {
 			cache = executeBatchQuery(totalQuery++, batchSize);
 		}
@@ -63,6 +61,15 @@ public class SQLBatchQuery extends AbstractSQLQuery {
 			return Collections.emptyMap();
 		}
 		return cache.get(next++);
+	}
+
+	@Override
+	public void jump(int steps) {
+		// reset status
+		this.batchSize = 1;
+		this.next = 0;
+		this.cache = null;
+		this.totalQuery = steps;
 	}
 
 	protected List<Map<String, String>> executeBatchQuery(Integer start, Integer batchSize) {
