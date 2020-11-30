@@ -395,7 +395,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 			logger.error(e.getMessage());
 		} catch (Exception e) {
 			response.setError(e.toString());
-			logger.error(e.getMessage());
+			logger.error("execute request failed", e);
 		}
 		return "json";
 	}

@@ -2,6 +2,7 @@ package com.bomber.asserter;
 
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
+import org.apache.commons.lang3.StringUtils;
 
 public class JsonPathAsserter implements Asserter {
 
@@ -12,6 +13,9 @@ public class JsonPathAsserter implements Asserter {
 	}
 
 	private String getActualValue(Assertion assertion) {
+		if (StringUtils.isEmpty(assertion.getText())) {
+			return null;
+		}
 		try {
 			Object result = JsonPath.parse(assertion.getText()).read(assertion.getExpression());
 			if (result instanceof String) {
