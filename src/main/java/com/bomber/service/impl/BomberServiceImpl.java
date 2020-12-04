@@ -81,8 +81,8 @@ public class BomberServiceImpl implements BomberService {
 				snapshot.setPayloadUrl(getPayloadApiUrl(sample.getPayload().getId()));
 				snapshot.setVariableNames(snapshot.readVariables());
 			} else {
-				String payloadFile = snapshot.getPayloadFile();
-				String variableNames = snapshot.getVariableNames();
+				String payloadFile = sample.getCsvFilePath();
+				String variableNames = sample.getVariableNames();
 				if (StringUtils.hasLength(payloadFile) && StringUtils.hasLength(variableNames)) {
 					snapshot.setPayloadFile(uri.getPath() + payloadFile);
 					snapshot.setVariableNames(variableNames);
