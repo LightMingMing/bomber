@@ -23,12 +23,12 @@
             </div>
         </div>
 
-        <#assign config=uiConfigs['options']/>
+        <#assign config=uiConfigs['functionDefinitions']/>
         <#assign embeddedUiConfigs=config.embeddedUiConfigs/>
-        <div id="control-group-payload-options" class="control-group">
-            <label class="control-label">${getText('payloadOptions')}</label>
+        <div id="control-group-payload-functionDefinitions" class="control-group">
+            <label class="control-label">${getText('functionDefinitions')}</label>
             <div class="controls">
-                <input type="hidden" name="__datagrid_payload.options">
+                <input type="hidden" name="__datagrid_payload.functionDefinitions">
                 <table class="table table-bordered table-fixed middle datagrid adaptive required">
                     <thead>
                     <tr>
@@ -38,16 +38,17 @@
                     </tr>
                     </thead>
                     <tbody class="ui-sortable">
-                    <#assign value=(entity['options'])!/>
+                    <#assign value=(entity['functionDefinitions'])!/>
                     <#list 0..((value?is_collection&&value?has_content)?then(value?size-1,0)) as index>
-                        <#assign option=(entity['options'][index])!/>
+                        <#assign option=(entity['functionDefinitions'][index])!/>
                         <tr class="ui-sortable-handle">
                             <td>
                                 <div class="form-horizontal">
                                     <div class="control-group">
                                         <label class="control-label" style="width: 50px">${getText('key')}</label>
                                         <div class="controls" style="margin-left: 80px">
-                                            <input type="text" name="payload.options[${index}].key" class="required"
+                                            <input type="text" name="payload.functionDefinitions[${index}].key"
+                                                   class="required"
                                                    value="${option['key']!}"
                                                    maxlength="255" autocomplete="off">
                                         </div>
@@ -57,7 +58,7 @@
                                                style="width: 50px">${getText('functionName')}</label>
                                         <div class="controls" style="margin-left: 80px">
                                             <#assign fnc=embeddedUiConfigs['functionName']>
-                                            <@s.select theme="simple" name="payload.options[${index}].functionName" class=fnc.cssClass list=fnc.listOptions?eval listKey=fnc.listKey listValue=fnc.listValue headerKey="" headerValue=""/>
+                                            <@s.select theme="simple" name="payload.functionDefinitions[${index}].functionName" class=fnc.cssClass list=fnc.listOptions?eval listKey=fnc.listKey listValue=fnc.listValue headerKey="" headerValue=""/>
                                         </div>
                                     </div>
                                 </div>
@@ -65,7 +66,7 @@
                             <td>
                             <textarea class="argument-values"
                                       style="height: 120px;overflow-y: auto;font-family: Menlo, Monaco, Consolas, 'Courier New', monospace;"
-                                      name="payload.options[${index}].content">${(option['content'])!}</textarea>
+                                      name="payload.functionDefinitions[${index}].content">${(option['content'])!}</textarea>
                             </td>
                             <td class="manipulate"><i class="glyphicon glyphicon-plus manipulate add clickable"></i>
                                 <i class="glyphicon glyphicon-minus manipulate remove clickable"></i></td>

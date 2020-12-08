@@ -23,7 +23,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Embeddable
-public class PayloadOption {
+public class FunctionDefinition {
 
 	@Getter
 	@Setter
@@ -53,6 +53,10 @@ public class PayloadOption {
 	@Setter
 	@UiConfig(alias = "argumentValues", cssClass = "input-xxlarge")
 	private List<String> argumentValues;
+
+	@Getter
+	@Setter
+	private boolean enable;
 
 	@Getter
 	@Setter

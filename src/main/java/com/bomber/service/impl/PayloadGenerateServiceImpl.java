@@ -9,7 +9,7 @@ import com.bomber.functions.core.DefaultFunctionExecutor;
 import com.bomber.functions.core.FunctionContext;
 import com.bomber.functions.core.FunctionExecutor;
 import com.bomber.model.Payload;
-import com.bomber.model.PayloadOption;
+import com.bomber.model.FunctionDefinition;
 import org.springframework.stereotype.Service;
 
 import com.bomber.manager.PayloadManager;
@@ -28,7 +28,8 @@ public class PayloadGenerateServiceImpl implements PayloadGenerateService {
 	private FunctionExecutor createExecutor(String id, Collection<String> columns) {
 		Payload payload = payloadManager.get(id);
 		Assert.notNull(payload, "payload '" + id + "' does not exist");
-		List<FunctionContext> all = payload.getOptions().stream().map(PayloadOption::map).collect(Collectors.toList());
+		List<FunctionContext> all = payload.getFunctionDefinitions().stream().map(FunctionDefinition::map)
+				.collect(Collectors.toList());
 		return new DefaultFunctionExecutor(all, columns);
 	}
 

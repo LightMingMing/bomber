@@ -16,7 +16,7 @@ import org.ironrhino.core.metadata.Richtable;
 import org.ironrhino.core.metadata.UiConfig;
 import org.ironrhino.core.model.BaseEntity;
 
-import com.bomber.converter.PayloadOptionListConverter;
+import com.bomber.converter.FunctionDefinitionListConverter;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -35,9 +35,9 @@ public class Payload extends BaseEntity {
 	private String name;
 
 	@Column(nullable = false, columnDefinition = "text")
-	@Convert(converter = PayloadOptionListConverter.class)
-	@UiConfig(alias = "payloadOptions", listTemplate = "<#list value as option>${option.key}= ${option.functionName}(${option.argumentValues!})<#sep><br></#list>")
-	private List<PayloadOption> options;
+	@Convert(converter = FunctionDefinitionListConverter.class)
+	@UiConfig(alias = "functionDefinitions", listTemplate = "<#list value as functionDefinition>${functionDefinition.key}= ${functionDefinition.functionName}(${functionDefinition.argumentValues!})<#sep><br></#list>")
+	private List<FunctionDefinition> functionDefinitions;
 
 	@CreationTimestamp
 	@Column(updatable = false)

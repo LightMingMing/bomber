@@ -20,7 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.bomber.functions.core.FunctionContext;
 import com.bomber.manager.PayloadManager;
 import com.bomber.model.Payload;
-import com.bomber.model.PayloadOption;
+import com.bomber.model.FunctionDefinition;
 import com.bomber.service.PayloadGenerateService;
 
 import lombok.Getter;
@@ -58,10 +58,10 @@ public class PayloadAction extends EntityAction<Payload> {
 	@Setter
 	private List<String> columns;
 
-	protected String formatArgumentValues(PayloadOption option) {
-		if (option == null)
+	protected String formatArgumentValues(FunctionDefinition functionDefinition) {
+		if (functionDefinition == null)
 			return null;
-		List<String> args = option.getArgumentValues();
+		List<String> args = functionDefinition.getArgumentValues();
 		Map<String, String> params = new HashMap<>();
 		if (args != null && !args.isEmpty()) {
 			for (String pair : args) {
@@ -75,7 +75,7 @@ public class PayloadAction extends EntityAction<Payload> {
 		Set<String> added = new HashSet<>();
 		StringJoiner joiner = new StringJoiner("\n");
 
-		String requiredArgs = option.getRequiredArgs();
+		String requiredArgs = functionDefinition.getRequiredArgs();
 		if (requiredArgs != null && !requiredArgs.isEmpty()) {
 			joiner.add("# required args");
 			String[] arr = requiredArgs.split(", *");
@@ -85,7 +85,7 @@ public class PayloadAction extends EntityAction<Payload> {
 			}
 		}
 
-		String optionalArgs = option.getOptionalArgs();
+		String optionalArgs = functionDefinition.getOptionalArgs();
 		if (optionalArgs != null && !optionalArgs.isEmpty()) {
 			joiner.add("# optional args");
 			String[] arr = optionalArgs.split(", *");
@@ -111,9 +111,9 @@ public class PayloadAction extends EntityAction<Payload> {
 	public String quickCreate() {
 		payload = payloadManager.get(this.getUid());
 		payload.setId(null);
-		List<PayloadOption> options = payload.getOptions();
-		if (options != null && !options.isEmpty()) {
-			options.forEach(option -> option.setContent(formatArgumentValues(option)));
+		List<FunctionDefinition> functionDefinitions = payload.getFunctionDefinitions();
+		if (functionDefinitions != null && !functionDefinitions.isEmpty()) {
+			functionDefinitions.forEach(each -> each.setContent(formatArgumentValues(each)));
 		}
 		return INPUT;
 	}
@@ -123,9 +123,9 @@ public class PayloadAction extends EntityAction<Payload> {
 		String parent = super.doInput();
 		if (INPUT.equals(parent)) {
 			Payload payload = this.getEntity();
-			List<PayloadOption> options = payload.getOptions();
-			if (options != null && !options.isEmpty()) {
-				options.forEach(option -> option.setContent(formatArgumentValues(option)));
+			List<FunctionDefinition> functionDefinitions = payload.getFunctionDefinitions();
+			if (functionDefinitions != null && !functionDefinitions.isEmpty()) {
+				functionDefinitions.forEach(each -> each.setContent(formatArgumentValues(each)));
 			}
 		}
 		return parent;
@@ -137,10 +137,10 @@ public class PayloadAction extends EntityAction<Payload> {
 			return INPUT;
 		}
 		payload = getEntity();
-		if (payload.getOptions() != null) {
-			for (PayloadOption option : payload.getOptions()) {
+		if (payload.getFunctionDefinitions() != null) {
+			for (FunctionDefinition functionDefinition : payload.getFunctionDefinitions()) {
 				List<String> args = new ArrayList<>();
-				String content = option.getContent();
+				String content = functionDefinition.getContent();
 				if (content == null) {
 					continue;
 				}
@@ -161,7 +161,7 @@ public class PayloadAction extends EntityAction<Payload> {
 					// TODO strong check ?
 					args.add(pair[0].trim() + "=" + pair[1].trim());
 				}
-				option.setArgumentValues(args);
+				functionDefinition.setArgumentValues(args);
 			}
 		}
 		payloadManager.save(payload);
@@ -175,7 +175,8 @@ public class PayloadAction extends EntityAction<Payload> {
 		}
 
 		this.columns = new ArrayList<>();
-		payload.getOptions().stream().map(PayloadOption::map).map(FunctionContext::retKeys).forEach(columns::addAll);
+		payload.getFunctionDefinitions().stream().map(FunctionDefinition::map).map(FunctionContext::retKeys)
+				.forEach(columns::addAll);
 
 		List<Map<String, String>> result = payloadGenerateService.generate(this.getUid(), 0, rows);
 
