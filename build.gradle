@@ -13,6 +13,7 @@ plugins {
 ext {
     assertjVersion = "3.13.1"
     jacksonVersion = "2.10.1"
+    jettyVersion = "9.4.35.v20201120"
     jmhVersion = "1.23"
     lombokVersion = "1.18.12"
     log4jVersion = "2.12.1"
@@ -60,8 +61,13 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
 
     providedCompile("com.google.code.findbugs:annotations:3.0.1")
+    providedCompile("javax.el:javax.el-api:3.0.0")
     providedCompile("javax.servlet:javax.servlet-api:4.0.0")
     providedCompile("javax.websocket:javax.websocket-api:1.0")
+    providedCompile("org.glassfish:javax.el:3.0.0")
+    providedCompile("org.eclipse.jetty:jetty-annotations:${jettyVersion}")
+    providedCompile("org.eclipse.jetty:jetty-server:${jettyVersion}")
+    providedCompile("org.eclipse.jetty:jetty-webapp:${jettyVersion}")
 
     implementation fileTree(dir: 'lib', includes: ['*jar'])
 
