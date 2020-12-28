@@ -13,10 +13,14 @@ import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.webapp.Configuration;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.eclipse.jetty.webapp.WebInfConfiguration;
+import org.ironrhino.core.util.AppInfo;
 
 public class JettyBootstrap {
 
 	public static void main(String[] args) throws Exception {
+
+		AppInfo.initialize();
+
 		Server server = new Server(8080);
 
 		Configuration.ClassList classList = Configuration.ClassList.setServerDefault(server);
