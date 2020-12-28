@@ -41,7 +41,7 @@ public class JettyBootstrap {
 
 		WebAppProvider provider = new WebAppProvider();
 		provider.setMonitoredDirectories(
-				Arrays.asList("./src/main/webapp", "./src/main/resources", "./build/classes/java/main"));
+				Arrays.asList("./src/main/webapp", "./src/main/resources/resources", "./build/classes/java/main"));
 		provider.setExtractWars(false);
 		provider.setScanInterval(2);
 
