@@ -16,7 +16,11 @@ public class JettyBootstrap {
 
 		AppInfo.initialize();
 
-		Server server = new Server(8080);
+		new JettyBootstrap().startup(8080, "password");
+	}
+
+	public void startup(int port, String shutdownToken) throws Exception {
+		Server server = new Server(port);
 
 		Configuration.ClassList classList = Configuration.ClassList.setServerDefault(server);
 		classList.add(AnnotationConfiguration.class.getName());
@@ -28,7 +32,7 @@ public class JettyBootstrap {
 		webAppContext.setInitParameter(DefaultServlet.CONTEXT_INIT + "dirAllowed", "false");
 
 		HandlerList handlers = new HandlerList();
-		handlers.addHandler(new ShutdownHandler("password"));
+		handlers.addHandler(new ShutdownHandler(shutdownToken));
 		handlers.addHandler(webAppContext);
 
 		server.setHandler(handlers);
