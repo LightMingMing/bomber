@@ -249,3 +249,22 @@ task explodedWar(type: Sync) {
     into "${buildDir}/exploded"
     with war
 }
+
+task jettyStartup(type: JavaExec) {
+    debugOptions {
+        enabled = true
+        port = 5005
+        server = true
+        suspend = false
+    }
+
+    systemProperty("log4j2.skipJansi", "false")
+
+    classpath = sourceSets.main.runtimeClasspath
+    main = "com.bomber.JettyBootstrap"
+}
+
+task jettyShutdown(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = "com.bomber.JettyShutdown"
+}
