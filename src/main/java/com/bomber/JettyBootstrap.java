@@ -26,7 +26,6 @@ public class JettyBootstrap {
 		webAppContext.setResourceBase("./src/main/webapp");
 		webAppContext.setAttribute(WebInfConfiguration.CONTAINER_JAR_PATTERN, ".*/ironrhino-[^/]*\\.jar$");
 		webAppContext.setInitParameter(DefaultServlet.CONTEXT_INIT + "dirAllowed", "false");
-		webAppContext.setDefaultsDescriptor("");
 
 		HandlerList handlers = new HandlerList();
 		handlers.addHandler(new ShutdownHandler("password"));
