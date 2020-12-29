@@ -23,8 +23,11 @@ public class JettyShutdown {
 		try {
 			URL url = new URL("http://localhost:" + port + "/shutdown?token=" + shutdownCookie);
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+			connection.setConnectTimeout(2000);
+			connection.setReadTimeout(2000);
 			connection.setRequestMethod("POST");
 			connection.getResponseCode();
+			connection.disconnect();
 			logger.info("Shutting down " + url + ": " + connection.getResponseMessage());
 		} catch (SocketException e) {
 			logger.debug("Not running");
