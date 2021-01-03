@@ -122,6 +122,7 @@ dependencies {
 
     implementation("javax.transaction:transaction-api:1.1")
     implementation("javax.validation:validation-api:2.0.1.Final")
+    implementation("javax.xml.bind:jaxb-api:2.3.1")
 
     implementation("com.jayway.jsonpath:json-path:2.4.0")
 
