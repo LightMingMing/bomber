@@ -27,11 +27,13 @@ ext {
 group 'bomber'
 version '1.0'
 
-sourceCompatibility = '1.8'
-targetCompatibility = '1.8'
+tasks.compileJava {
+    // Since version 9
+    // options.release.set(8)
 
-compileJava.options.encoding = 'UTF-8'
-compileJava.options.compilerArgs << "-parameters"
+    options.encoding('UTF-8')
+    options.compilerArgs.add('-parameters')
+}
 
 buildDir = 'build'
 
