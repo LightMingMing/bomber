@@ -252,12 +252,12 @@ task explodedWar(type: Sync) {
 
 task jettyStartup(type: JavaExec) {
     debugOptions {
-        enabled = true
         port = 5005
         server = true
         suspend = false
     }
 
+    systemProperty("STAGE", "DEVELOPMENT")
     systemProperty("log4j2.skipJansi", "false")
 
     classpath = sourceSets.main.runtimeClasspath
