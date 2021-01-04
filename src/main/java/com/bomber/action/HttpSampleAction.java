@@ -325,8 +325,8 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 	}
 
 	private Map<String, String> getPayload(HttpSample httpSample, int index) throws IOException {
-		if (httpSample.getPayload() != null) {
-			return payloadGenerateService.generate(httpSample.getPayload().getId(), index);
+		if (httpSample.getFunctionConfigure() != null) {
+			return payloadGenerateService.generate(httpSample.getFunctionConfigure().getId(), index);
 		} else {
 			String filePath = httpSample.getCsvFilePath();
 			String names = httpSample.getVariableNames();

@@ -6,7 +6,6 @@ import java.io.File;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.ConstraintMode;
@@ -104,8 +103,8 @@ public class HttpSample extends BaseEntity {
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-	@UiConfig(alias = "payload", hiddenInList = @Hidden(true), excludedFromQuery = true, group = "basic")
-	private Payload payload;
+	@UiConfig(alias = "functionConfigure", hiddenInList = @Hidden(true), excludedFromQuery = true, group = "basic")
+	private FunctionConfigure functionConfigure;
 
 	@JsonIgnore
 	@CreationTimestamp

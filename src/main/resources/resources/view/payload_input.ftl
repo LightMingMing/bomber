@@ -15,17 +15,17 @@
         </#if>
         <#if versionPropertyName??><@s.hidden name=entityName+'.'+versionPropertyName class="version"/></#if>
 
-        <div id="control-group-payload-name" class="control-group">
-            <label class="control-label" for="payload-name">${getText('name')}</label>
+        <div id="control-group-functionConfigure-name" class="control-group">
+            <label class="control-label" for="functionConfigure-name">${getText('name')}</label>
             <div class="controls">
-                <input type="text" id="payload-name" name="payload.name" class="required" value="${entity.name!}"
+                <input type="text" id="functionConfigure-name" name="functionConfigure.name" class="required" value="${entity.name!}"
                        maxlength="255" autocomplete="off">
             </div>
         </div>
 
         <#assign config=uiConfigs['functionDefinitions']/>
         <#assign embeddedUiConfigs=config.embeddedUiConfigs/>
-        <div id="control-group-payload-functionDefinitions" class="control-group">
+        <div id="control-group-functionConfigure-functionDefinitions" class="control-group">
             <label class="control-label">${getText('functionDefinitions')}</label>
             <div class="controls">
                 <input type="hidden" name="__datagrid_payload.functionDefinitions">
@@ -47,7 +47,7 @@
                                     <div class="control-group">
                                         <label class="control-label" style="width: 50px">${getText('key')}</label>
                                         <div class="controls" style="margin-left: 80px">
-                                            <input type="text" name="payload.functionDefinitions[${index}].key"
+                                            <input type="text" name="functionConfigure.functionDefinitions[${index}].key"
                                                    class="required"
                                                    value="${option['key']!}"
                                                    maxlength="255" autocomplete="off">
@@ -58,7 +58,7 @@
                                                style="width: 50px">${getText('functionName')}</label>
                                         <div class="controls" style="margin-left: 80px">
                                             <#assign fnc=embeddedUiConfigs['functionName']>
-                                            <@s.select theme="simple" name="payload.functionDefinitions[${index}].functionName" class=fnc.cssClass list=fnc.listOptions?eval listKey=fnc.listKey listValue=fnc.listValue headerKey="" headerValue=""/>
+                                            <@s.select theme="simple" name="functionConfigure.functionDefinitions[${index}].functionName" class=fnc.cssClass list=fnc.listOptions?eval listKey=fnc.listKey listValue=fnc.listValue headerKey="" headerValue=""/>
                                         </div>
                                     </div>
                                 </div>
@@ -66,7 +66,7 @@
                             <td>
                             <textarea class="argument-values"
                                       style="height: 120px;overflow-y: auto;font-family: Menlo, Monaco, Consolas, 'Courier New', monospace;"
-                                      name="payload.functionDefinitions[${index}].content">${(option['content'])!}</textarea>
+                                      name="functionConfigure.functionDefinitions[${index}].content">${(option['content'])!}</textarea>
                             </td>
                             <td class="manipulate"><i class="glyphicon glyphicon-plus manipulate add clickable"></i>
                                 <i class="glyphicon glyphicon-minus manipulate remove clickable"></i></td>

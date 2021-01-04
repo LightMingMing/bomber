@@ -8,27 +8,27 @@ import java.util.stream.Collectors;
 import com.bomber.functions.core.DefaultFunctionExecutor;
 import com.bomber.functions.core.FunctionContext;
 import com.bomber.functions.core.FunctionExecutor;
-import com.bomber.model.Payload;
+import com.bomber.model.FunctionConfigure;
 import com.bomber.model.FunctionDefinition;
 import org.springframework.stereotype.Service;
 
-import com.bomber.manager.PayloadManager;
+import com.bomber.manager.FunctionConfigureManager;
 import com.bomber.service.PayloadGenerateService;
 import org.springframework.util.Assert;
 
 @Service
 public class PayloadGenerateServiceImpl implements PayloadGenerateService {
 
-	private final PayloadManager payloadManager;
+	private final FunctionConfigureManager functionConfigureManager;
 
-	public PayloadGenerateServiceImpl(PayloadManager payloadManager) {
-		this.payloadManager = payloadManager;
+	public PayloadGenerateServiceImpl(FunctionConfigureManager functionConfigureManager) {
+		this.functionConfigureManager = functionConfigureManager;
 	}
 
 	private FunctionExecutor createExecutor(String id, Collection<String> columns) {
-		Payload payload = payloadManager.get(id);
-		Assert.notNull(payload, "payload '" + id + "' does not exist");
-		List<FunctionContext> all = payload.getFunctionDefinitions().stream().map(FunctionDefinition::map)
+		FunctionConfigure functionConfigure = functionConfigureManager.get(id);
+		Assert.notNull(functionConfigure, "payload '" + id + "' does not exist");
+		List<FunctionContext> all = functionConfigure.getFunctionDefinitions().stream().map(FunctionDefinition::map)
 				.collect(Collectors.toList());
 		return new DefaultFunctionExecutor(all, columns);
 	}

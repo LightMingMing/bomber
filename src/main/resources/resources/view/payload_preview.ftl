@@ -8,8 +8,8 @@
 <#if content?has_content>
     <pre style="max-height: 500px;overflow-y: auto">${content}</pre>
     <form class="form-horizontal" action="<@url value="/${entityName}/download"/>" method="get">
-        <input type="hidden" id="payload-id" name="id" class="id"
-               value="${payload.id}">
+        <input type="hidden" id="functionConfigure-id" name="id" class="id"
+               value="${functionConfigure.id}">
         <div class="control-group">
             <label class="control-label">选择</label>
             <div class="controls">

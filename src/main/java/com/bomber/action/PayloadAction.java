@@ -18,8 +18,8 @@ import org.ironrhino.core.struts.EntityAction;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.bomber.functions.core.FunctionContext;
-import com.bomber.manager.PayloadManager;
-import com.bomber.model.Payload;
+import com.bomber.manager.FunctionConfigureManager;
+import com.bomber.model.FunctionConfigure;
 import com.bomber.model.FunctionDefinition;
 import com.bomber.service.PayloadGenerateService;
 
@@ -27,21 +27,21 @@ import lombok.Getter;
 import lombok.Setter;
 
 @AutoConfig
-public class PayloadAction extends EntityAction<Payload> {
+public class PayloadAction extends EntityAction<FunctionConfigure> {
 
 	private static final long serialVersionUID = 7361376054414253701L;
 
 	private static final String DEFAULT_DELIMITER = ",";
 
 	@Autowired
-	private PayloadManager payloadManager;
+	private FunctionConfigureManager functionConfigureManager;
 
 	@Autowired
 	private PayloadGenerateService payloadGenerateService;
 
 	@Getter
 	@Setter
-	private Payload payload;
+	private FunctionConfigure functionConfigure;
 
 	@Getter
 	@Setter
@@ -109,9 +109,9 @@ public class PayloadAction extends EntityAction<Payload> {
 
 	// shortcut to create
 	public String quickCreate() {
-		payload = payloadManager.get(this.getUid());
-		payload.setId(null);
-		List<FunctionDefinition> functionDefinitions = payload.getFunctionDefinitions();
+		functionConfigure = functionConfigureManager.get(this.getUid());
+		functionConfigure.setId(null);
+		List<FunctionDefinition> functionDefinitions = functionConfigure.getFunctionDefinitions();
 		if (functionDefinitions != null && !functionDefinitions.isEmpty()) {
 			functionDefinitions.forEach(each -> each.setContent(formatArgumentValues(each)));
 		}
@@ -122,8 +122,8 @@ public class PayloadAction extends EntityAction<Payload> {
 	protected String doInput() throws Exception {
 		String parent = super.doInput();
 		if (INPUT.equals(parent)) {
-			Payload payload = this.getEntity();
-			List<FunctionDefinition> functionDefinitions = payload.getFunctionDefinitions();
+			FunctionConfigure functionConfigure = this.getEntity();
+			List<FunctionDefinition> functionDefinitions = functionConfigure.getFunctionDefinitions();
 			if (functionDefinitions != null && !functionDefinitions.isEmpty()) {
 				functionDefinitions.forEach(each -> each.setContent(formatArgumentValues(each)));
 			}
@@ -136,9 +136,9 @@ public class PayloadAction extends EntityAction<Payload> {
 		if (!makeEntityValid()) {
 			return INPUT;
 		}
-		payload = getEntity();
-		if (payload.getFunctionDefinitions() != null) {
-			for (FunctionDefinition functionDefinition : payload.getFunctionDefinitions()) {
+		functionConfigure = getEntity();
+		if (functionConfigure.getFunctionDefinitions() != null) {
+			for (FunctionDefinition functionDefinition : functionConfigure.getFunctionDefinitions()) {
 				List<String> args = new ArrayList<>();
 				String content = functionDefinition.getContent();
 				if (content == null) {
@@ -164,18 +164,18 @@ public class PayloadAction extends EntityAction<Payload> {
 				functionDefinition.setArgumentValues(args);
 			}
 		}
-		payloadManager.save(payload);
+		functionConfigureManager.save(functionConfigure);
 		return SUCCESS;
 	}
 
 	public String preview() {
-		payload = payloadManager.get(this.getUid());
-		if (payload == null) {
+		functionConfigure = functionConfigureManager.get(this.getUid());
+		if (functionConfigure == null) {
 			throw new IllegalArgumentException("payload does not exist");
 		}
 
 		this.columns = new ArrayList<>();
-		payload.getFunctionDefinitions().stream().map(FunctionDefinition::map).map(FunctionContext::retKeys)
+		functionConfigure.getFunctionDefinitions().stream().map(FunctionDefinition::map).map(FunctionContext::retKeys)
 				.forEach(columns::addAll);
 
 		List<Map<String, String>> result = payloadGenerateService.generate(this.getUid(), 0, rows);

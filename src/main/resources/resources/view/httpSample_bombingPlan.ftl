@@ -38,18 +38,18 @@
             </div>
         </div>
         <#if mutable>
-            <div id="control-group-start-payload-index" class="control-group">
-                <label class="control-label" for="start-payload-index"
+            <div id="control-group-start-functionConfigure-index" class="control-group">
+                <label class="control-label" for="start-functionConfigure-index"
                        style="width: 120px;">${getText('startPayloadIndex')}</label>
                 <div class="controls" style="margin-left: 140px;">
-                    <input type="number" id="start-payload-index" name="startPayloadIndex"
+                    <input type="number" id="start-functionConfigure-index" name="startPayloadIndex"
                            class="input-small required" min="0" value="0">
                 </div>
             </div>
             <div id="control-group-scope" class="control-group">
                 <label class="control-label" for="scope" style="width: 120px;"><span
                             data-content="${getText('payloadScope.desc')}"
-                            class="poped glyphicon glyphicon-question-sign"/>${getText('payload')}${getText('scope')}
+                            class="poped glyphicon glyphicon-question-sign"/>${getText('functionConfigure')}${getText('scope')}
                 </label>
                 <div class="controls" style="margin-left: 140px;">
                     <select id="scope" name="scope">

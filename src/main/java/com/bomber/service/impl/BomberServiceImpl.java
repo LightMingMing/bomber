@@ -77,8 +77,8 @@ public class BomberServiceImpl implements BomberService {
 		}
 
 		if (sample.isMutable()) {
-			if (sample.getPayload() != null) {
-				snapshot.setPayloadUrl(getPayloadApiUrl(sample.getPayload().getId()));
+			if (sample.getFunctionConfigure() != null) {
+				snapshot.setPayloadUrl(getPayloadApiUrl(sample.getFunctionConfigure().getId()));
 				snapshot.setVariableNames(snapshot.readVariables());
 			} else {
 				String payloadFile = sample.getCsvFilePath();
