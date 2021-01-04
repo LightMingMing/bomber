@@ -10,6 +10,7 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Transient;
 
+import org.ironrhino.core.metadata.Hidden;
 import org.ironrhino.core.metadata.Readonly;
 import org.ironrhino.core.metadata.UiConfig;
 
@@ -56,12 +57,9 @@ public class FunctionDefinition {
 
 	@Getter
 	@Setter
-	private boolean enable;
-
-	@Getter
-	@Setter
 	@Transient
 	@JsonIgnore
+	@UiConfig(hiddenInView = @Hidden(true))
 	private String content;
 
 	public String getRequiredArgs() {
