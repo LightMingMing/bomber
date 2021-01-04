@@ -28,7 +28,7 @@
         <div id="control-group-functionConfigure-functionDefinitions" class="control-group">
             <label class="control-label">${getText('functionDefinitions')}</label>
             <div class="controls">
-                <input type="hidden" name="__datagrid_payload.functionDefinitions">
+                <input type="hidden" name="__datagrid_functionConfigure.functionDefinitions">
                 <table class="table table-bordered table-fixed middle datagrid adaptive required">
                     <thead>
                     <tr>

@@ -27,7 +27,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @AutoConfig
-public class PayloadAction extends EntityAction<FunctionConfigure> {
+public class FunctionConfigureAction extends EntityAction<FunctionConfigure> {
 
 	private static final long serialVersionUID = 7361376054414253701L;
 
