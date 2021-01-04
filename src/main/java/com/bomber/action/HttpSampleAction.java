@@ -108,7 +108,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 	@Setter
 	private String scope;
 	@Setter
-	private int startPayloadIndex = 0;
+	private int beginUserIndex = 0;
 
 	@Getter
 	private int totalRequests;
@@ -293,7 +293,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		request.setName(name);
 		request.setRequestsPerThread(requestsPerThread);
 		request.setThreadGroups(numberOfThreadsList);
-		request.setPayloadIndex(startPayloadIndex);
+		request.setBeginUserIndex(beginUserIndex);
 		request.setScope(StringUtils.isEmpty(scope) ? Scope.Request : Scope.valueOf(scope));
 		bomberService.execute(request);
 

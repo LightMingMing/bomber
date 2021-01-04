@@ -54,7 +54,7 @@ public class BomberServiceImpl implements BomberService {
 		record.setRequestsPerThread(request.getRequestsPerThread());
 		record.setHttpSample(httpSample);
 		record.setScope(request.getScope());
-		record.setStartPayloadIndex(request.getPayloadIndex());
+		record.setBeginUserIndex(request.getBeginUserIndex());
 		record.setCreateTime(new Date());
 		record.setStatus(READY);
 		return record;
@@ -101,7 +101,7 @@ public class BomberServiceImpl implements BomberService {
 		ctx.setRequestsPerThread(record.getRequestsPerThread());
 		ctx.setActiveThreads(record.getActiveThreads());
 		ctx.setScope(record.getScope());
-		ctx.setStart(record.getStartPayloadIndex());
+		ctx.setStart(record.getBeginUserIndex());
 		return ctx;
 	}
 

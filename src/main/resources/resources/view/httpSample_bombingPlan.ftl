@@ -39,10 +39,10 @@
         </div>
         <#if mutable>
             <div id="control-group-start-functionConfigure-index" class="control-group">
-                <label class="control-label" for="start-functionConfigure-index"
-                       style="width: 120px;">${getText('startPayloadIndex')}</label>
+                <label class="control-label" for="begin-user-index"
+                       style="width: 120px;">${getText('beginUserIndex')}</label>
                 <div class="controls" style="margin-left: 140px;">
-                    <input type="number" id="start-functionConfigure-index" name="startPayloadIndex"
+                    <input type="number" id="begin-user-index" name="beginUserIndex"
                            class="input-small required" min="0" value="0">
                 </div>
             </div>

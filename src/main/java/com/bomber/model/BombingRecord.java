@@ -82,7 +82,7 @@ public class BombingRecord extends BaseEntity {
 	private Scope scope;
 
 	@UiConfig(hiddenInList = @Hidden(true), readonly = @Readonly(true), excludedFromQuery = true)
-	private int startPayloadIndex = 0;
+	private int beginUserIndex = 0;
 
 	@Min(1)
 	@UiConfig(width = "150px", excludedFromQuery = true, readonly = @Readonly(true), cellDynamicAttributes = CENTER_ATTRIBUTE)

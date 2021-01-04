@@ -19,7 +19,7 @@ public class BomberRequest {
 
 	private List<Integer> threadGroups;
 
-	private int payloadIndex;
+	private int beginUserIndex;
 
 	private Scope scope;
 }
