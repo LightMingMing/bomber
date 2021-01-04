@@ -97,20 +97,20 @@ $(function () {
 });
 
 $(function () {
-    $(document).on('focus', 'input.payload-index, #requestsPerThread', function () {
+    $(document).on('focus', 'input.user-index, #requestsPerThread', function () {
         $(this).select()
     })
 
-    $(document).on('change', 'input.payload-index', function () {
+    $(document).on('change', 'input.user-index', function () {
         const $this = $(this)
-        const payloadIndex = $this.val()
-        if (payloadIndex === '' || payloadIndex < 0)
+        const userIndex = $this.val()
+        if (userIndex === '' || userIndex < 0)
             return;
         const uid = $("input.uid").val()
         $.ajax({
             type: "GET",
             contentType: "application/json",
-            url: CONTEXT_PATH + "/httpSample/previewRequest?id=" + uid + "&payloadIndex=" + payloadIndex,
+            url: CONTEXT_PATH + "/httpSample/previewRequest?id=" + uid + "&userIndex=" + userIndex,
             success: function (data) {
                 $("code.request").html(data.content)
             }
@@ -118,12 +118,12 @@ $(function () {
     })
 
     $(document).on('click', 'button.execute', function () {
-        const payloadIndex = $('input.payload-index').val()
+        const userIndex = $('input.user-userIndex').val()
         const uid = $('input.uid').val()
         $.ajax({
             type: "GET",
             contentType: "application/json",
-            url: CONTEXT_PATH + "/httpSample/executeRequest?id=" + uid + "&payloadIndex=" + payloadIndex,
+            url: CONTEXT_PATH + "/httpSample/executeRequest?id=" + uid + "&userIndex=" + userIndex,
             success: function (data) {
                 if (data.content !== undefined) {
                     $("#response").removeClass("hidden")

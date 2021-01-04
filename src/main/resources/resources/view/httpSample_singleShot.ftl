@@ -18,12 +18,12 @@
     </div>
     <#if mutable>
         <div class="form-horizontal">
-            <div id="control-group-functionConfigure-index" class="control-group">
-                <label class="control-label" for="functionConfigure-index"><span data-content="通过设置有效载荷索引, 使用不同的变量进行调试"
-                                                                       class="poped glyphicon glyphicon-question-sign"></span>有效载荷索引</label>
+            <div id="control-group-user-index" class="control-group">
+                <label class="control-label" for="user-index"><span data-content="通过设置用户索引, 使用不同的用户进行测试"
+                                                                    class="poped glyphicon glyphicon-question-sign"></span>用户索引</label>
                 <div class="controls">
-                    <input type="number" id="functionConfigure-index" name="payloadIndex"
-                           class="input-small required functionConfigure-index" min="0"
+                    <input type="number" id="user-index" name="user-index"
+                           class="input-small required user-index" min="0"
                            value="0">
                     <button type="button" class="btn btn-primary execute">${getText('execute')}</button>
                 </div>

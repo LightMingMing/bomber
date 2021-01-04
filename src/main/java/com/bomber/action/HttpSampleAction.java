@@ -118,7 +118,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 	@Getter
 	private boolean mutable = true;
 	@Setter
-	private int payloadIndex = 0;
+	private int userIndex = 0;
 	@Getter
 	private Request request;
 	@Getter
@@ -340,7 +340,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 	private RequestEntity<String> createRequestEntity() throws IOException {
 		httpSample = Objects.requireNonNull(httpSampleManager.get(this.getUid()), "httpSample");
 		if (mutable = httpSample.isMutable()) {
-			Map<String, String> context = getPayload(httpSample, this.payloadIndex);
+			Map<String, String> context = getPayload(httpSample, this.userIndex);
 			return createRequestEntity(httpSample, value -> replace(value, context));
 		} else {
 			// String::toString will cause NPE if value is null
