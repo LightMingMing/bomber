@@ -19,7 +19,7 @@
         <div id="control-group-threadGroups" class="control-group">
             <label class="control-label" for="threadGroups" style="width: 120px;"><span
                         data-content="${getText('threadGroups.desc')}"
-                        class="poped glyphicon glyphicon-question-sign"/>${getText('threadGroups')}</label>
+                        class="poped glyphicon glyphicon-question-sign"></span>${getText('threadGroups')}</label>
             <div class="controls" style="margin-left: 140px;">
                 <input type="text" id="threadGroups" name="threadGroups" maxlength="255" autocomplete="off"
                        value="${threadGroups!1}" style="width: 400px">
@@ -29,7 +29,7 @@
             <label class="control-label" for="requestsPerThread" style="width: 120px;"><span
                         data-content="${getText('requestsPerThread.desc')}"
                         data-html="true"
-                        class="poped glyphicon glyphicon-question-sign"/>${getText('requestsPerThread')}</label>
+                        class="poped glyphicon glyphicon-question-sign"></span>${getText('requestsPerThread')}</label>
             <div class="controls" style="margin-left: 140px;">
                 <input type="number" id="requestsPerThread" name="requestsPerThread" maxlength="255" min="1"
                        max="${maxRequestsPerThread!500}" autocomplete="off" value="${requestsPerThread!10}"
@@ -48,8 +48,8 @@
             </div>
             <div id="control-group-scope" class="control-group">
                 <label class="control-label" for="scope" style="width: 120px;"><span
-                            data-content="${getText('payloadScope.desc')}"
-                            class="poped glyphicon glyphicon-question-sign"/>${getText('functionConfigure')}${getText('scope')}
+                            data-content="${getText('userScope.desc')}"
+                            class="poped glyphicon glyphicon-question-sign"></span>${getText('userScope')}
                 </label>
                 <div class="controls" style="margin-left: 140px;">
                     <select id="scope" name="scope">
