@@ -31,6 +31,7 @@ public class Project extends BaseEntity {
 	private static final long serialVersionUID = -6035022618157843454L;
 
 	@Column(nullable = false)
+	@UiConfig(listTemplate = "<a href='<@url value='/workbench?projectId='/>${(entity.id)!}'>${value}</a>")
 	private String name;
 
 	@UiConfig(excludedFromQuery = true, type = "textarea")
