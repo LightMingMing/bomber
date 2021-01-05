@@ -6,6 +6,7 @@ import java.io.File;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.ConstraintMode;
@@ -65,6 +66,10 @@ public class HttpSample extends BaseEntity {
 	@Column(nullable = false)
 	@UiConfig(alias = "requestName", width = "200px", cellDynamicAttributes = "{\"style\":\"text-align: center\"}", group = "basic")
 	private String name;
+
+	@Column
+	@UiConfig(templateName = "httpSample_tag", type = "dictionary", cssClass = "chosen", hiddenInList = @Hidden(true), excludedFromQuery = true, group = "basic")
+	private Set<String> tags;
 
 	@Column(nullable = false)
 	@UiConfig(alias = "requestMethod", width = "100px", cellDynamicAttributes = "{\"style\":\"text-align: center\"}", group = "basic")
