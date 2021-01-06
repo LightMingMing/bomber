@@ -84,6 +84,15 @@ public class BombingRecord extends BaseEntity {
 	@UiConfig(hiddenInList = @Hidden(true), readonly = @Readonly(true), excludedFromQuery = true)
 	private int beginUserIndex = 0;
 
+	@UiConfig(hiddenInList = @Hidden(true), readonly = @Readonly(true), excludedFromQuery = true)
+	private int iterations;
+
+	@UiConfig(hiddenInList = @Hidden(true), readonly = @Readonly(true), excludedFromQuery = true)
+	private int completedIterations;
+
+	@UiConfig(hiddenInList = @Hidden(true), readonly = @Readonly(true), excludedFromQuery = true)
+	private boolean useSameUser;
+
 	@Min(1)
 	@UiConfig(width = "150px", excludedFromQuery = true, readonly = @Readonly(true), cellDynamicAttributes = CENTER_ATTRIBUTE)
 	private int requestsPerThread;

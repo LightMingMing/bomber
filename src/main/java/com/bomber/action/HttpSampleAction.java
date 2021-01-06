@@ -109,6 +109,10 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 	private String scope;
 	@Setter
 	private int beginUserIndex = 0;
+	@Setter
+	private int iterations = 0;
+	@Setter
+	private boolean useSameUser = false;// for each iteration
 
 	@Getter
 	private int totalRequests;
@@ -294,6 +298,8 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		request.setRequestsPerThread(requestsPerThread);
 		request.setThreadGroups(numberOfThreadsList);
 		request.setBeginUserIndex(beginUserIndex);
+		request.setIterations(iterations);
+		request.setUseSameUser(useSameUser);
 		request.setScope(StringUtils.isEmpty(scope) ? Scope.Request : Scope.valueOf(scope));
 		bomberService.execute(request);
 

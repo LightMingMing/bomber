@@ -43,6 +43,18 @@ public class BomberContext {
 	@Setter
 	private int start;
 
+	@Getter
+	@Setter
+	private int iterations = 1;
+
+	@Getter
+	@Setter
+	private int completedIterations = 0;
+
+	@Getter
+	@Setter
+	private boolean useSameUser = false;
+
 	@Setter
 	private volatile boolean paused;
 

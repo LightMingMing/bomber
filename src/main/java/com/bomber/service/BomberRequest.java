@@ -21,5 +21,9 @@ public class BomberRequest {
 
 	private int beginUserIndex;
 
+	private int iterations;
+
+	private boolean useSameUser;
+
 	private Scope scope;
 }

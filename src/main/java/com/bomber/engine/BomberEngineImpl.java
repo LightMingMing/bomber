@@ -8,6 +8,7 @@ import static com.bomber.model.BombingStatus.RUNNING;
 import java.util.Date;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
+import java.util.function.Supplier;
 
 import org.ironrhino.rest.RestStatus;
 import org.springframework.lang.NonNull;
@@ -113,6 +114,28 @@ public class BomberEngineImpl implements BomberEngine {
 		}
 	}
 
+	public static int computeOffsetForEachIteration(BomberContext ctx) {
+		if (ctx.isUseSameUser()) {
+			return 0;
+		}
+		Supplier<Integer> totalThreads = () -> {
+			int result = 0;
+			for (int threadCount : ctx.getThreadGroups()) {
+				result += threadCount;
+			}
+			return result;
+		};
+		if (ctx.getScope() == Scope.Request) {
+			return totalThreads.get() * ctx.getRequestsPerThread();
+		} else if (ctx.getScope() == Scope.Thread) {
+			return totalThreads.get();
+		} else if (ctx.getScope() == Scope.Group) {
+			return ctx.getThreadGroups().size();
+		} else {
+			return 1;
+		}
+	}
+
 	@Override
 	public void execute(@NonNull BomberContext ctx) {
 		bombingExecutor.execute(() -> {
@@ -145,37 +168,50 @@ public class BomberEngineImpl implements BomberEngine {
 
 		BombardierRequest request = createBombardierRequest(httpSampleSnapshot, ctx.getScope());
 
-		Counter counter = createCounter(ctx);
+		int offsetForEachIteration = computeOffsetForEachIteration(ctx);
+		int baseBeginIndex = ctx.getStart();
 
-		for (int i = ctx.getThreadGroupCursor(); i < ctx.getThreadGroups().size(); i++) {
-			int numberOfThreads = ctx.getThreadGroups().get(i);
-			int numberOfRequests = numberOfThreads * ctx.getRequestsPerThread();
+		for (int i = ctx.getCompletedIterations(); i < ctx.getIterations();) {
 
-			ctx.setActiveThreads(numberOfThreads);
-			ctx.setThreadGroupCursor(i);
-			record.setActiveThreads(numberOfThreads);
-			record.setThreadGroupCursor(i);
-			if (ctx.isPaused()) {
-				record.setStatus(PAUSE);
+			ctx.setStart(baseBeginIndex + offsetForEachIteration * i);
+
+			Counter counter = createCounter(ctx);
+
+			for (int j = ctx.getThreadGroupCursor(); j < ctx.getThreadGroups().size(); j++) {
+				int numberOfThreads = ctx.getThreadGroups().get(j);
+				int numberOfRequests = numberOfThreads * ctx.getRequestsPerThread();
+
+				ctx.setActiveThreads(numberOfThreads);
+				ctx.setThreadGroupCursor(j);
+				record.setActiveThreads(numberOfThreads);
+				record.setThreadGroupCursor(j);
+				record.setCompletedIterations(i);
+				if (ctx.isPaused()) {
+					record.setStatus(PAUSE);
+					bombingRecordManager.save(record);
+					return;
+				}
 				bombingRecordManager.save(record);
-				return;
+
+				request.setNumberOfConnections(numberOfThreads);
+				request.setNumberOfRequests(numberOfRequests);
+				request.setStartLine(counter.getAndCount());
+
+				try {
+					Date startTime = new Date();
+					BombardierResponse response = bombardierService.execute(request);
+					saveSummaryReport(response, record, startTime);
+				} catch (RestStatus status) {
+					handleException(record, status);
+					return;
+				} catch (Exception e) {
+					handleException(record, e);
+					return;
+				}
 			}
-			bombingRecordManager.save(record);
 
-			request.setNumberOfConnections(numberOfThreads);
-			request.setNumberOfRequests(numberOfRequests);
-			request.setStartLine(counter.getAndCount());
-
-			try {
-				Date startTime = new Date();
-				BombardierResponse response = bombardierService.execute(request);
-				saveSummaryReport(response, record, startTime);
-			} catch (RestStatus status) {
-				handleException(record, status);
-				return;
-			} catch (Exception e) {
-				handleException(record, e);
-				return;
+			if (++i < ctx.getIterations()) {
+				ctx.setThreadGroupCursor(0);
 			}
 		}
 

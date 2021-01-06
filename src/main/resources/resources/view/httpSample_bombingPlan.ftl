@@ -29,7 +29,8 @@
             <label class="control-label" for="requestsPerThread" style="width: 120px;"><span
                         data-content="${getText('requestsPerThread.desc')}"
                         data-html="true"
-                        class="poped glyphicon glyphicon-question-sign"></span>${getText('requestsPerThread')}</label>
+                        class="poped glyphicon glyphicon-question-sign"></span>${getText('requestsPerThread')}
+            </label>
             <div class="controls" style="margin-left: 140px;">
                 <input type="number" id="requestsPerThread" name="requestsPerThread" maxlength="255" min="1"
                        max="${maxRequestsPerThread!500}" autocomplete="off" value="${requestsPerThread!10}"
@@ -37,8 +38,23 @@
                 <span> </span><span id="total-requests">${totalRequests!0}</span>
             </div>
         </div>
+        <div id="control-group-iterations" class="control-group">
+            <label class="control-label" for="iterations" style="width: 120px;">${getText('iterations')}</label>
+            <div class="controls" style="margin-left: 140px;">
+                <input type="number" id="iterations" name="iterations" min="1" max="500" autocomplete="off"
+                       value="${iterations!1}" class="input-small">
+            </div>
+        </div>
         <#if mutable>
-            <div id="control-group-start-functionConfigure-index" class="control-group">
+            <div id="control-group-use-same-user" class="control-group">
+                <label class="control-label" for="use-same-user"
+                       style="width: 120px;">${getText('useSameUser')}</label>
+                <div class="controls" style="margin-left: 140px;">
+                    <input type="checkbox" id="use-same-user" name="useSameUser" class="switch switch-off input-small"
+                           checked="checked">
+                </div>
+            </div>
+            <div id="control-group-begin-user-index" class="control-group">
                 <label class="control-label" for="begin-user-index"
                        style="width: 120px;">${getText('beginUserIndex')}</label>
                 <div class="controls" style="margin-left: 140px;">
