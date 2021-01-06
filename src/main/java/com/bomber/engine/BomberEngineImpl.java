@@ -162,38 +162,19 @@ public class BomberEngineImpl implements BomberEngine {
 			}
 			bombingRecordManager.save(record);
 
-			try {
-				request.setNumberOfConnections(numberOfThreads);
-				request.setNumberOfRequests(numberOfRequests);
-				request.setStartLine(counter.getAndCount());
+			request.setNumberOfConnections(numberOfThreads);
+			request.setNumberOfRequests(numberOfRequests);
+			request.setStartLine(counter.getAndCount());
 
+			try {
 				Date startTime = new Date();
 				BombardierResponse response = bombardierService.execute(request);
-
-				SummaryReport summaryReport = convertToSummaryReport(response);
-				summaryReport.setStartTime(startTime);
-				summaryReport.setEndTime(new Date());
-				summaryReport.setBombingRecord(record);
-				summaryReportManager.save(summaryReport);
+				saveSummaryReport(response, record, startTime);
 			} catch (RestStatus status) {
-				log.error("bombardier execute failed", status);
-				String message = status.getStatus();
-				if (status.getMessage() != null) {
-					message = status.getMessage();
-				} else if (status.getCause() != null && status.getCause().getMessage() != null) {
-					message = status.getCause().getMessage();
-				}
-				record.setStatus(FAILURE);
-				record.setRemark(message);
-				record.setEndTime(new Date());
-				bombingRecordManager.save(record);
+				handleException(record, status);
 				return;
 			} catch (Exception e) {
-				log.error("bombardier execute failed", e);
-				record.setStatus(FAILURE);
-				record.setEndTime(new Date());
-				record.setRemark(e.getMessage());
-				bombingRecordManager.save(record);
+				handleException(record, e);
 				return;
 			}
 		}
@@ -201,5 +182,35 @@ public class BomberEngineImpl implements BomberEngine {
 		record.setStatus(COMPLETED);
 		record.setEndTime(new Date());
 		bombingRecordManager.save(record);
+	}
+
+	private void handleException(BombingRecord record, RestStatus status) {
+		log.error("bombardier execute failed", status);
+		String message = status.getStatus();
+		if (status.getMessage() != null) {
+			message = status.getMessage();
+		} else if (status.getCause() != null && status.getCause().getMessage() != null) {
+			message = status.getCause().getMessage();
+		}
+		record.setStatus(FAILURE);
+		record.setRemark(message);
+		record.setEndTime(new Date());
+		bombingRecordManager.save(record);
+	}
+
+	private void handleException(BombingRecord record, Exception e) {
+		log.error("bombardier execute failed", e);
+		record.setStatus(FAILURE);
+		record.setEndTime(new Date());
+		record.setRemark(e.getMessage());
+		bombingRecordManager.save(record);
+	}
+
+	private void saveSummaryReport(BombardierResponse response, BombingRecord record, Date startTime) {
+		SummaryReport summaryReport = convertToSummaryReport(response);
+		summaryReport.setStartTime(startTime);
+		summaryReport.setEndTime(new Date());
+		summaryReport.setBombingRecord(record);
+		summaryReportManager.save(summaryReport);
 	}
 }
