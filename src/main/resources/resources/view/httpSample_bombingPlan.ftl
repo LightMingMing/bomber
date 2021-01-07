@@ -21,8 +21,13 @@
                         data-content="${getText('threadGroups.desc')}"
                         class="poped glyphicon glyphicon-question-sign"></span>${getText('threadGroups')}</label>
             <div class="controls" style="margin-left: 140px;">
-                <input type="text" id="threadGroups" name="threadGroups" maxlength="255" autocomplete="off"
-                       value="${threadGroups!1}" style="width: 400px">
+                <input type="text" id="threadGroups" name="threadGroups" style="width: 320px;" autocomplete="off"
+                       value="${threadGroups!1}">
+                <span>&nbsp;✖&nbsp;</span>
+                <input type="number" id="iterations" name="iterations" style="width: 50px" min="1" max="500"
+                       value="${iterations!1}"/>
+                <span data-content="${getText('iterations')}" data-html="true"
+                      class="poped glyphicon glyphicon-question-sign"></span>
             </div>
         </div>
         <div id="control-group-requests-per-thread" class="control-group">
@@ -38,19 +43,12 @@
                 <span> </span><span id="total-requests">${totalRequests!0}</span>
             </div>
         </div>
-        <div id="control-group-iterations" class="control-group">
-            <label class="control-label" for="iterations" style="width: 120px;">${getText('iterations')}</label>
-            <div class="controls" style="margin-left: 140px;">
-                <input type="number" id="iterations" name="iterations" min="1" max="500" autocomplete="off"
-                       value="${iterations!1}" class="input-small">
-            </div>
-        </div>
         <#if mutable>
             <div id="control-group-use-same-user" class="control-group">
                 <label class="control-label" for="use-same-user"
                        style="width: 120px;">${getText('useSameUser')}</label>
                 <div class="controls" style="margin-left: 140px;">
-                    <input type="checkbox" id="use-same-user" name="useSameUser" class="switch switch-off input-small"
+                    <input type="checkbox" id="use-same-user" name="useSameUser" class="switch switch-off input-medium"
                            checked="checked">
                 </div>
             </div>
@@ -68,7 +66,7 @@
                             class="poped glyphicon glyphicon-question-sign"></span>${getText('userScope')}
                 </label>
                 <div class="controls" style="margin-left: 140px;">
-                    <select id="scope" name="scope">
+                    <select id="scope" name="scope" class="input-medium">
                         <option label="${getText('Request')}" selected>Request</option>
                         <option label="${getText('Thread')}">Thread</option>
                         <option label="${getText('Group')}">Group</option>
