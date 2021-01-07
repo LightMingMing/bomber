@@ -114,28 +114,6 @@ public class BomberEngineImpl implements BomberEngine {
 		}
 	}
 
-	public static int computeOffsetForEachIteration(BomberContext ctx) {
-		if (ctx.isUseSameUser()) {
-			return 0;
-		}
-		Supplier<Integer> totalThreads = () -> {
-			int result = 0;
-			for (int threadCount : ctx.getThreadGroups()) {
-				result += threadCount;
-			}
-			return result;
-		};
-		if (ctx.getScope() == Scope.Request) {
-			return totalThreads.get() * ctx.getRequestsPerThread();
-		} else if (ctx.getScope() == Scope.Thread) {
-			return totalThreads.get();
-		} else if (ctx.getScope() == Scope.Group) {
-			return ctx.getThreadGroups().size();
-		} else {
-			return 1;
-		}
-	}
-
 	@Override
 	public void execute(@NonNull BomberContext ctx) {
 		bombingExecutor.execute(() -> {
@@ -168,12 +146,7 @@ public class BomberEngineImpl implements BomberEngine {
 
 		BombardierRequest request = createBombardierRequest(httpSampleSnapshot, ctx.getScope());
 
-		int offsetForEachIteration = computeOffsetForEachIteration(ctx);
-		int baseBeginIndex = ctx.getStart();
-
 		for (int i = ctx.getCompletedIterations(); i < ctx.getIterations();) {
-
-			ctx.setStart(baseBeginIndex + offsetForEachIteration * i);
 
 			Counter counter = createCounter(ctx);
 

@@ -23,7 +23,5 @@ public class BomberRequest {
 
 	private int iterations;
 
-	private boolean useSameUser;
-
 	private Scope scope;
 }

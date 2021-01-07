@@ -56,7 +56,6 @@ public class BomberServiceImpl implements BomberService {
 		record.setScope(request.getScope());
 		record.setBeginUserIndex(request.getBeginUserIndex());
 		record.setIterations(request.getIterations());
-		record.setUseSameUser(request.isUseSameUser());
 		record.setCreateTime(new Date());
 		record.setStatus(READY);
 		return record;
@@ -106,7 +105,6 @@ public class BomberServiceImpl implements BomberService {
 		ctx.setStart(record.getBeginUserIndex());
 		ctx.setIterations(record.getIterations());
 		ctx.setCompletedIterations(record.getCompletedIterations());
-		ctx.setUseSameUser(record.isUseSameUser());
 		return ctx;
 	}
 

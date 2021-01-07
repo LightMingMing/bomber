@@ -44,14 +44,6 @@
             </div>
         </div>
         <#if mutable>
-            <div id="control-group-use-same-user" class="control-group">
-                <label class="control-label" for="use-same-user"
-                       style="width: 120px;">${getText('useSameUser')}</label>
-                <div class="controls" style="margin-left: 140px;">
-                    <input type="checkbox" id="use-same-user" name="useSameUser" class="switch switch-off input-medium"
-                           checked="checked">
-                </div>
-            </div>
             <div id="control-group-begin-user-index" class="control-group">
                 <label class="control-label" for="begin-user-index"
                        style="width: 120px;">${getText('beginUserIndex')}</label>
