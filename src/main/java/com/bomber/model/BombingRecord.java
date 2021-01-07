@@ -48,7 +48,8 @@ public class BombingRecord extends BaseEntity {
 			+ "<#elseif (entity.status.name() == 'READY')><span class='label label-info'>${threads}</span><#sep> "
 			+ "<#elseif (entity.status.name() == 'RUNNING')><span class='label label-warning'>${threads}</span><#sep> "
 			+ "<#elseif (entity.status.name() == 'PAUSE')><span class='label label-inverse'>${threads}</span><#sep> "
-			+ "<#else><span class='label label-important'>${threads}</span><#sep> </#if></#list>";
+			+ "<#else><span class='label label-important'>${threads}</span><#sep> </#if></#list>"
+			+ "<#if (entity.status.name() != 'COMPLETED' && entity.iterations > 1)> ${entity.currentIterations}/${entity.iterations}</#if>";
 
 	private static final String STATUS_TEMPLATE = "<span class='label <#switch value.name()>"
 			+ "<#case 'COMPLETED'>label-success<#break><#case 'FAILURE'>label-important<#break>"
