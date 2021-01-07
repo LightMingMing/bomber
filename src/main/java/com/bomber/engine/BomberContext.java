@@ -49,7 +49,7 @@ public class BomberContext {
 
 	@Getter
 	@Setter
-	private int completedIterations = 0;
+	private int currentIterations = 0;
 
 	@Setter
 	private volatile boolean paused;

@@ -104,7 +104,7 @@ public class BomberServiceImpl implements BomberService {
 		ctx.setScope(record.getScope());
 		ctx.setStart(record.getBeginUserIndex());
 		ctx.setIterations(record.getIterations());
-		ctx.setCompletedIterations(record.getCompletedIterations());
+		ctx.setCurrentIterations(record.getCurrentIterations());
 		return ctx;
 	}
 

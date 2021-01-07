@@ -8,7 +8,6 @@ import static com.bomber.model.BombingStatus.RUNNING;
 import java.util.Date;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
-import java.util.function.Supplier;
 
 import org.ironrhino.rest.RestStatus;
 import org.springframework.lang.NonNull;
@@ -146,7 +145,7 @@ public class BomberEngineImpl implements BomberEngine {
 
 		BombardierRequest request = createBombardierRequest(httpSampleSnapshot, ctx.getScope());
 
-		for (int i = ctx.getCompletedIterations(); i < ctx.getIterations();) {
+		for (int i = ctx.getCurrentIterations(); i < ctx.getIterations();) {
 
 			Counter counter = createCounter(ctx);
 
@@ -158,7 +157,7 @@ public class BomberEngineImpl implements BomberEngine {
 				ctx.setThreadGroupCursor(j);
 				record.setActiveThreads(numberOfThreads);
 				record.setThreadGroupCursor(j);
-				record.setCompletedIterations(i);
+				record.setCurrentIterations(i);
 				if (ctx.isPaused()) {
 					record.setStatus(PAUSE);
 					bombingRecordManager.save(record);
@@ -190,6 +189,7 @@ public class BomberEngineImpl implements BomberEngine {
 
 		record.setStatus(COMPLETED);
 		record.setEndTime(new Date());
+		record.setCurrentIterations(record.getCurrentIterations());
 		bombingRecordManager.save(record);
 	}
 

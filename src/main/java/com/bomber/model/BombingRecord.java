@@ -88,7 +88,7 @@ public class BombingRecord extends BaseEntity {
 	private int iterations;
 
 	@UiConfig(hiddenInList = @Hidden(true), readonly = @Readonly(true), excludedFromQuery = true)
-	private int completedIterations;
+	private int currentIterations;
 
 	@Min(1)
 	@UiConfig(width = "150px", excludedFromQuery = true, readonly = @Readonly(true), cellDynamicAttributes = CENTER_ATTRIBUTE)
