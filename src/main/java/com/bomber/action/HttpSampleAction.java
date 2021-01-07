@@ -66,7 +66,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 
 	private static final int MAX_REQUESTS_PRE_THREAD = 500;
 
-	private static final String DEFAULT_THREAD_GROUPS = "1, 2, 5, 10, 20, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500";
+	private static final String DEFAULT_THREAD_GROUPS = "1, 2, 5, 10, 20, 50, 100, 150, 200, 250";
 
 	private static final int DEFAULT_REQUESTS_PRE_THREAD = 10;
 
