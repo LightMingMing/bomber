@@ -1,5 +1,7 @@
 package com.bomber.functions.core;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -27,7 +29,7 @@ public class DefaultDependencyHandler implements DependencyHandler {
 			while (iterator.hasNext()) {
 				FunctionContext next = iterator.next();
 				Set<String> dependentArgs;
-				if ((dependentArgs = next.dependentKeys()).isEmpty() || found.containsAll(dependentArgs)) {
+				if ((dependentArgs = next.dependentKeys()).isEmpty() || containsAll(found, dependentArgs)) {
 					ordered.add(next);
 					List<String> intersection = intersection(found, next.retKeys());
 					if (!intersection.isEmpty()) {
@@ -71,7 +73,7 @@ public class DefaultDependencyHandler implements DependencyHandler {
 	}
 
 	private void find(String key, Collection<FunctionContext> all, Set<String> found) {
-		FunctionContext ctx = all.stream().filter(o -> o.retKeys().contains(key)).findFirst()
+		FunctionContext ctx = all.stream().filter(o -> contains(o.retKeys(), key)).findFirst()
 				.orElseThrow(() -> new IllegalArgumentException("The key '" + key + "' can't found"));
 		found.add(ctx.name());
 		for (String each : ctx.dependentKeys()) {
@@ -79,5 +81,38 @@ public class DefaultDependencyHandler implements DependencyHandler {
 				find(each, all, found);
 			}
 		}
+	}
+
+	private boolean contains(Set<String> keys, String key) {
+		// key
+		if (keys.contains(key)) {
+			return true;
+		}
+
+		if (key.length() < 3) {
+			return false;
+		}
+
+		// key_n
+		if (key.endsWith("_n")) {
+			return keys.contains(key.substring(0, key.length() - 2));
+		}
+
+		// key_number
+		int separatorIndex = key.lastIndexOf('_');
+		if (separatorIndex > 0 && separatorIndex + 1 < key.length()
+				&& StringUtils.isNumeric(key.substring(separatorIndex + 1))) {
+			return keys.contains(key.substring(0, separatorIndex));
+		}
+		return false;
+	}
+
+	private boolean containsAll(Set<String> source, Set<String> target) {
+		for (String key : target) {
+			if (!contains(source, key)) {
+				return false;
+			}
+		}
+		return true;
 	}
 }
