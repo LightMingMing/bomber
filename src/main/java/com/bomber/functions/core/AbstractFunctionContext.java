@@ -52,11 +52,11 @@ public abstract class AbstractFunctionContext implements FunctionContext {
 			return Collections.emptySet();
 		}
 		Set<String> result = readReplaceableKeys(input().values());
-		result.addAll(customerArgs());
+		result.addAll(customArgs());
 		return result;
 	}
 
-	protected Set<String> customerArgs() {
+	protected Set<String> customArgs() {
 		String customArg = metadata().getCustomArg();
 		if (customArg.isEmpty()) {
 			return Collections.emptySet();
@@ -118,7 +118,7 @@ public abstract class AbstractFunctionContext implements FunctionContext {
 	protected Input newInput(Output output) {
 		if (!input().isEmpty() && !output.isEmpty()) {
 			Map<String, String> temp = new HashMap<>();
-			customerArgs().forEach(k -> temp.put(k, output.get(k)));
+			customArgs().forEach(k -> temp.put(k, output.get(k)));
 			input().getAll().forEach((k, v) -> temp.put(k, replace(v, output.getAll())));
 			return new Input(temp);
 		}
