@@ -1,7 +1,5 @@
 package com.bomber.functions.core;
 
-import org.apache.commons.lang3.StringUtils;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -9,6 +7,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
 
 public class DefaultDependencyHandler implements DependencyHandler {
 
@@ -44,19 +44,6 @@ public class DefaultDependencyHandler implements DependencyHandler {
 			}
 		}
 		return ordered;
-	}
-
-	@Override
-	public List<FunctionContext> handle(Collection<FunctionContext> disordered, String... chooses) {
-		List<FunctionContext> ordered = handle(disordered);
-		if (chooses.length == 0) {
-			return ordered;
-		}
-		Set<String> found = new HashSet<>();
-		for (String choose : chooses) {
-			find(choose, ordered, found);
-		}
-		return ordered.stream().filter(each -> found.contains(each.name())).collect(Collectors.toList());
 	}
 
 	@Override
