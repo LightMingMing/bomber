@@ -1,5 +1,6 @@
-package com.bomber.manager;
+package com.bomber.manager.impl;
 
+import com.bomber.manager.FunctionConfigureManager;
 import org.ironrhino.core.service.BaseManagerImpl;
 import org.springframework.stereotype.Repository;
 
