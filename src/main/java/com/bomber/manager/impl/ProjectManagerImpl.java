@@ -1,15 +1,18 @@
 package com.bomber.manager.impl;
 
-import com.bomber.manager.ProjectManager;
-import com.bomber.model.Project;
-import org.ironrhino.core.service.BaseManagerImpl;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
+import java.util.Optional;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import java.util.Optional;
+
+import org.ironrhino.core.service.BaseManagerImpl;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.bomber.manager.ProjectManager;
+import com.bomber.model.Project;
+import com.bomber.model.Project_;
 
 @Repository
 public class ProjectManagerImpl extends BaseManagerImpl<Project> implements ProjectManager {
@@ -17,14 +20,14 @@ public class ProjectManagerImpl extends BaseManagerImpl<Project> implements Proj
 	@Override
 	@Transactional(readOnly = true)
 	public Optional<String> getProjectName(String id) {
-		CriteriaBuilder criteriaBuilder = sessionFactory.getCriteriaBuilder();
+		CriteriaBuilder cb = sessionFactory.getCriteriaBuilder();
 
-		CriteriaQuery<String> query = criteriaBuilder.createQuery(String.class);
-		Root<Project> root = query.from(Project.class);
+		CriteriaQuery<String> cq = cb.createQuery(String.class);
+		Root<Project> root = cq.from(Project.class);
 
-		query.select(root.get("name"));
-		query.where(criteriaBuilder.equal(root.get("id"), id));
+		cq.select(root.get(Project_.NAME));
+		cq.where(cb.equal(root.get(Project_.ID), id));
 
-		return sessionFactory.getCurrentSession().createQuery(query).uniqueResultOptional();
+		return sessionFactory.getCurrentSession().createQuery(cq).uniqueResultOptional();
 	}
 }
