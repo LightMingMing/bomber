@@ -61,6 +61,7 @@ dependencies {
 
     jmhImplementation sourceSets.main.output
 
+    annotationProcessor("org.hibernate:hibernate-jpamodelgen:5.4.27.Final")
     annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
 
     providedCompile("com.google.code.findbugs:annotations:3.0.1")
