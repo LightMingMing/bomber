@@ -3,6 +3,7 @@ package com.bomber.model;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.persistence.Embeddable;
 
@@ -36,4 +37,19 @@ public class Assertion implements Serializable {
 		return Collections.singletonMap("JsonPath", "JsonPath");
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		Assertion assertion = (Assertion) o;
+		return Objects.equals(asserter, assertion.asserter) && Objects.equals(expression, assertion.expression)
+				&& condition == assertion.condition && Objects.equals(expected, assertion.expected);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(asserter, expression, condition, expected);
+	}
 }

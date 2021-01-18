@@ -5,6 +5,7 @@ import static com.bomber.functions.util.FunctionHelper.getFunctionMetadata;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -83,5 +84,21 @@ public class FunctionDefinition {
 			input = new Input(params);
 		}
 		return new DefaultFunctionContext(key, functionName, input);
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		FunctionDefinition that = (FunctionDefinition) o;
+		return key.equals(that.key) && functionName.equals(that.functionName)
+				&& Objects.equals(argumentValues, that.argumentValues);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(key, functionName, argumentValues);
 	}
 }
