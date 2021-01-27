@@ -14,7 +14,7 @@ import com.bomber.model.SummaryReport;
 import com.bomber.service.SummaryReportService;
 
 @RestController
-@RequestMapping("/summaryReport")
+@RequestMapping("/summaryReports")
 public class SummaryReportController {
 
 	protected final static Comparator<SummaryReport> comparator = Comparator
@@ -26,7 +26,7 @@ public class SummaryReportController {
 		this.bombingRecordService = bombingRecordService;
 	}
 
-	@GetMapping("/list")
+	@GetMapping
 	public List<SummaryReportVo> list(@RequestParam("recordId") String recordId) {
 		return bombingRecordService.list(recordId).stream().sorted(comparator).map(this::map)
 				.collect(Collectors.toList());

@@ -18,14 +18,20 @@
 </div>
 <script>
     const recordIds = '${recordIds!}'.split(/,\s*/);
-    const reportsListUrl = '<@url value='/api/summaryReport/list?recordId='/>'
-    const recordNameUrl = '<@url value='/api/bombingRecord/getRecordName?id='/>'
+
+    function reportListUrl(id) {
+        return '<@url value='/api/summaryReports?recordId='/>' + id;
+    }
+
+    function recordNameUrl(id) {
+        return '<@url value='/api/bombingRecords/'/>' + id + '/name';
+    }
 
     let records = []
     $.ajaxSettings.async = false
-    recordIds.forEach(id => $.get(reportsListUrl + id, data => records.push(preprocess(data))))
+    recordIds.forEach(id => $.get(reportListUrl(id), data => records.push(preprocess(data))))
     records = getIntersectionOnCommonThreads(records)
-    recordIds.forEach((id, i) => $.get(recordNameUrl + id, name => records[i].forEach(r => r.name = name)))
+    recordIds.forEach((id, i) => $.get(recordNameUrl(id), name => records[i].forEach(r => r.name = name)))
     $.ajaxSettings.async = true
 
     // union

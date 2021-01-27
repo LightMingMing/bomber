@@ -22,10 +22,10 @@
     </div>
 </div>
 <script>
-    const reportsListUrl = '<@url value='/api/summaryReport/list?recordId='/>${recordId!}'
-    const recordNameUrl = '<@url value='/api/bombingRecord/getRecordName?id='/>${recordId!}'
+    const reportListUrl = '<@url value='/api/summaryReports?recordId=${recordId!}'/>'
+    const recordNameUrl = '<@url value='/api/bombingRecords/${recordId!}/name'/>'
     $.get(recordNameUrl, name => $("#recordName").html(name))
-    $.get(reportsListUrl, function (data) {
+    $.get(reportListUrl, function (data) {
         displaySummaryReports("throughput", "average", data)
     })
 </script>
