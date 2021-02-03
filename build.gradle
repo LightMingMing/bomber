@@ -105,13 +105,6 @@ dependencies {
         exclude group: "org.hdrhistogram"
         exclude group: "org.latencyutils"
     }
-    implementation("io.micrometer:micrometer-registry-influx:${micrometerVersion}") {
-        exclude group: "io.micrometer"
-    }
-    implementation("io.micrometer:micrometer-registry-prometheus:${micrometerVersion}") {
-        exclude group: "io.micrometer"
-        exclude group: "io.prometheus"
-    }
 
     implementation("io.netty:netty-all:4.1.50.Final")
 
