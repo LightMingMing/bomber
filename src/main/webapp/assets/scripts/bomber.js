@@ -118,7 +118,7 @@ $(function () {
     })
 
     $(document).on('click', 'button.execute', function () {
-        const userIndex = $('input.user-userIndex').val()
+        const userIndex = $('input.user-index').val()
         const uid = $('input.uid').val()
         $.ajax({
             type: "GET",
