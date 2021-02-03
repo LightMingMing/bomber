@@ -1,23 +1,24 @@
 package com.bomber.api.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.bomber.service.ProjectService;
+import com.bomber.manager.ProjectManager;
 
 @RestController
-@RequestMapping("/project")
+@RequestMapping("/projects")
 public class ProjectController {
 
-	private final ProjectService projectService;
+	private final ProjectManager projectManager;
 
-	public ProjectController(ProjectService projectService) {
-		this.projectService = projectService;
+	public ProjectController(ProjectManager projectManager) {
+		this.projectManager = projectManager;
 	}
 
-	@GetMapping("/projectName")
-	public String getProjectName(String id) {
-		return projectService.getProjectName(id).orElse(null);
+	@GetMapping("/{id}/name")
+	public String getProjectName(@PathVariable String id) {
+		return projectManager.getProjectName(id).orElse(null);
 	}
 }
