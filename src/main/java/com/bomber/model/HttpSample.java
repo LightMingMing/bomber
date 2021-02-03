@@ -63,6 +63,15 @@ public class HttpSample extends BaseEntity {
 	@UiConfig(width = "200px", shownInPick = true, cellDynamicAttributes = "{\"style\":\"text-align: center\"}", group = "basic")
 	private ApplicationInstance applicationInstance;
 
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+	@UiConfig(hiddenInList = @Hidden(value = true), viewTemplate = "<#if value??>value.name</#if>", group = "basic")
+	private Project project;
+
+	@Column(nullable = false)
+	@UiConfig(hiddenInList = @Hidden(value = true), hiddenInView = @Hidden(value = true), group = "basic")
+	private int orderNumber;
+
 	@Column(nullable = false)
 	@UiConfig(alias = "requestName", width = "200px", cellDynamicAttributes = "{\"style\":\"text-align: center\"}", group = "basic")
 	private String name;
