@@ -1,13 +1,14 @@
 package com.bomber.manager;
 
-import java.util.List;
+import java.util.stream.Stream;
 
 import org.ironrhino.core.service.BaseManager;
 
 import com.bomber.model.SummaryReport;
+import com.bomber.vo.SummaryReportVo;
 
 public interface SummaryReportManager extends BaseManager<SummaryReport> {
 
-	List<SummaryReport> list(String recordId);
+	Stream<SummaryReportVo> list(String recordId);
 
 }
