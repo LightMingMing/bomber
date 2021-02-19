@@ -21,7 +21,7 @@ ext {
     mockitoVersion = "3.3.3"
     springdataVersion = "2.2.3.RELEASE"
     springsecurityVersion = "5.2.2.RELEASE"
-    springframeworkVersion = "5.2.2.RELEASE"
+    springframeworkVersion = "5.3.4"
 }
 
 group 'bomber'
@@ -197,6 +197,7 @@ dependencies {
     implementation("org.springframework:spring-jms:${springframeworkVersion}")
     implementation("org.springframework:spring-messaging:${springframeworkVersion}")
     implementation("org.springframework:spring-orm:${springframeworkVersion}")
+    implementation("org.springframework:spring-oxm:${springframeworkVersion}") // spring data redis
     implementation("org.springframework:spring-tx:${springframeworkVersion}")
     implementation("org.springframework:spring-web:${springframeworkVersion}")
     implementation("org.springframework:spring-webflux:${springframeworkVersion}")
