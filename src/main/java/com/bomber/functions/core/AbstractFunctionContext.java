@@ -35,7 +35,7 @@ public abstract class AbstractFunctionContext implements FunctionContext {
 			String arg = metadata().getRetArg();
 			if (input().containsKey(arg)) {
 				String value = input().get(arg);
-				if (StringUtils.isEmpty(value)) {
+				if (StringUtils.hasLength(value)) {
 					throw new MissingArgumentException(metadata().getName(), arg);
 				}
 				outputKeys.addAll(Arrays.asList(value.split(", *")));

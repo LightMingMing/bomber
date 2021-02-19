@@ -3,7 +3,7 @@ package com.bomber.action;
 import static com.bomber.http.StringEntityRender.renderPlainText;
 import static com.bomber.util.ValueReplacer.replace;
 import static java.util.Objects.isNull;
-import static org.springframework.util.StringUtils.isEmpty;
+import static org.springframework.util.StringUtils.hasLength;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -197,7 +197,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 
 	// return true if not upload new file and file path is set to empty
 	private boolean shouldDeleteOldFile() {
-		return isNull(httpSample.getCsvFile()) && isEmpty(httpSample.getCsvFilePath());
+		return isNull(httpSample.getCsvFile()) && hasLength(httpSample.getCsvFilePath());
 	}
 
 	// TODO validate json in front end
@@ -222,12 +222,12 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 
 		boolean shouldDelete = shouldDeleteOldFile();
 		httpSample = getEntity();
-		if (shouldDelete && !isEmpty(httpSample.getCsvFilePath())) {
+		if (shouldDelete && !hasLength(httpSample.getCsvFilePath())) {
 			fileStorage.delete(httpSample.getCsvFilePath());
 			httpSample.setCsvFilePath(null);
 		}
 
-		if (!isEmpty(httpSample.getBody())) {
+		if (!hasLength(httpSample.getBody())) {
 			for (HttpHeader header : httpSample.getHeaders()) {
 				if (header.getName().equals("Content-Type") && header.getValue().contains("json")) {
 					if (!isValidJson(httpSample.getBody())) {
@@ -297,7 +297,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		request.setThreadGroups(numberOfThreadsList);
 		request.setBeginUserIndex(beginUserIndex);
 		request.setIterations(iterations);
-		request.setScope(StringUtils.isEmpty(scope) ? Scope.Request : Scope.valueOf(scope));
+		request.setScope(hasLength(scope) ? Scope.Request : Scope.valueOf(scope));
 		bomberService.execute(request);
 
 		addActionMessage("Bombing is ongoing!");

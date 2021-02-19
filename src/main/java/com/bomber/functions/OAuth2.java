@@ -78,7 +78,7 @@ public class OAuth2 extends StringFunction {
 	}
 
 	private String getKey() {
-		return StringUtils.isEmpty(username) ? clientId : username;
+		return StringUtils.hasLength(username) ? clientId : username;
 	}
 
 	private int timeToLive(Token token) {
