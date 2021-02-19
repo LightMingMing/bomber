@@ -33,6 +33,7 @@ tasks.compileJava {
 
     options.encoding('UTF-8')
     options.compilerArgs.add('-parameters')
+    options.compilerArgs.add('-Xlint:deprecation')
 }
 
 buildDir = 'build'
