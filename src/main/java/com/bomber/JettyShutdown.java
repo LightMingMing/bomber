@@ -1,8 +1,5 @@
 package com.bomber;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.SocketException;
@@ -13,7 +10,11 @@ import java.net.URL;
  */
 public class JettyShutdown {
 
-	private final Logger logger = LoggerFactory.getLogger(JettyShutdown.class);
+	private static final String ANSI_RESET = "\u001B[0m";
+
+	private static final String ANSI_GREEN = "\u001B[32m";
+
+	private static final String ANSI_RED = "\u001B[31m";
 
 	public static void main(String[] args) {
 		new JettyShutdown().attemptShutdown(8080, "password");
@@ -28,11 +29,19 @@ public class JettyShutdown {
 			connection.setRequestMethod("POST");
 			connection.getResponseCode();
 			connection.disconnect();
-			logger.info("Shutting down " + url + ": " + connection.getResponseMessage());
+			info("Shutting down " + url + ": " + connection.getResponseMessage());
 		} catch (SocketException e) {
-			logger.debug("Not running");
+			warn();
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	private void info(String msg) {
+		System.out.println(ANSI_GREEN + msg + ANSI_RESET);
+	}
+
+	private void warn() {
+		System.out.println(ANSI_RED + "Not running " + ANSI_RESET);
 	}
 }

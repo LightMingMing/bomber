@@ -15,3 +15,6 @@ build
 classes
 
 target
+
+jettyShutdown
+*.o
