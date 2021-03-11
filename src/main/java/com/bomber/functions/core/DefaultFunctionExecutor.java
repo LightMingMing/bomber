@@ -50,7 +50,7 @@ public class DefaultFunctionExecutor implements FunctionExecutor {
 				Arrays.stream(outputs).forEach(ctx::fireExecute);
 			}
 		}
-		List<Map<String, String>> result = new ArrayList<>();
+		List<Map<String, String>> result = new ArrayList<>(count);
 		for (Output output : outputs) {
 			result.add(output.getAll());
 		}
