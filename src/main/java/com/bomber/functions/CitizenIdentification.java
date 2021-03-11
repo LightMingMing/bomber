@@ -51,6 +51,19 @@ public class CitizenIdentification extends StringFunction {
 		return sum;
 	}
 
+	// yyyyMMdd
+	private String formattedDate() {
+		int i;
+		String month = (i = date.getMonthValue()) < 10 ? "0" + i : "" + i;
+		String day = (i = date.getDayOfMonth()) < 10 ? "0" + i : "" + i;
+		return date.getYear() + month + day;
+	}
+
+	// %03d
+	private String formattedSeq() {
+		return seq > 99 ? "" + seq : (seq > 9) ? "0" + seq : "00" + seq;
+	}
+
 	@Override
 	public void init(Input input) {
 		String addressCode = input.get("addressCode");
@@ -59,13 +72,13 @@ public class CitizenIdentification extends StringFunction {
 		}
 		String startDate = input.getOrDefault("startDate", "19700101");
 		this.addressCode = addressCode;
-		this.date = LocalDate.parse(startDate, DateTimeFormatter.ofPattern("yyyyMMdd"));
+		this.date = LocalDate.parse(startDate, dateFormat);
 		this.seq = 0;
 	}
 
 	@Override
 	public String execute(Input input) {
-		String result = addressCode + dateFormat.format(date) + String.format("%03d", seq);
+		String result = addressCode + formattedDate() + formattedSeq();
 		result += getCheckBit(getPowerSum(result.toCharArray()));
 		if (++seq == MAX_SEQ) {
 			date = date.plusDays(1);
