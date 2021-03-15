@@ -3,6 +3,9 @@ package com.bomber.functions;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.bomber.functions.core.FuncInfo;
 import com.bomber.functions.core.Input;
@@ -11,9 +14,9 @@ import com.bomber.functions.core.StringFunction;
 @FuncInfo(requiredArgs = "addressCode", optionalArgs = "startDate")
 public class CitizenIdentification extends StringFunction {
 
-	private static final String[] provinces = new String[]{"11", "12", "13", "14", "15", "21", "22", "23", "31", "32",
-			"33", "34", "35", "36", "37", "41", "42", "43", "44", "45", "46", "50", "51", "52", "53", "54", "61", "62",
-			"63", "64", "65", "71", "81", "82", "91"};
+	private static final Set<String> provinces = Collections.unmodifiableSet(new HashSet<>(Arrays.asList("11", "12",
+			"13", "14", "15", "21", "22", "23", "31", "32", "33", "34", "35", "36", "37", "41", "42", "43", "44", "45",
+			"46", "50", "51", "52", "53", "54", "61", "62", "63", "64", "65", "71", "81", "82", "91")));
 	private static final int[] power = new int[]{7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2};
 	private static final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyyMMdd");
 	private static final int MAX_SEQ = 1000; // exclusive
@@ -32,7 +35,7 @@ public class CitizenIdentification extends StringFunction {
 				return false;
 			}
 		}
-		return Arrays.binarySearch(provinces, addressCode.substring(0, 2)) > -1;
+		return provinces.contains(addressCode.substring(0, 2));
 	}
 
 	private static char getCheckBit(int sum) {
