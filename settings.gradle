@@ -1,2 +1,3 @@
 rootProject.name = 'bomber'
+include 'bomber-common'
 include 'bomber-function'
