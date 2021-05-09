@@ -54,7 +54,6 @@ sourceSets {
 
 repositories {
     maven { url = uri("https://maven.aliyun.com/repository/public") }
-    jcenter()
 }
 
 dependencies {
@@ -72,6 +71,8 @@ dependencies {
     // providedCompile("org.eclipse.jetty:jetty-deploy:${jettyVersion}")
     providedCompile("org.eclipse.jetty:jetty-server:${jettyVersion}")
     providedCompile("org.eclipse.jetty:jetty-webapp:${jettyVersion}")
+
+    implementation project(':bomber-common')
 
     implementation fileTree(dir: 'lib', includes: ['*jar'])
 

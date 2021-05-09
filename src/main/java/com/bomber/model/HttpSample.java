@@ -1,6 +1,6 @@
 package com.bomber.model;
 
-import static com.bomber.util.ValueReplacer.isReplaceable;
+import static com.bomber.common.util.StringReplacer.supports;
 
 import java.io.File;
 import java.util.Date;
@@ -129,7 +129,7 @@ public class HttpSample extends BaseEntity {
 	}
 
 	public boolean isMutable() {
-		return isReplaceable(path) || isReplaceable(body)
-				|| headers.stream().anyMatch(header -> isReplaceable(header.getValue()));
+		return supports(path) || supports(body)
+				|| headers.stream().anyMatch(header -> supports(header.getValue()));
 	}
 }

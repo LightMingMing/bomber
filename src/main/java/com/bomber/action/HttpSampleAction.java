@@ -1,7 +1,7 @@
 package com.bomber.action;
 
 import static com.bomber.http.StringEntityRender.renderPlainText;
-import static com.bomber.util.ValueReplacer.replace;
+import static com.bomber.common.util.StringReplacer.replace;
 import static java.util.Objects.isNull;
 import static org.springframework.util.StringUtils.hasLength;
 

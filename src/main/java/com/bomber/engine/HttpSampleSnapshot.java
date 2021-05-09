@@ -1,6 +1,6 @@
 package com.bomber.engine;
 
-import static com.bomber.util.ValueReplacer.readReplaceableKeys;
+import static com.bomber.common.util.StringReplacer.read;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -33,12 +33,12 @@ public class HttpSampleSnapshot {
 	private List<Assertion> assertions = new ArrayList<>();
 
 	public String readVariables() {
-		Set<String> result = new HashSet<>(readReplaceableKeys(url));
+		Set<String> result = new HashSet<>(read(url));
 		if (headers != null) {
-			headers.forEach(header -> result.addAll(readReplaceableKeys(header)));
+			headers.forEach(header -> result.addAll(read(header)));
 		}
 		if (body != null) {
-			result.addAll(readReplaceableKeys(body));
+			result.addAll(read(body));
 		}
 		return String.join(",", result);
 	}

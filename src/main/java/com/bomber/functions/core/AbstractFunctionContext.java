@@ -1,7 +1,7 @@
 package com.bomber.functions.core;
 
-import static com.bomber.util.ValueReplacer.readReplaceableKeys;
-import static com.bomber.util.ValueReplacer.replace;
+import static com.bomber.common.util.StringReplacer.read;
+import static com.bomber.common.util.StringReplacer.replace;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.bomber.common.util.StringReplacer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
@@ -51,7 +52,7 @@ public abstract class AbstractFunctionContext implements FunctionContext {
 		if (input().isEmpty()) {
 			return Collections.emptySet();
 		}
-		Set<String> result = readReplaceableKeys(input().values());
+		Set<String> result = StringReplacer.read(input().values());
 		result.addAll(customArgs());
 		return result;
 	}

@@ -1,13 +1,18 @@
-package com.bomber.util;
+package com.bomber.common.util;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class ValueReplacer {
+/**
+ * String 占位符替换工具类
+ *
+ * @author MingMing Zhao
+ */
+public class StringReplacer {
 
-	public static boolean isReplaceable(String source) {
+	public static boolean supports(String source) {
 		if (source == null || source.isEmpty()) {
 			return false;
 		}
@@ -25,21 +30,21 @@ public class ValueReplacer {
 		return false;
 	}
 
-	public static Set<String> readReplaceableKeys(Collection<String> sources) {
+	public static Set<String> read(Collection<String> sources) {
 		Set<String> result = new LinkedHashSet<>();
 		for (String source : sources) {
-			readReplaceableKeys(source, result);
+			readTo(source, result);
 		}
 		return result;
 	}
 
-	public static Set<String> readReplaceableKeys(String source) {
+	public static Set<String> read(String source) {
 		Set<String> result = new LinkedHashSet<>();
-		readReplaceableKeys(source, result);
+		readTo(source, result);
 		return result;
 	}
 
-	private static void readReplaceableKeys(String source, Set<String> result) {
+	private static void readTo(String source, Set<String> collector) {
 		char p = ' ';
 		boolean matched = false;
 		StringBuilder key = new StringBuilder();
@@ -48,7 +53,7 @@ public class ValueReplacer {
 			if (c == '{' && p == '$') {
 				matched = true;
 			} else if (c == '}' && matched) {
-				result.add(key.toString());
+				collector.add(key.toString());
 				key = new StringBuilder();
 				matched = false;
 			} else if (matched) {
@@ -97,4 +102,5 @@ public class ValueReplacer {
 		}
 		return sb.toString();
 	}
+
 }
