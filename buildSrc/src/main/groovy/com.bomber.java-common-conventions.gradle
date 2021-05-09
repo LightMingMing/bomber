@@ -1,0 +1,21 @@
+plugins {
+    id 'java'
+}
+
+repositories {
+    maven { url = uri("https://maven.aliyun.com/repository/public") }
+}
+
+dependencies {
+    annotationProcessor 'org.projectlombok:lombok:1.18.18'
+
+    implementation 'org.projectlombok:lombok:1.18.18'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.1'
+
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.1'
+}
+
+test {
+    useJUnitPlatform()
+}

@@ -1,0 +1,4 @@
+plugins {
+    id 'application'
+    id 'com.bomber.java-common-conventions'
+}
