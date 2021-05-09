@@ -1,0 +1,6 @@
+plugins {
+    id 'com.bomber.java-common-conventions'
+}
+
+group 'com.bomber'
+version '1.0.0'
