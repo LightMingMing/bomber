@@ -1,9 +1,7 @@
 package com.bomber;
 
-import com.bomber.functions.JavaScript;
-import com.bomber.functions.JavaScript2;
-import com.bomber.functions.MVEL;
-import com.bomber.functions.core.Input;
+import java.util.concurrent.TimeUnit;
+
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Fork;
@@ -18,7 +16,8 @@ import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
-import java.util.concurrent.TimeUnit;
+import com.bomber.functions.MVEL;
+import com.bomber.functions.core.Input;
 
 @BenchmarkMode(Mode.Throughput)
 @Warmup(iterations = 3, time = 2)
@@ -30,13 +29,7 @@ public class ScriptEngineBenchmark {
 
 	String str = "0123456";
 
-	Input input1 = new Input("script", String.format("'%s'.substring(3)", str));
-
-	Input input2 = new Input("script", "str.substring(3)", "str", str);
-
-	JavaScript javaScript = new JavaScript();
-
-	JavaScript2 javaScript2 = new JavaScript2();
+	Input input = new Input("script", "str.substring(3)", "str", str);
 
 	MVEL mvel = new MVEL();
 
@@ -52,17 +45,7 @@ public class ScriptEngineBenchmark {
 	}
 
 	@Benchmark
-	public String javaScript() {
-		return javaScript.execute(input1);
-	}
-
-	@Benchmark
-	public String javaScript2() {
-		return javaScript2.execute(input2);
-	}
-
-	@Benchmark
 	public String mvel() {
-		return mvel.execute(input2);
+		return mvel.execute(input);
 	}
 }
