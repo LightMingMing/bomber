@@ -1,6 +1,5 @@
-package com.bomber.functions;
+package com.bomber.function;
 
-import static com.bomber.functions.SQLBatchQuery.MAX_BATCH_SIZE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.BDDMockito.willAnswer;
@@ -11,13 +10,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.invocation.InvocationOnMock;
 
-import com.bomber.functions.core.Input;
-
-public class SQLBatchQueryTest {
+/**
+ * @author MingMing Zhao
+ */
+class SQLBatchQueryTest {
 
 	private static final Integer[] batchSizes = new Integer[15];
 
@@ -25,7 +25,7 @@ public class SQLBatchQueryTest {
 
 	static {
 		for (int i = 0; i < batchSizes.length; i++) {
-			batchSizes[i] = Math.min((1 << i), MAX_BATCH_SIZE);
+			batchSizes[i] = Math.min((1 << i), SQLBatchQuery.MAX_BATCH_SIZE);
 			totalQueries[i] = i == 0 ? 0 : batchSizes[i - 1] + totalQueries[i - 1];
 		}
 	}
@@ -35,9 +35,13 @@ public class SQLBatchQueryTest {
 		int batchSize = invocation.getArgument(1, Integer.class);
 		List<Map<String, String>> result = new ArrayList<>(batchSize);
 		for (int i = start; i < start + batchSize; i++) {
-			result.add(Collections.singletonMap("id", Integer.toString(i)));
+			result.add(Map.of("id", Integer.toString(i)));
 		}
 		return result;
+	}
+
+	private SQLBatchQuery mockSQLBatchQuery() {
+		return spy(new SQLBatchQuery("url", "user", "password", "sql", "ret"));
 	}
 
 	@Test
@@ -45,11 +49,11 @@ public class SQLBatchQueryTest {
 		ArgumentCaptor<Integer> batchSize = ArgumentCaptor.forClass(Integer.class);
 		ArgumentCaptor<Integer> totalQuery = ArgumentCaptor.forClass(Integer.class);
 
-		SQLBatchQuery query = spy(new SQLBatchQuery());
+		SQLBatchQuery query = mockSQLBatchQuery();
 		willAnswer(this::mockList).given(query).executeBatchQuery(totalQuery.capture(), batchSize.capture());
 
 		for (int i = 0; i < 10000; i++) {
-			assertThat(query.execute(Input.EMPTY)).containsEntry("id", i + "");
+			assertThat(query.execute()).containsEntry("id", i + "");
 		}
 
 		assertThat(batchSize.getAllValues()).startsWith(batchSizes);
@@ -61,13 +65,13 @@ public class SQLBatchQueryTest {
 		ArgumentCaptor<Integer> batchSize = ArgumentCaptor.forClass(Integer.class);
 		ArgumentCaptor<Integer> totalQuery = ArgumentCaptor.forClass(Integer.class);
 
-		SQLBatchQuery query = spy(new SQLBatchQuery());
+		SQLBatchQuery query = mockSQLBatchQuery();
 		willAnswer(this::mockList).given(query).executeBatchQuery(totalQuery.capture(), batchSize.capture());
 
 		int offset = 1000;
 		query.jump(offset);
 		for (int i = 0; i < 10000; i++) {
-			assertThat(query.execute(Input.EMPTY)).containsEntry("id", (offset + i) + "");
+			assertThat(query.execute()).containsEntry("id", (offset + i) + "");
 		}
 
 		assertThat(batchSize.getAllValues()).startsWith(batchSizes);
@@ -85,13 +89,12 @@ public class SQLBatchQueryTest {
 
 	@Test
 	public void testBatchQueryResultIsEmpty() {
-		SQLBatchQuery query = spy(new SQLBatchQuery());
+		SQLBatchQuery query = mockSQLBatchQuery();
 
 		willAnswer(this::mockEmptyList).given(query).executeBatchQuery(anyInt(), anyInt());
 
 		for (int i = 0; i < 100; i++) {
-			assertThat(query.execute(Input.EMPTY)).isEmpty();
+			assertThat(query.execute()).isEmpty();
 		}
 	}
-
 }

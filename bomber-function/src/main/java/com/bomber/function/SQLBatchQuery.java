@@ -1,4 +1,4 @@
-package com.bomber.functions;
+package com.bomber.function;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -11,19 +11,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.sql.DataSource;
-
-import com.bomber.functions.core.FuncInfo;
-import com.bomber.functions.core.Input;
-
+/**
+ * SQL 批量查询
+ *
+ * @author MingMing Zhao
+ */
 @FuncInfo(requiredArgs = "url, user, password, sql, ret", retArg = "ret")
-public class SQLBatchQuery extends AbstractSQLQuery {
+public class SQLBatchQuery extends AbstractSQLQuery implements Producer<Map<String, String>> {
 
 	protected static final int MAX_BATCH_SIZE = 1 << 10; // 1024
-
-	private DataSource dataSource;
-	private String sql;
-	private String[] ret;
 
 	private int totalQuery = 0;
 	private int batchSize = 1;
@@ -31,19 +27,12 @@ public class SQLBatchQuery extends AbstractSQLQuery {
 	private int next = 0;
 	private List<Map<String, String>> cache;
 
-	@Override
-	public void init(Input input) {
-		String url = input.get("url");
-		String user = input.get("user");
-		String password = input.get("password");
-
-		this.sql = input.get("sql");
-		this.ret = input.get("ret").split(", *");
-		this.dataSource = getDataSourceManager().getDataSource(url, user, password);
+	public SQLBatchQuery(String url, String user, String password, String sql, String ret) {
+		super(url, user, password, sql, ret);
 	}
 
 	@Override
-	public Map<String, String> execute(Input input) {
+	public Map<String, String> execute() {
 		if (cache == null) {
 			cache = executeBatchQuery(totalQuery++, batchSize);
 		}
@@ -74,9 +63,9 @@ public class SQLBatchQuery extends AbstractSQLQuery {
 
 	protected List<Map<String, String>> executeBatchQuery(Integer start, Integer batchSize) {
 		String batchSQL = String.format("%s limit %d offset %d", sql, batchSize, start);
-		try (Connection connection = dataSource.getConnection();
-				Statement stmt = connection.createStatement();
-				ResultSet rs = stmt.executeQuery(batchSQL)) {
+		try (Connection connection = getDataSource().getConnection();
+			 Statement stmt = connection.createStatement();
+			 ResultSet rs = stmt.executeQuery(batchSQL)) {
 			return getMapFromResultSet(rs, batchSize);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);

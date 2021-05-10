@@ -1,19 +1,14 @@
-package com.bomber.sql;
+package com.bomber.function.sql;
 
 import java.util.Objects;
 
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
-@Setter
 public class JdbcConfig {
 
-	private String url;
+	private final String url;
 
-	private String user;
+	private final String user;
 
-	private String password;
+	private final String password;
 
 	public JdbcConfig(String url, String user, String password) {
 		this.url = Objects.requireNonNull(url, "url");
@@ -35,5 +30,17 @@ public class JdbcConfig {
 	@Override
 	public int hashCode() {
 		return Objects.hash(url, user, password);
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public String getUser() {
+		return user;
+	}
+
+	public String getPassword() {
+		return password;
 	}
 }
