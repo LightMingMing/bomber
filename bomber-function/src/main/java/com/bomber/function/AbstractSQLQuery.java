@@ -50,6 +50,8 @@ public abstract class AbstractSQLQuery implements Function {
 		this.password = password;
 		this.sql = Objects.requireNonNull(sql, "sql");
 		this.ret = Objects.requireNonNull(ret, "ret").split(", *");
+		// 如若数据源创建失败, 尽早暴露问题, 避免后续查询出现大量异常
+		getDataSource();
 	}
 
 	public static int getJdbcType(String name) {
