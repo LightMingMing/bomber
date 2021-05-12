@@ -1,4 +1,4 @@
-package com.bomber.functions;
+package com.bomber.function;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -16,9 +16,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.web.client.HttpClientErrorException;
-
-import com.bomber.function.FuncInfo;
-import com.bomber.function.Function;
 
 @FuncInfo(requiredArgs = "url, form", optionalArgs = "expiresIn")
 public class Login implements Function {

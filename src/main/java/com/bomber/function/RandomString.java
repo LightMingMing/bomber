@@ -1,9 +1,6 @@
-package com.bomber.functions;
+package com.bomber.function;
 
 import org.ironrhino.core.util.CodecUtils;
-
-import com.bomber.function.FuncInfo;
-import com.bomber.function.Producer;
 
 @FuncInfo(requiredArgs = "length")
 public class RandomString implements Producer<String> {

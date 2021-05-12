@@ -1,4 +1,4 @@
-package com.bomber.functions;
+package com.bomber.function;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -16,9 +16,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.HttpClientErrorException;
-
-import com.bomber.function.FuncInfo;
-import com.bomber.function.Function;
 
 @FuncInfo(requiredArgs = "accessTokenEndpoint, grant_type, client_id, client_secret", optionalArgs = "username, password, device_id, device_name")
 public class OAuth2 implements Function {
