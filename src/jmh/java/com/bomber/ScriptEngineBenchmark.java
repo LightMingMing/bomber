@@ -1,5 +1,6 @@
 package com.bomber;
 
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.openjdk.jmh.annotations.Benchmark;
@@ -16,8 +17,7 @@ import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
-import com.bomber.functions.MVEL;
-import com.bomber.functions.core.Input;
+import com.bomber.function.MVEL;
 
 @BenchmarkMode(Mode.Throughput)
 @Warmup(iterations = 3, time = 2)
@@ -29,7 +29,9 @@ public class ScriptEngineBenchmark {
 
 	String str = "0123456";
 
-	Input input = new Input("script", "str.substring(3)", "str", str);
+	String script = "str.substring(3)";
+
+	Map<String, String> parameterValues = Map.of("str", str);
 
 	MVEL mvel = new MVEL();
 
@@ -46,6 +48,6 @@ public class ScriptEngineBenchmark {
 
 	@Benchmark
 	public String mvel() {
-		return mvel.execute(input);
+		return mvel.execute(script, parameterValues);
 	}
 }
