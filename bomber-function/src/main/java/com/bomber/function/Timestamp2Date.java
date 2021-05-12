@@ -26,8 +26,8 @@ public class Timestamp2Date implements Function {
 		this.format = new SimpleDateFormat(format);
 	}
 
-	public String execute(long timestamp) {
-		return format.format(new Date(timestamp));
+	public String execute(String timestamp) {
+		return format.format(new Date(Long.parseLong(timestamp)));
 	}
 
 	@Override

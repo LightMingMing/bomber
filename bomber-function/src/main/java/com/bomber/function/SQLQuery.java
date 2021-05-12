@@ -71,6 +71,6 @@ public class SQLQuery extends AbstractSQLQuery {
 	@Override
 	public Object[] getParameterValues(@NonNull Map<String, String> initParameterValues,
 									   @NonNull Map<String, String> container) {
-		return replace(initParameterValues, container, "args", "argsTypes");
+		return replace(initParameterValues, container, "args", "argTypes");
 	}
 }

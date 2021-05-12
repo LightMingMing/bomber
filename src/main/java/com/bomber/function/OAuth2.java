@@ -1,5 +1,6 @@
 package com.bomber.function;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -12,10 +13,13 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.lang.NonNull;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.HttpClientErrorException;
+
+import com.bomber.common.util.StringReplacer;
 
 @FuncInfo(requiredArgs = "accessTokenEndpoint, grant_type, client_id, client_secret", optionalArgs = "username, password, device_id, device_name")
 public class OAuth2 implements Function {
@@ -103,5 +107,14 @@ public class OAuth2 implements Function {
 		} catch (HttpClientErrorException e) {
 			throw new RuntimeException("OAuth2 failed to access '" + accessTokenEndpoint + "'", e);
 		}
+	}
+
+	@Override
+	public Object[] getParameterValues(@NonNull Map<String, String> initParameterValues, @NonNull Map<String, String> container) {
+		Map<String, String> parameterValues = new HashMap<>(initParameterValues.size());
+		for (Map.Entry<String, String> entry : initParameterValues.entrySet()) {
+			parameterValues.put(entry.getKey(), StringReplacer.replace(initParameterValues.get(entry.getKey()), container));
+		}
+		return new Object[]{parameterValues};
 	}
 }
