@@ -5,8 +5,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.bomber.functions.core.FunctionMetadata;
-import com.bomber.functions.util.FunctionHelper;
+import com.bomber.function.model.FunctionMetadata;
+import com.bomber.function.util.FunctionHelper;
 
 @RestController
 @RequestMapping("/functionMetadata")

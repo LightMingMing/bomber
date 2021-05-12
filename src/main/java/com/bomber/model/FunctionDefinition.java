@@ -1,12 +1,11 @@
 package com.bomber.model;
 
-import static com.bomber.functions.util.FunctionHelper.getFunctionMetadata;
+import static com.bomber.function.util.FunctionHelper.getFunctionMetadata;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Transient;
@@ -15,12 +14,10 @@ import org.ironrhino.core.metadata.Hidden;
 import org.ironrhino.core.metadata.Readonly;
 import org.ironrhino.core.metadata.UiConfig;
 
-import com.bomber.functions.core.DefaultFunctionContext;
-import com.bomber.functions.core.FunctionContext;
-import com.bomber.functions.core.FunctionMetadata;
-import com.bomber.functions.core.Input;
+import com.bomber.function.model.DefaultFunctionContext;
+import com.bomber.function.model.FunctionContext;
+import com.bomber.function.model.FunctionMetadata;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import lombok.Getter;
 import lombok.Setter;
 
@@ -36,7 +33,7 @@ public class FunctionDefinition {
 	@Getter
 	@Setter
 	@Column(nullable = false)
-	@UiConfig(alias = "functionName", type = "select", listKey = "key", listValue = "value", listOptions = "statics['com.bomber.functions.util.FunctionHelper'].getLabelValues()", cssClass = "function-type")
+	@UiConfig(alias = "functionName", type = "select", listKey = "key", listValue = "value", listOptions = "statics['com.bomber.function.util.FunctionHelper'].getLabelValues()", cssClass = "function-type")
 	private String functionName;
 
 	@Setter
@@ -74,16 +71,15 @@ public class FunctionDefinition {
 	}
 
 	public FunctionContext map() {
-		Input input = Input.EMPTY;
 		if (argumentValues != null && !argumentValues.isEmpty()) {
 			Map<String, String> params = new HashMap<>();
 			for (String each : argumentValues) {
 				String[] pair = each.split("=", 2);
 				params.put(pair[0], pair[1]);
 			}
-			input = new Input(params);
+			return new DefaultFunctionContext(key, functionName, params);
 		}
-		return new DefaultFunctionContext(key, functionName, input);
+		return new DefaultFunctionContext(key, functionName);
 	}
 
 	@Override

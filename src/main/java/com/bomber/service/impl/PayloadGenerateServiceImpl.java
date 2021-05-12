@@ -5,16 +5,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.bomber.functions.core.DefaultFunctionExecutor;
-import com.bomber.functions.core.FunctionContext;
-import com.bomber.functions.core.FunctionExecutor;
+import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
+
+import com.bomber.function.model.FunctionContext;
+import com.bomber.function.runner.DefaultFunctionExecutor;
+import com.bomber.function.runner.FunctionExecutor;
+import com.bomber.manager.FunctionConfigureManager;
 import com.bomber.model.FunctionConfigure;
 import com.bomber.model.FunctionDefinition;
-import org.springframework.stereotype.Service;
-
-import com.bomber.manager.FunctionConfigureManager;
 import com.bomber.service.PayloadGenerateService;
-import org.springframework.util.Assert;
 
 @Service
 public class PayloadGenerateServiceImpl implements PayloadGenerateService {
@@ -35,23 +35,11 @@ public class PayloadGenerateServiceImpl implements PayloadGenerateService {
 
 	@Override
 	public Map<String, String> generate(String id, int start, Collection<String> columns) {
-		FunctionExecutor executor = createExecutor(id, columns);
-		try {
-			executor.jump(start);
-			return executor.execute();
-		} finally {
-			executor.shutdown();
-		}
+		return createExecutor(id, columns).execute(start);
 	}
 
 	@Override
 	public List<Map<String, String>> generate(String id, int start, int count, Collection<String> columns) {
-		FunctionExecutor executor = createExecutor(id, columns);
-		try {
-			executor.jump(start);
-			return executor.execute(count);
-		} finally {
-			executor.shutdown();
-		}
+		return createExecutor(id, columns).executeBatch(start, count);
 	}
 }
