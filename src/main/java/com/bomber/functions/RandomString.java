@@ -1,22 +1,21 @@
 package com.bomber.functions;
 
-import com.bomber.functions.core.FuncInfo;
-import com.bomber.functions.core.Input;
-import com.bomber.functions.core.StringFunction;
 import org.ironrhino.core.util.CodecUtils;
 
+import com.bomber.function.FuncInfo;
+import com.bomber.function.Producer;
+
 @FuncInfo(requiredArgs = "length")
-public class RandomString extends StringFunction {
+public class RandomString implements Producer<String> {
 
-	private int length;
+	private final int length;
 
-	@Override
-	public void init(Input input) {
-		this.length = Integer.parseInt(input.get("length"));
+	public RandomString(int length) {
+		this.length = length;
 	}
 
 	@Override
-	public String execute(Input input) {
+	public String execute() {
 		return CodecUtils.nextId(length);
 	}
 

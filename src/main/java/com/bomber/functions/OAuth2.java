@@ -1,5 +1,6 @@
 package com.bomber.functions;
 
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.ironrhino.core.cache.CacheManager;
@@ -16,12 +17,11 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.HttpClientErrorException;
 
-import com.bomber.functions.core.FuncInfo;
-import com.bomber.functions.core.Input;
-import com.bomber.functions.core.StringFunction;
+import com.bomber.function.FuncInfo;
+import com.bomber.function.Function;
 
 @FuncInfo(requiredArgs = "accessTokenEndpoint, grant_type, client_id, client_secret", optionalArgs = "username, password, device_id, device_name")
-public class OAuth2 extends StringFunction {
+public class OAuth2 implements Function {
 
 	private static final RestTemplate template = new RestTemplate();
 
@@ -45,16 +45,18 @@ public class OAuth2 extends StringFunction {
 
 	private String deviceName;
 
-	@Override
-	public void init(Input input) {
+	protected CacheManager getCacheManager() {
+		if (this.cacheManager != null) {
+			return this.cacheManager;
+		}
 		ApplicationContext context = ApplicationContextUtils.getApplicationContext();
 		if (context == null) {
 			throw new IllegalStateException("OAuth2 function should be running in a web application");
 		}
-		this.cacheManager = context.getBean(CacheManager.class);
+		return this.cacheManager = context.getBean(CacheManager.class);
 	}
 
-	private void reset(Input input) {
+	private void reset(Map<String, String> input) {
 		this.accessTokenEndpoint = input.get("accessTokenEndpoint");
 		this.grantType = input.get("grant_type");
 		this.clientId = input.get("client_id");
@@ -65,13 +67,12 @@ public class OAuth2 extends StringFunction {
 		this.deviceName = input.get("device_name");
 	}
 
-	@Override
-	public String execute(Input input) {
+	public String execute(Map<String, String> input) {
 		reset(input);
-		Token token = (Token) cacheManager.get(getKey(), namespace);
+		Token token = (Token) getCacheManager().get(getKey(), namespace);
 		if (token == null || token.isExpired()) {
 			token = requestToken();
-			cacheManager.put(getKey(), token, timeToLive(token), TimeUnit.SECONDS, namespace);
+			getCacheManager().put(getKey(), token, timeToLive(token), TimeUnit.SECONDS, namespace);
 		}
 		// TODO refresh token ?
 		return token.getAccessToken();

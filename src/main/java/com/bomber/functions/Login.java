@@ -6,8 +6,6 @@ import java.util.Map;
 import java.util.StringJoiner;
 import java.util.concurrent.TimeUnit;
 
-import com.bomber.functions.core.Input;
-import com.bomber.functions.core.StringFunction;
 import org.ironrhino.core.cache.CacheManager;
 import org.ironrhino.core.spring.http.client.RestTemplate;
 import org.ironrhino.core.util.ApplicationContextUtils;
@@ -16,16 +14,20 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.client.HttpClientErrorException;
 
-import com.bomber.functions.core.FuncInfo;
+import com.bomber.function.FuncInfo;
+import com.bomber.function.Function;
 
 @FuncInfo(requiredArgs = "url, form", optionalArgs = "expiresIn")
-public class Login extends StringFunction {
+public class Login implements Function {
 
 	private static final RestTemplate template = new RestTemplate();
 
 	private static final String namespace = "F_Login";
+
+	private final int expiresIn;
 
 	private CacheManager cacheManager;
 
@@ -33,7 +35,13 @@ public class Login extends StringFunction {
 
 	private String form;
 
-	private int expiresIn;
+	public Login() {
+		this(600);
+	}
+
+	public Login(int expiresIn) {
+		this.expiresIn = 600;
+	}
 
 	public static String handleCookie(List<String> cookies) {
 		Map<String, String> pairs = new LinkedHashMap<>(cookies.size());
@@ -53,25 +61,25 @@ public class Login extends StringFunction {
 		return joiner.toString();
 	}
 
-	@Override
-	public void init(Input input) {
+	protected CacheManager getCacheManager() {
+		if (this.cacheManager != null) {
+			return this.cacheManager;
+		}
 		ApplicationContext context = ApplicationContextUtils.getApplicationContext();
 		if (context == null) {
 			throw new IllegalStateException("Login function should be running in a web application");
 		}
-		this.cacheManager = context.getBean(CacheManager.class);
-		this.expiresIn = Integer.parseInt(input.getOrDefault("expiresIn", "600"));
+		return this.cacheManager = context.getBean(CacheManager.class);
 	}
 
-	@Override
-	public String execute(Input input) {
-		this.url = input.get("url");
-		this.form = input.get("form");
+	public String execute(String url, String form) {
+		this.url = url;
+		this.form = form;
 
-		String cookie = (String) cacheManager.get(getKey(), namespace);
+		String cookie = (String) getCacheManager().get(getKey(), namespace);
 		if (cookie == null) {
 			cookie = requestSetCookie();
-			cacheManager.put(getKey(), cookie, expiresIn, TimeUnit.SECONDS, namespace);
+			getCacheManager().put(getKey(), cookie, expiresIn, TimeUnit.SECONDS, namespace);
 		}
 		return cookie;
 	}
@@ -96,4 +104,8 @@ public class Login extends StringFunction {
 		}
 	}
 
+	@Override
+	public Object[] getParameterValues(@NonNull Map<String, String> initParameterValues, @NonNull Map<String, String> container) {
+		return replace(initParameterValues, container, "url", "form");
+	}
 }
