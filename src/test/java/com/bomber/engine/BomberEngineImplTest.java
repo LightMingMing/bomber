@@ -1,10 +1,14 @@
 package com.bomber.engine;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
 
 import org.junit.Test;
+
+import com.bomber.engine.internal.BenchmarkCounter;
+import com.bomber.engine.internal.Counter;
+import com.bomber.engine.model.Scope;
 
 public class BomberEngineImplTest {
 

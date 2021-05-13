@@ -5,7 +5,6 @@ import static com.bomber.model.BombingRecord.BOTTOM_BUTTONS;
 
 import java.util.Date;
 import java.util.List;
-
 import javax.persistence.Column;
 import javax.persistence.ConstraintMode;
 import javax.persistence.Entity;
@@ -22,8 +21,7 @@ import org.ironrhino.core.metadata.Richtable;
 import org.ironrhino.core.metadata.UiConfig;
 import org.ironrhino.core.model.BaseEntity;
 
-import com.bomber.engine.Scope;
-
+import com.bomber.engine.model.Scope;
 import lombok.Getter;
 import lombok.Setter;
 

@@ -73,6 +73,7 @@ dependencies {
     providedCompile("org.eclipse.jetty:jetty-webapp:${jettyVersion}")
 
     implementation project(':bomber-common')
+    implementation project(':bomber-engine')
     implementation project(':bomber-function')
 
     implementation fileTree(dir: 'lib', includes: ['*jar'])
@@ -225,6 +226,7 @@ dependencies {
 
     implementation("org.yaml:snakeyaml:1.26")
 
+    testImplementation project(':bomber-engine')
 
     testImplementation("junit:junit:4.12")
 

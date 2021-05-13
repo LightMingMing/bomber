@@ -2,6 +2,7 @@ package com.bomber.engine;
 
 import java.util.List;
 
+import com.bomber.engine.model.Scope;
 import lombok.Getter;
 import lombok.Setter;
 

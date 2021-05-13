@@ -41,7 +41,7 @@ import org.springframework.web.util.HtmlUtils;
 import com.bomber.asserter.AssertResult;
 import com.bomber.asserter.Asserter;
 import com.bomber.asserter.util.Asserters;
-import com.bomber.engine.Scope;
+import com.bomber.engine.model.Scope;
 import com.bomber.manager.HttpSampleManager;
 import com.bomber.model.Assertion;
 import com.bomber.model.HttpHeader;

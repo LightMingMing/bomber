@@ -1,13 +1,18 @@
-package com.bomber.engine;
+package com.bomber.engine.internal;
 
 import java.util.List;
 
+/**
+ * 线程计数
+ *
+ * @author MingMing Zhao
+ */
 public class ThreadCounter extends ThreadGroupCounter {
 
 	protected final List<Integer> threadGroups;
 	protected int threadCount;
 
-	ThreadCounter(int start, List<Integer> threadGroups, int cursor) {
+	public ThreadCounter(int start, List<Integer> threadGroups, int cursor) {
 		super(start, cursor);
 		this.threadGroups = threadGroups;
 
@@ -17,7 +22,7 @@ public class ThreadCounter extends ThreadGroupCounter {
 	}
 
 	@Override
-	int getAndCount() {
+	public int getAndCount() {
 		int result = start + threadCount;
 		threadCount += threadGroups.get(cursor++);
 		return result;

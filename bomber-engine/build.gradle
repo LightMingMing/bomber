@@ -1,6 +1,17 @@
 plugins {
     id 'com.bomber.java-common-conventions'
+    id 'org.springframework.boot' version '2.4.3'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 }
 
 group 'com.bomber'
 version '1.0.0'
+
+dependencies {
+    testImplementation 'org.assertj:assertj-core'
+    testImplementation 'org.mockito:mockito-core'
+}
+
+jar {
+    enabled = true
+}
