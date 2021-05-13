@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import javax.sql.DataSource;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -41,7 +42,13 @@ class SQLBatchQueryTest {
 	}
 
 	private SQLBatchQuery mockSQLBatchQuery() {
-		return spy(new SQLBatchQuery("url", "user", "password", "sql", "ret"));
+		return spy(new SQLBatchQuery("url", "user", "password", "sql", "ret") {
+			@Override
+			protected DataSource getDataSource() {
+				// Don't create DataSource
+				return null;
+			}
+		});
 	}
 
 	@Test
