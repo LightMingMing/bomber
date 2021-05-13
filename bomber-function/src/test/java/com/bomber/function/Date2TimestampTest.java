@@ -17,6 +17,6 @@ class Date2TimestampTest {
 
 		String timestamp = new Date2Timestamp().execute(date);
 
-		assertThat(new Timestamp2Date().execute(Long.parseLong(timestamp))).isEqualTo(date);
+		assertThat(new Timestamp2Date().execute(timestamp)).isEqualTo(date);
 	}
 }
