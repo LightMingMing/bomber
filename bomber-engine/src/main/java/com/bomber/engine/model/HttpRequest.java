@@ -1,42 +1,35 @@
-package com.bomber.rpc;
+package com.bomber.engine.model;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.http.HttpMethod;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * HTTP 请求
+ *
+ * @author MingMing Zhao
+ */
 @Getter
 @Setter
-public class BombardierRequest {
-	@JsonProperty("numConns")
-	private int numberOfConnections;
+public class HttpRequest {
 
-	@JsonProperty("numReqs")
-	private int numberOfRequests;
-
-	@JsonProperty("method")
-	private HttpMethod method;
-
-	private List<String> headers;
-
+	@NonNull
 	private String url;
 
+	@NonNull
+	private HttpMethod method;
+
+	@Nullable
+	private List<String> headers;
+
+	@Nullable
 	private String body;
-
-	private String payloadFile;
-
-	private String payloadUrl;
-
-	private String variableNames;
-
-	private int startLine;
-
-	private String scope;
 
 	private List<Assertion> assertions = new ArrayList<>();
 
@@ -49,9 +42,9 @@ public class BombardierRequest {
 		this.assertions.add(assertion);
 	}
 
-	@Getter
 	@Setter
-	static class Assertion {
+	@Getter
+	public static class Assertion {
 
 		private String asserter;
 

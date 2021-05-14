@@ -14,18 +14,18 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import com.bomber.converter.HttpHeaderListConverter;
-import com.bomber.engine.BomberContext;
 import com.bomber.engine.BomberEngine;
-import com.bomber.engine.HttpSampleSnapshot;
+import com.bomber.engine.model.BomberContext;
+import com.bomber.engine.model.BomberRequest;
+import com.bomber.engine.model.HttpRequest;
+import com.bomber.engine.model.Payload;
 import com.bomber.manager.BombingRecordManager;
 import com.bomber.manager.HttpSampleManager;
 import com.bomber.model.BombingRecord;
 import com.bomber.model.HttpHeader;
 import com.bomber.model.HttpSample;
-import com.bomber.service.BomberRequest;
 import com.bomber.service.BomberService;
 
 @Service
@@ -41,13 +41,13 @@ public class BomberServiceImpl implements BomberService {
 	protected URI uri;
 
 	public BomberServiceImpl(HttpSampleManager httpSampleManager, BombingRecordManager bombingRecordManager,
-			BomberEngine bomberEngine) {
+							 BomberEngine bomberEngine) {
 		this.httpSampleManager = httpSampleManager;
 		this.bombingRecordManager = bombingRecordManager;
 		this.bomberEngine = bomberEngine;
 	}
 
-	private static BombingRecord createBombingRecord(BomberRequest request, HttpSample httpSample) {
+	private static BombingRecord createBombingRecord(com.bomber.service.BomberRequest request, HttpSample httpSample) {
 		BombingRecord record = new BombingRecord();
 		record.setName(request.getName());
 		record.setThreadGroups(request.getThreadGroups());
@@ -65,8 +65,8 @@ public class BomberServiceImpl implements BomberService {
 		return headers.stream().map(HttpHeaderListConverter::convertToString).collect(Collectors.toList());
 	}
 
-	public HttpSampleSnapshot createHttpSampleSnapshot(HttpSample sample) {
-		HttpSampleSnapshot snapshot = new HttpSampleSnapshot();
+	public HttpRequest createHttpRequest(HttpSample sample) {
+		HttpRequest snapshot = new HttpRequest();
 		snapshot.setMethod(sample.getMethod());
 		snapshot.setUrl(sample.getUrl());
 		snapshot.setBody(sample.getBody());
@@ -76,46 +76,39 @@ public class BomberServiceImpl implements BomberService {
 			sample.getAssertions().forEach(each -> snapshot.addAssertion(each.getAsserter(), each.getExpression(),
 					each.getCondition().name(), each.getExpected()));
 		}
-
-		if (sample.isMutable()) {
-			if (sample.getFunctionConfigure() != null) {
-				snapshot.setPayloadUrl(getPayloadApiUrl(sample.getFunctionConfigure().getId()));
-				snapshot.setVariableNames(snapshot.readVariables());
-			} else {
-				String payloadFile = sample.getCsvFilePath();
-				String variableNames = sample.getVariableNames();
-				if (StringUtils.hasLength(payloadFile) && StringUtils.hasLength(variableNames)) {
-					snapshot.setPayloadFile(uri.getPath() + payloadFile);
-					snapshot.setVariableNames(variableNames);
-				}
-			}
-		}
 		return snapshot;
 	}
 
-	private BomberContext createBomberContext(BombingRecord record) {
-		BomberContext ctx = new BomberContext(record.getId());
-		ctx.setHttpSampleSnapshot(createHttpSampleSnapshot(record.getHttpSample()));
-		ctx.setName(record.getName());
-		ctx.setThreadGroups(record.getThreadGroups());
-		ctx.setThreadGroupCursor(record.getThreadGroupCursor());
-		ctx.setRequestsPerThread(record.getRequestsPerThread());
-		ctx.setActiveThreads(record.getActiveThreads());
-		ctx.setScope(record.getScope());
-		ctx.setStart(record.getBeginUserIndex());
-		ctx.setIterations(record.getIterations());
-		ctx.setCurrentIterations(record.getCurrentIterations());
-		return ctx;
+	private BomberRequest createBomberRequest(BombingRecord record) {
+		HttpSample httpSample = record.getHttpSample();
+		BomberRequest request = new BomberRequest();
+		request.setId(record.getId());
+		request.setHttpRequest(createHttpRequest(httpSample));
+		request.setName(record.getName());
+		request.setThreadGroups(record.getThreadGroups());
+		request.setThreadGroupCursor(record.getThreadGroupCursor());
+		request.setRequestsPerThread(record.getRequestsPerThread());
+		request.setIterations(record.getIterations());
+		request.setIteration(record.getCurrentIterations());
+
+		if (httpSample.isMutable() && httpSample.getFunctionConfigure() != null) {
+			Payload payload = new Payload();
+			payload.setUrl(getPayloadApiUrl(httpSample.getFunctionConfigure().getId()));
+			payload.setScope(record.getScope());
+			payload.setStart(record.getBeginUserIndex());
+			request.setPayload(payload);
+		}
+		return request;
 	}
 
 	@Override
-	public void execute(@NonNull BomberRequest request) {
+	public void execute(@NonNull com.bomber.service.BomberRequest request) {
 		HttpSample httpSample = requireNonNull(httpSampleManager.get(request.getHttpSampleId()), "httpSample");
 
 		BombingRecord record = createBombingRecord(request, httpSample);
 		bombingRecordManager.save(record);
 
-		bomberEngine.execute(createBomberContext(record));
+		bomberEngine.execute(new BomberContext(createBomberRequest(record)));
 	}
 
 	@Override
@@ -127,7 +120,7 @@ public class BomberServiceImpl implements BomberService {
 		record.setStatus(READY);
 		bombingRecordManager.save(record);
 
-		bomberEngine.execute(createBomberContext(record));
+		bomberEngine.execute(new BomberContext(createBomberRequest(record)));
 	}
 
 	@Override

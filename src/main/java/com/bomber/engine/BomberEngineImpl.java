@@ -13,20 +13,16 @@ import org.ironrhino.rest.RestStatus;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
-import com.bomber.engine.internal.BenchmarkCounter;
+import com.bomber.engine.converter.BombardierRequestConverter;
 import com.bomber.engine.internal.Counter;
-import com.bomber.engine.internal.RequestCounter;
-import com.bomber.engine.internal.ThreadCounter;
-import com.bomber.engine.internal.ThreadGroupCounter;
-import com.bomber.engine.model.Scope;
+import com.bomber.engine.model.BomberContext;
+import com.bomber.engine.rpc.BombardierRequest;
+import com.bomber.engine.rpc.BombardierResponse;
 import com.bomber.manager.BombingRecordManager;
 import com.bomber.manager.SummaryReportManager;
 import com.bomber.model.BombingRecord;
 import com.bomber.model.SummaryReport;
-import com.bomber.rpc.BombardierRequest;
-import com.bomber.rpc.BombardierResponse;
 import com.bomber.rpc.BombardierService;
-
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -44,7 +40,7 @@ public class BomberEngineImpl implements BomberEngine {
 	private final BomberContextRegistry registry;
 
 	public BomberEngineImpl(BombingRecordManager bombingRecordManager, SummaryReportManager summaryReportManager,
-			BombardierService bombardierService, BomberContextRegistry registry, ExecutorService bombingExecutor) {
+							BombardierService bombardierService, BomberContextRegistry registry, ExecutorService bombingExecutor) {
 		this.bombingRecordManager = bombingRecordManager;
 		this.summaryReportManager = summaryReportManager;
 		this.bombardierService = bombardierService;
@@ -84,49 +80,14 @@ public class BomberEngineImpl implements BomberEngine {
 		return record;
 	}
 
-	protected static BombardierRequest createBombardierRequest(HttpSampleSnapshot snapshot, Scope scope) {
-		BombardierRequest request = new BombardierRequest();
-		request.setMethod(snapshot.getMethod());
-		request.setUrl(snapshot.getUrl());
-		request.setHeaders(snapshot.getHeaders());
-		request.setBody(snapshot.getBody());
-		request.setPayloadFile(snapshot.getPayloadFile());
-		request.setVariableNames(snapshot.getVariableNames());
-		request.setPayloadUrl(snapshot.getPayloadUrl());
-		snapshot.getAssertions().forEach(each -> request.addAssertion(each.getAsserter(), each.getExpression(),
-				each.getCondition(), each.getExpected()));
-		if (scope == Scope.Request) {
-			request.setScope("request");
-		} else if (scope == Scope.Thread) {
-			request.setScope("thread");
-		} else {
-			request.setScope("benchmark");
-		}
-		return request;
-	}
-
-	public static Counter createCounter(BomberContext ctx) {
-		Scope scope = ctx.getScope();
-		if (scope == Scope.Request) {
-			return new RequestCounter(ctx.getStart(), ctx.getThreadGroups(), ctx.getThreadGroupCursor(),
-					ctx.getRequestsPerThread());
-		} else if (scope == Scope.Thread) {
-			return new ThreadCounter(ctx.getStart(), ctx.getThreadGroups(), ctx.getThreadGroupCursor());
-		} else if (scope == Scope.Group) {
-			return new ThreadGroupCounter(ctx.getStart(), ctx.getThreadGroupCursor());
-		} else {
-			return new BenchmarkCounter(ctx.getStart());
-		}
-	}
-
 	@Override
 	public void execute(@NonNull BomberContext ctx) {
 		bombingExecutor.execute(() -> {
-			registry.registerBomberContext(ctx);
+			registry.register(ctx);
 			try {
 				doExecute(ctx);
 			} finally {
-				registry.unregisterBomberContext(ctx);
+				registry.unregister(ctx);
 			}
 		});
 	}
@@ -137,8 +98,6 @@ public class BomberEngineImpl implements BomberEngine {
 	}
 
 	private void doExecute(BomberContext ctx) {
-		HttpSampleSnapshot httpSampleSnapshot = ctx.getHttpSampleSnapshot();
-
 		BombingRecord record = bombingRecordManager.get(ctx.getId());
 		if (record == null) {
 			return; // is removed
@@ -149,32 +108,30 @@ public class BomberEngineImpl implements BomberEngine {
 		record.setStatus(RUNNING);
 		bombingRecordManager.save(record);
 
-		BombardierRequest request = createBombardierRequest(httpSampleSnapshot, ctx.getScope());
+		BombardierRequest request = BombardierRequestConverter.INSTANCE.convert(ctx);
 
-		for (int i = ctx.getCurrentIterations(); i < ctx.getIterations();) {
+		Counter counter = ctx.rebuildCounter();
 
-			Counter counter = createCounter(ctx);
+		for (; ctx.hasNextThreadGroup(); ctx.nextThreadGroup()) {
 
-			for (int j = ctx.getThreadGroupCursor(); j < ctx.getThreadGroups().size(); j++) {
-				int numberOfThreads = ctx.getThreadGroups().get(j);
-				int numberOfRequests = numberOfThreads * ctx.getRequestsPerThread();
+			request.setNumberOfConnections(ctx.getNumberOfThreads());
+			request.setNumberOfRequests(ctx.getNumberOfRequests());
+			request.setStartLine(counter.getAndCount());
 
-				ctx.setActiveThreads(numberOfThreads);
-				ctx.setThreadGroupCursor(j);
-				record.setActiveThreads(numberOfThreads);
-				record.setThreadGroupCursor(j);
-				record.setCurrentIterations(i);
+			record.setThreadGroupCursor(ctx.getThreadGroupCursor());
+			record.setActiveThreads(ctx.getNumberOfThreads());
+
+			for (; ctx.hasNextIteration(); ctx.nextIteration()) {
+
+				record.setCurrentIterations(ctx.getIteration());
+
 				if (ctx.isPaused()) {
 					record.setStatus(PAUSE);
 					bombingRecordManager.save(record);
 					return;
 				}
+
 				bombingRecordManager.save(record);
-
-				request.setNumberOfConnections(numberOfThreads);
-				request.setNumberOfRequests(numberOfRequests);
-				request.setStartLine(counter.getAndCount());
-
 				try {
 					Date startTime = new Date();
 					BombardierResponse response = bombardierService.execute(request);
@@ -186,10 +143,6 @@ public class BomberEngineImpl implements BomberEngine {
 					handleException(record, e);
 					return;
 				}
-			}
-
-			if (++i < ctx.getIterations()) {
-				ctx.setThreadGroupCursor(0);
 			}
 		}
 
