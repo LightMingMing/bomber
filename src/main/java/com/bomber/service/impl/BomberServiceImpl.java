@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 import com.bomber.converter.HttpHeaderListConverter;
 import com.bomber.engine.BomberEngine;
-import com.bomber.engine.model.BomberContext;
 import com.bomber.engine.model.BomberRequest;
 import com.bomber.engine.model.HttpRequest;
 import com.bomber.engine.model.Payload;
@@ -108,7 +107,7 @@ public class BomberServiceImpl implements BomberService {
 		BombingRecord record = createBombingRecord(request, httpSample);
 		bombingRecordManager.save(record);
 
-		bomberEngine.execute(new BomberContext(createBomberRequest(record)));
+		bomberEngine.execute(createBomberRequest(record));
 	}
 
 	@Override
@@ -120,11 +119,11 @@ public class BomberServiceImpl implements BomberService {
 		record.setStatus(READY);
 		bombingRecordManager.save(record);
 
-		bomberEngine.execute(new BomberContext(createBomberRequest(record)));
+		bomberEngine.execute(createBomberRequest(record));
 	}
 
 	@Override
 	public void pauseExecute(@NonNull String id) {
-		bomberEngine.pauseExecute(id);
+		bomberEngine.pause(id);
 	}
 }

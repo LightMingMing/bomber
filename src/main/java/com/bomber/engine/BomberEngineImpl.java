@@ -8,14 +8,15 @@ import static com.bomber.model.BombingStatus.RUNNING;
 import java.util.Date;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 import org.ironrhino.rest.RestStatus;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import com.bomber.engine.converter.BombardierRequestConverter;
 import com.bomber.engine.internal.Counter;
 import com.bomber.engine.model.BomberContext;
+import com.bomber.engine.model.BomberRequest;
 import com.bomber.engine.rpc.BombardierRequest;
 import com.bomber.engine.rpc.BombardierResponse;
 import com.bomber.manager.BombingRecordManager;
@@ -81,8 +82,9 @@ public class BomberEngineImpl implements BomberEngine {
 	}
 
 	@Override
-	public void execute(@NonNull BomberContext ctx) {
-		bombingExecutor.execute(() -> {
+	public Future<?> execute(BomberRequest request) {
+		BomberContext ctx = new BomberContext(request);
+		return bombingExecutor.submit(() -> {
 			registry.register(ctx);
 			try {
 				doExecute(ctx);
@@ -93,7 +95,7 @@ public class BomberEngineImpl implements BomberEngine {
 	}
 
 	@Override
-	public void pauseExecute(String id) {
+	public void pause(String id) {
 		Optional.ofNullable(registry.get(id)).ifPresent(BomberContext::pause);
 	}
 
