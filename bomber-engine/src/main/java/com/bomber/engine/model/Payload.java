@@ -34,7 +34,7 @@ public class Payload {
 	private Scope scope;
 
 	/**
-	 * 函数上下文
+	 * 函数信息
 	 */
 	@NonNull
 	private List<FunctionInfo> functionInfos;
