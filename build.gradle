@@ -110,12 +110,7 @@ dependencies {
         exclude group: "org.latencyutils"
     }
 
-    implementation("io.netty:netty-all:4.1.59.Final")
-
-    implementation("io.projectreactor:reactor-core:3.4.3.RELEASE")
-    implementation("io.projectreactor.netty:reactor-netty:0.9.17.RELEASE") {
-        exclude group: "io.netty"
-    }
+    implementation("io.projectreactor.netty:reactor-netty-http:1.0.4")
 
     implementation("javax.transaction:transaction-api:1.1")
     implementation("javax.validation:validation-api:2.0.1.Final")
