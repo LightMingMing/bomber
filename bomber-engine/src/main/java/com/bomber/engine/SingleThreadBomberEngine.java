@@ -95,7 +95,8 @@ public abstract class SingleThreadBomberEngine extends AbstractBomberEngine {
 				this.firePaused(ctx);
 				return false;
 			}
-			doEachExecute(ctx, request);
+			this.fireBeforeEachExecute(ctx);
+			this.doEachExecute(ctx, request);
 		}
 		return true;
 	}

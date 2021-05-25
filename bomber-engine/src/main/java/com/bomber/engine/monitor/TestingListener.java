@@ -25,6 +25,9 @@ public interface TestingListener {
 	default void failed(TestingEvent event, Throwable e) {
 	}
 
+	default void beforeEachExecute(TestingEvent event) {
+	}
+
 	default void afterEachExecute(TestingEvent event, Result result) {
 	}
 }

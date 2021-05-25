@@ -80,6 +80,14 @@ public abstract class AbstractBomberEngine implements BomberEngine, TestingNotif
 	}
 
 	@Override
+	public void fireBeforeEachExecute(BomberContext ctx) {
+		TestingEvent event = new TestingEvent(ctx);
+		for (TestingListener listener : listeners) {
+			listener.beforeEachExecute(event);
+		}
+	}
+
+	@Override
 	public void fireEachExecute(BomberContext ctx, Result result) {
 		TestingEvent event = new TestingEvent(ctx);
 		for (TestingListener listener : listeners) {

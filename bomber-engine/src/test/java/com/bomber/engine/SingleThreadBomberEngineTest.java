@@ -180,6 +180,7 @@ class SingleThreadBomberEngineTest {
 		int executeTimes = request.getThreadGroups().size() * request.getIterations();
 
 		then(listener).should().started(any());
+		then(listener).should(times(executeTimes)).beforeEachExecute(any());
 		then(listener).should(times(executeTimes)).afterEachExecute(any(), any());
 		then(listener).should().completed(any());
 

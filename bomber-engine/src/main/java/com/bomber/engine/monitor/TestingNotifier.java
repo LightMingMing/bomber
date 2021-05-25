@@ -20,6 +20,8 @@ public interface TestingNotifier extends ListenerRegistry {
 
     void fireCompleted(BomberContext ctx);
 
+    void fireBeforeEachExecute(BomberContext ctx);
+
     void fireEachExecute(BomberContext ctx, Result result);
 
 }
