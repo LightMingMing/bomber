@@ -49,38 +49,6 @@ public class BomberEngineImpl implements BomberEngine {
 		this.bombingExecutor = bombingExecutor;
 	}
 
-	protected static SummaryReport convertToSummaryReport(BombardierResponse response) {
-		SummaryReport record = new SummaryReport();
-		record.setNumberOfThreads(response.getNumConns());
-		record.setNumberOfRequests(response.getNumReqs());
-
-		BombardierResponse.StatusStats status = response.getStatus();
-		record.setReq1xx(status.getReq1xx());
-		record.setReq2xx(status.getReq2xx());
-		record.setReq3xx(status.getReq3xx());
-		record.setReq4xx(status.getReq4xx());
-		record.setReq5xx(status.getReq5xx());
-		record.setOther(status.getOther());
-
-		BombardierResponse.LatencyStats latency = response.getLatency();
-		record.setAvg(latency.getAvg());
-		record.setMax(latency.getMax());
-		record.setMin(latency.getMin());
-		record.setStdDev(latency.getStdDev());
-
-		BombardierResponse.Percentiles percentiles = latency.getPercentiles();
-		record.setPoint25(percentiles.getPoint25());
-		record.setPoint50(percentiles.getPoint50());
-		record.setPoint75(percentiles.getPoint75());
-		record.setPoint90(percentiles.getPoint90());
-		record.setPoint95(percentiles.getPoint95());
-		record.setPoint99(percentiles.getPoint99());
-
-		record.setTps(response.getTps());
-		record.setErrorCount(response.getErrorCount());
-		return record;
-	}
-
 	@Override
 	public Future<?> execute(BomberRequest request) {
 		BomberContext ctx = new BomberContext(request);
@@ -177,7 +145,7 @@ public class BomberEngineImpl implements BomberEngine {
 	}
 
 	private void saveSummaryReport(BombardierResponse response, BombingRecord record, Date startTime) {
-		SummaryReport summaryReport = convertToSummaryReport(response);
+		SummaryReport summaryReport = SummaryReporterConverter.INSTANCE.convertToSummaryReport(response);
 		summaryReport.setStartTime(startTime);
 		summaryReport.setEndTime(new Date());
 		summaryReport.setBombingRecord(record);
