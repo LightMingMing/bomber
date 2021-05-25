@@ -4,6 +4,7 @@ import java.net.URI;
 import java.time.Duration;
 import java.util.Date;
 
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.reactive.socket.client.WebSocketClient;
@@ -21,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
  * 基于 WebSocket 的引擎实现
  */
 @Slf4j
-public class WebSocketBasedBombEngine extends SingleThreadBomberEngine implements InitializingBean {
+public class WebSocketBasedBombEngine extends SingleThreadBomberEngine implements InitializingBean, DisposableBean {
 
 	private final BombardierWebSocketClient client;
 
@@ -67,5 +68,10 @@ public class WebSocketBasedBombEngine extends SingleThreadBomberEngine implement
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		this.uri = new URI(webSocketUrl);
+	}
+
+	@Override
+	public void destroy() throws Exception {
+		super.destroy();
 	}
 }

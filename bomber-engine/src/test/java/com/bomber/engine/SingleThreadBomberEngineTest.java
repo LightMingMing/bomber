@@ -154,6 +154,12 @@ class SingleThreadBomberEngineTest {
 		then(listener).should().started(any());
 		then(listener).should().paused(any());
 		then(listener).should(never()).completed(any());
+
+		try {
+			engine.destroy();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	private void testTemplate(BomberRequest request, Consumer<BombardierRequest> lastVerify) {
@@ -180,6 +186,11 @@ class SingleThreadBomberEngineTest {
 		// 实现上多次执行返回的是同一个 BombardierRequest, 因此这里校验的是终态
 		// 保险起见, 取最后一个
 		lastVerify.accept(requestCaptor.getAllValues().get(executeTimes - 1));
+		try {
+			engine.destroy();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	private static class SimpleBomberEngine extends SingleThreadBomberEngine {

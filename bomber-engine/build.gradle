@@ -8,6 +8,8 @@ group 'com.bomber'
 version '1.0.0'
 
 dependencies {
+    compileOnly 'com.google.code.findbugs:annotations:3.0.1'
+
     implementation project(':bomber-common')
 
     implementation 'com.fasterxml.jackson.core:jackson-databind'

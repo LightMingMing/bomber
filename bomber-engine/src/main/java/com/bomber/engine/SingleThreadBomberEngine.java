@@ -1,5 +1,6 @@
 package com.bomber.engine;
 
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -42,7 +43,7 @@ public abstract class SingleThreadBomberEngine extends AbstractBomberEngine {
 					return thread;
 				},
 				(r, e) -> log.warn("task is rejected from bomber engine"));
-		Runtime.getRuntime().addShutdownHook(new Thread(this::destroy));
+		// Runtime.getRuntime().addShutdownHook(new Thread(this::destroy));
 	}
 
 	@Override
@@ -50,10 +51,10 @@ public abstract class SingleThreadBomberEngine extends AbstractBomberEngine {
 		return executor.submit(newTaskFor(request));
 	}
 
-	private BomberFutureTask<?> newTaskFor(BomberRequest request) {
+	private Callable<?> newTaskFor(BomberRequest request) {
 		BomberContext ctx = new BomberContext(request);
 		registry.register(ctx);
-		return new BomberFutureTask<>(() -> {
+		return new Task<>(ctx, () -> {
 			try {
 				if (fireStarted(ctx)) {
 					doExecute(ctx);
@@ -62,7 +63,7 @@ public abstract class SingleThreadBomberEngine extends AbstractBomberEngine {
 				registry.unregister(ctx);
 			}
 			return null;
-		}, ctx);
+		});
 	}
 
 	private void doExecute(BomberContext ctx) {
@@ -101,23 +102,38 @@ public abstract class SingleThreadBomberEngine extends AbstractBomberEngine {
 
 	protected abstract void doEachExecute(BomberContext ctx, BombardierRequest request) throws Throwable;
 
-	public void destroy() {
+	public void destroy() throws Exception {
 		// 由于任务执行较久, 这里直接调用 shutdownNow() 方法
 		List<Runnable> canceledTasks = executor.shutdownNow();
 		for (Runnable canceledTask : canceledTasks) {
-			if (canceledTask instanceof BomberFutureTask) {
-				this.fireFailed(((BomberFutureTask<?>) canceledTask).ctx, CANCELLED_EXECUTION_EXCEPTION);
+			if (canceledTask instanceof FutureTask) {
+				Callable<?> task = getCallable((FutureTask<?>) canceledTask);
+				if (task instanceof Task) {
+					this.fireFailed(((Task<?>) task).ctx, CANCELLED_EXECUTION_EXCEPTION);
+				}
 			}
 		}
 	}
 
-	static class BomberFutureTask<V> extends FutureTask<V> {
+	private Callable<?> getCallable(FutureTask<?> futureTask) throws NoSuchFieldException, IllegalAccessException {
+		Field field = FutureTask.class.getDeclaredField("callable");
+		field.setAccessible(true);
+		return (Callable<?>) field.get(futureTask);
+	}
+
+	static class Task<V> implements Callable<V> {
 
 		protected final BomberContext ctx;
+		protected final Callable<V> callable;
 
-		public BomberFutureTask(Callable<V> callable, BomberContext ctx) {
-			super(callable);
+		public Task(BomberContext ctx, Callable<V> callable) {
 			this.ctx = ctx;
+			this.callable = callable;
+		}
+
+		@Override
+		public V call() throws Exception {
+			return callable.call();
 		}
 	}
 }
