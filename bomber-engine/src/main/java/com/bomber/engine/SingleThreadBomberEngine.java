@@ -10,6 +10,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.lang.NonNull;
 
 import com.bomber.engine.converter.BombardierRequestConverter;
@@ -27,7 +28,7 @@ import lombok.extern.slf4j.Slf4j;
  * @author MingMing Zhao
  */
 @Slf4j
-public abstract class SingleThreadBomberEngine extends AbstractBomberEngine {
+public abstract class SingleThreadBomberEngine extends AbstractBomberEngine implements DisposableBean {
 
 	private static final ConstantException CANCELLED_EXECUTION_EXCEPTION =
 			new ConstantException("Task is cancelled");
@@ -104,6 +105,7 @@ public abstract class SingleThreadBomberEngine extends AbstractBomberEngine {
 
 	protected abstract void doEachExecute(BomberContext ctx, BombardierRequest request) throws Throwable;
 
+	@Override
 	public void destroy() throws Exception {
 		// 由于任务执行较久, 这里直接调用 shutdownNow() 方法
 		List<Runnable> canceledTasks = executor.shutdownNow();
