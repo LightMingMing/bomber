@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
  * 基于 WebSocket 的引擎实现
  */
 @Slf4j
-public class WebSocketBasedBombEngine extends SingleThreadBomberEngine implements InitializingBean, DisposableBean {
+public class WebSocketBasedBomberEngine extends SingleThreadBomberEngine implements InitializingBean, DisposableBean {
 
 	private final BombardierWebSocketClient client;
 
@@ -31,7 +31,7 @@ public class WebSocketBasedBombEngine extends SingleThreadBomberEngine implement
 
 	private URI uri;
 
-	public WebSocketBasedBombEngine(BomberContextRegistry registry, WebSocketClient client) {
+	public WebSocketBasedBomberEngine(BomberContextRegistry registry, WebSocketClient client) {
 		super(registry);
 		this.client = new BombardierWebSocketClient(client);
 	}
