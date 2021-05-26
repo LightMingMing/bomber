@@ -16,6 +16,7 @@ import com.bomber.engine.converter.BombardierRequestConverter;
 import com.bomber.engine.internal.Counter;
 import com.bomber.engine.model.BomberContext;
 import com.bomber.engine.model.BomberRequest;
+import com.bomber.engine.monitor.TestingListener;
 import com.bomber.engine.rpc.BombardierRequest;
 import com.bomber.engine.util.ConstantException;
 import lombok.extern.slf4j.Slf4j;
@@ -33,8 +34,8 @@ public abstract class SingleThreadBomberEngine extends AbstractBomberEngine {
 
 	protected ExecutorService executor;
 
-	public SingleThreadBomberEngine(BomberContextRegistry registry) {
-		super(registry);
+	public SingleThreadBomberEngine(BomberContextRegistry registry, TestingListener... listeners) {
+		super(registry, listeners);
 		this.executor = new ThreadPoolExecutor(1, 1, 0, TimeUnit.MINUTES,
 				new LinkedBlockingQueue<>(1000),
 				r -> {

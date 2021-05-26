@@ -11,6 +11,7 @@ import org.springframework.web.reactive.socket.client.WebSocketClient;
 
 import com.bomber.engine.model.BomberContext;
 import com.bomber.engine.model.Result;
+import com.bomber.engine.monitor.TestingListener;
 import com.bomber.engine.rpc.BombardierRequest;
 import com.bomber.engine.rpc.BombardierResponse;
 import com.bomber.engine.rpc.BombardierWebSocketClient;
@@ -31,8 +32,8 @@ public class WebSocketBasedBomberEngine extends SingleThreadBomberEngine impleme
 
 	private URI uri;
 
-	public WebSocketBasedBomberEngine(BomberContextRegistry registry, WebSocketClient client) {
-		super(registry);
+	public WebSocketBasedBomberEngine(BomberContextRegistry registry, WebSocketClient client, TestingListener... listeners) {
+		super(registry, listeners);
 		this.client = new BombardierWebSocketClient(client);
 	}
 

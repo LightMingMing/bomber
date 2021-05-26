@@ -22,8 +22,9 @@ public abstract class AbstractBomberEngine implements BomberEngine, TestingNotif
 
 	protected BomberContextRegistry registry;
 
-	public AbstractBomberEngine(BomberContextRegistry registry) {
+	public AbstractBomberEngine(BomberContextRegistry registry, TestingListener... listeners) {
 		this.registry = registry;
+		this.register(listeners);
 	}
 
 	@Override
