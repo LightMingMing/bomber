@@ -21,6 +21,7 @@ import org.springframework.web.client.HttpClientErrorException;
 
 import com.bomber.common.util.StringReplacer;
 
+@Group(Type.OTHER)
 @FuncInfo(requiredArgs = "accessTokenEndpoint, grant_type, client_id, client_secret", optionalArgs = "username, password, device_id, device_name")
 public class OAuth2 implements Function {
 

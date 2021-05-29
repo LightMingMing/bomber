@@ -16,6 +16,7 @@ import javax.sql.DataSource;
 import com.bomber.function.sql.CachedDataSourceManager;
 import com.bomber.function.sql.DataSourceManager;
 
+@Group(Type.SQL)
 public abstract class AbstractSQLQuery implements Function {
 
 	private static final Map<String, Integer> jdbcTypeForName;
@@ -84,7 +85,7 @@ public abstract class AbstractSQLQuery implements Function {
 
 	// From org.apache.jmeter.protocol.jdbc.AbstractJDBCTestElement
 	private void setArgument(PreparedStatement pstmt, String argument, int targetSqlType, int index)
-			throws SQLException {
+		throws SQLException {
 		switch (targetSqlType) {
 			case Types.INTEGER:
 				pstmt.setInt(index, Integer.parseInt(argument));

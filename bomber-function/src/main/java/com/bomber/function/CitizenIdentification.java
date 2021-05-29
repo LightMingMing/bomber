@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+@Group(Type.BASE)
 @FuncInfo(optionalArgs = "startDate, addressCode")
 public class CitizenIdentification implements Producer<String> {
 

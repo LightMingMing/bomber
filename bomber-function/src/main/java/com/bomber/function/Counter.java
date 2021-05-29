@@ -5,6 +5,7 @@ package com.bomber.function;
  *
  * @author MingMing Zhao
  */
+@Group(Type.BASE)
 @FuncInfo
 public class Counter implements Producer<String> {
 

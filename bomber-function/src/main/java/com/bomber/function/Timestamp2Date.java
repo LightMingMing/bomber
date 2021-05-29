@@ -11,6 +11,7 @@ import org.springframework.lang.NonNull;
  *
  * @author MingMing Zhao
  */
+@Group(Type.DATE)
 @FuncInfo(requiredArgs = "timestamp", optionalArgs = "format")
 public class Timestamp2Date implements Function {
 

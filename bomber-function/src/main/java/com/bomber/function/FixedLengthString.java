@@ -5,6 +5,7 @@ package com.bomber.function;
  *
  * @author MingMing Zhao
  */
+@Group(Type.BASE)
 @FuncInfo(requiredArgs = "length", optionalArgs = "prefix, suffix")
 public class FixedLengthString implements Producer<String> {
 

@@ -8,6 +8,7 @@ import java.util.Map;
  *
  * @author MingMing Zhao
  */
+@Group(Type.BASE)
 @FuncInfo(retAllArgs = true)
 public class Properties implements Producer<Map<String, String>> {
 

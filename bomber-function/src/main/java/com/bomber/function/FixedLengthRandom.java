@@ -9,6 +9,7 @@ import java.util.concurrent.ThreadLocalRandom;
  *
  * @author MingMing Zhao
  */
+@Group(Type.BASE)
 @FuncInfo(requiredArgs = "length")
 public class FixedLengthRandom implements Producer<String> {
 

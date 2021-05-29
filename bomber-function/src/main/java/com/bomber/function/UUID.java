@@ -5,6 +5,7 @@ package com.bomber.function;
  *
  * @author MingMing Zhao
  */
+@Group(Type.BASE)
 @FuncInfo(optionalArgs = "noHyphen")
 public class UUID implements Producer<String> {
 

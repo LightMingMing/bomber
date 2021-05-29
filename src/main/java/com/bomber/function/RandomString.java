@@ -2,6 +2,7 @@ package com.bomber.function;
 
 import org.ironrhino.core.util.CodecUtils;
 
+@Group(Type.BASE)
 @FuncInfo(requiredArgs = "length")
 public class RandomString implements Producer<String> {
 

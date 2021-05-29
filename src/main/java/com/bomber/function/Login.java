@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.web.client.HttpClientErrorException;
 
+@Group(Type.OTHER)
 @FuncInfo(requiredArgs = "url, form", optionalArgs = "expiresIn")
 public class Login implements Function {
 

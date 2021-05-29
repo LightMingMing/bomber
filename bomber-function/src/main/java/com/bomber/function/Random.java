@@ -7,6 +7,7 @@ import java.util.concurrent.ThreadLocalRandom;
  *
  * @author MingMing Zhao
  */
+@Group(Type.BASE)
 @FuncInfo(requiredArgs = "min, max")
 public class Random implements Producer<String> {
 

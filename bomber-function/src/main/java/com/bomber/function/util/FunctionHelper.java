@@ -10,6 +10,8 @@ import java.util.Map;
 import com.bomber.function.Counter;
 import com.bomber.function.FuncInfo;
 import com.bomber.function.Function;
+import com.bomber.function.Group;
+import com.bomber.function.Type;
 import com.bomber.function.model.FunctionConstructors;
 import com.bomber.function.model.FunctionMetadata;
 import com.bomber.function.model.MethodInvoker;
@@ -28,32 +30,53 @@ public final class FunctionHelper {
 	private static final Map<Class<Function>, FunctionMetadata> functionMetadataForType = new LinkedHashMap<>();
 
 	static {
-		FunctionScanner.scan(new String[]{Counter.class.getPackageName()}).forEach(clazz -> {
-			String name = generateFunctionName(clazz);
-			FuncInfo funcInfo = clazz.getDeclaredAnnotation(FuncInfo.class);
-			if (funcInfo != null) {
-				FunctionMetadata fm = new FunctionMetadata();
-				fm.setFunctionType(clazz);
-				fm.setName(name);
-
-				fm.setRequiredArgs(funcInfo.requiredArgs());
-				fm.setOptionalArgs(funcInfo.optionalArgs());
-				fm.setRetAllArgs(funcInfo.retAllArgs());
-				fm.setRetArg(funcInfo.retArg());
-				fm.setParallel(funcInfo.parallel());
-				fm.setCustomArg(funcInfo.customArg());
-
-				fm.setConstructors(new FunctionConstructors<>(clazz));
-				fm.setMethodInvoker(new MethodInvoker(clazz));
-
-				functionTypeMap.put(name, clazz);
-				functionMetadataMap.put(name, fm);
-				functionMetadataForType.put(clazz, fm);
-			}
-		});
+		FunctionScanner.scan(new String[]{Counter.class.getPackageName()}).stream().sorted(FunctionHelper::sort)
+			.forEach(clazz -> {
+					FunctionMetadata fm = parse(clazz);
+					if (fm != null) {
+						functionTypeMap.put(fm.getName(), clazz);
+						functionMetadataMap.put(fm.getName(), fm);
+						functionMetadataForType.put(clazz, fm);
+					}
+				}
+			);
 	}
 
-	private static String generateFunctionName(Class<Function> clazz) {
+	private static int getOrder(Class<Function> clazz) {
+		Group group = clazz.getAnnotation(Group.class);
+		return group == null ? Type.OTHER.getOrder() : group.value().getOrder();
+	}
+
+	private static int sort(Class<Function> f1, Class<Function> f2) {
+		int order1 = getOrder(f1);
+		int order2 = getOrder(f2);
+		if (order1 == order2)
+			return f1.getSimpleName().compareTo(f2.getSimpleName());
+		return Integer.compare(order1, order2);
+	}
+
+	private static FunctionMetadata parse(Class<Function> clazz) {
+		FuncInfo funcInfo = clazz.getDeclaredAnnotation(FuncInfo.class);
+		if (funcInfo == null) {
+			return null;
+		}
+		FunctionMetadata fm = new FunctionMetadata();
+		fm.setFunctionType(clazz);
+		fm.setName(getFunctionName(clazz));
+
+		fm.setRequiredArgs(funcInfo.requiredArgs());
+		fm.setOptionalArgs(funcInfo.optionalArgs());
+		fm.setRetAllArgs(funcInfo.retAllArgs());
+		fm.setRetArg(funcInfo.retArg());
+		fm.setParallel(funcInfo.parallel());
+		fm.setCustomArg(funcInfo.customArg());
+
+		fm.setConstructors(new FunctionConstructors<>(clazz));
+		fm.setMethodInvoker(new MethodInvoker(clazz));
+		return fm;
+	}
+
+	private static String getFunctionName(Class<Function> clazz) {
 		return clazz.getSimpleName().replace("Function", "");
 	}
 

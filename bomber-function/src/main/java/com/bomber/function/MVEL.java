@@ -23,6 +23,7 @@ import com.bomber.common.util.StringReplacer;
  *
  * @author MingMing Zhao
  */
+@Group(Type.SCRIPT)
 @FuncInfo(requiredArgs = "script, args", customArg = "args", parallel = true)
 public class MVEL implements Function {
 
@@ -62,7 +63,7 @@ public class MVEL implements Function {
 		String script = StringReplacer.replace(initParameterValues.get("script"), container);
 		Map<String, String> args = new HashMap<>();
 		Arrays.stream(initParameterValues.get("args").split(", *"))
-				.forEach(k -> args.put(k, container.get(k)));
+			.forEach(k -> args.put(k, container.get(k)));
 		return new Object[]{script, args};
 	}
 }
