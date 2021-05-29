@@ -81,8 +81,6 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}")
     implementation("com.fasterxml.jackson.core:jackson-core:${jacksonVersion}")
     implementation("com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}")
-    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:${jacksonVersion}")
-    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-smile:${jacksonVersion}")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}")
     implementation("com.fasterxml.jackson.module:jackson-module-mrbean:${jacksonVersion}")
     implementation("com.fasterxml.jackson.module:jackson-module-parameter-names:${jacksonVersion}")
@@ -122,7 +120,7 @@ dependencies {
         exclude group: "com.google.protobuf"
     }
 
-    implementation("net.bytebuddy:byte-buddy:1.10.5")
+    implementation("net.bytebuddy:byte-buddy:1.10.20")
 
     implementation("net.htmlparser.jericho:jericho-html:3.4")
 
