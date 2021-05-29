@@ -2,12 +2,10 @@ package com.bomber.model;
 
 import static com.bomber.common.util.StringReplacer.supports;
 
-import java.io.File;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-
 import javax.persistence.Column;
 import javax.persistence.ConstraintMode;
 import javax.persistence.Convert;
@@ -17,7 +15,6 @@ import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -30,7 +27,6 @@ import org.springframework.http.HttpMethod;
 import com.bomber.converter.AssertionListConverter;
 import com.bomber.converter.HttpHeaderListConverter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import lombok.Getter;
 import lombok.Setter;
 
@@ -91,20 +87,6 @@ public class HttpSample extends BaseEntity {
 	@UiConfig(alias = "assertions", hiddenInList = @Hidden(true), group = "assertion")
 	@Convert(converter = AssertionListConverter.class)
 	private List<Assertion> assertions;
-
-	@Transient
-	@UiConfig(alias = "file", hiddenInList = @Hidden(true), hiddenInView = @Hidden(true), group = "fileUpload")
-	private File csvFile;
-
-	@Transient
-	@UiConfig(hidden = true, group = "fileUpload")
-	private String csvFileFileName;
-
-	@UiConfig(alias = "filePath", hiddenInList = @Hidden(true), hiddenInInput = @Hidden(expression = "!value?has_content"), excludedFromQuery = true, group = "fileUpload")
-	private String csvFilePath;
-
-	@UiConfig(hiddenInList = @Hidden(true), description = "separatedByCommas", excludedFromQuery = true, group = "fileUpload")
-	private String variableNames;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))

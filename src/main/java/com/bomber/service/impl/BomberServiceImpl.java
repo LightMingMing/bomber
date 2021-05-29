@@ -6,12 +6,10 @@ import static com.bomber.model.BombingStatus.PAUSE;
 import static com.bomber.model.BombingStatus.READY;
 import static java.util.Objects.requireNonNull;
 
-import java.net.URI;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
@@ -35,9 +33,6 @@ public class BomberServiceImpl implements BomberService {
 	private final BombingRecordManager bombingRecordManager;
 
 	private final BomberEngine bomberEngine;
-
-	@Value("${fileStorage.uri}")
-	protected URI uri;
 
 	public BomberServiceImpl(HttpSampleManager httpSampleManager, BombingRecordManager bombingRecordManager,
 							 BomberEngine bomberEngine) {

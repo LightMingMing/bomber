@@ -1,17 +1,13 @@
 package com.bomber.action;
 
-import static com.bomber.http.StringEntityRender.renderPlainText;
 import static com.bomber.common.util.StringReplacer.replace;
-import static java.util.Objects.isNull;
+import static com.bomber.http.StringEntityRender.renderPlainText;
 import static org.springframework.util.StringUtils.hasLength;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -19,7 +15,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.ironrhino.core.fs.FileStorage;
 import org.ironrhino.core.metadata.AutoConfig;
 import org.ironrhino.core.metadata.JsonConfig;
 import org.ironrhino.core.struts.EntityAction;
@@ -33,7 +28,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
-import org.springframework.util.StringUtils;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.HtmlUtils;
@@ -49,11 +43,9 @@ import com.bomber.model.HttpSample;
 import com.bomber.service.BomberRequest;
 import com.bomber.service.BomberService;
 import com.bomber.service.PayloadGenerateService;
-import com.bomber.util.FileUtils;
 import com.fasterxml.jackson.core.JsonLocation;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.opensymphony.xwork2.interceptor.annotations.InputConfig;
-
 import lombok.Getter;
 import lombok.Setter;
 
@@ -88,9 +80,6 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 
 	@Autowired
 	private RestTemplate stringMessageRestTemplate;
-
-	@Autowired
-	private FileStorage fileStorage;
 
 	@Getter
 	@Setter
@@ -132,7 +121,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 	private String errorMessage;
 
 	private static MultiValueMap<String, String> convertToHttpHeaders(List<HttpHeader> httpHeaderList,
-			Function<String, String> mapper) {
+																	  Function<String, String> mapper) {
 		if (httpHeaderList == null) {
 			return null;
 		}
@@ -195,11 +184,6 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		return true;
 	}
 
-	// return true if not upload new file and file path is set to empty
-	private boolean shouldDeleteOldFile() {
-		return isNull(httpSample.getCsvFile()) && !hasLength(httpSample.getCsvFilePath());
-	}
-
 	// TODO validate json in front end
 	private boolean isValidJson(String body) {
 		try {
@@ -220,12 +204,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 			return INPUT;
 		}
 
-		boolean shouldDelete = shouldDeleteOldFile();
 		httpSample = getEntity();
-		if (shouldDelete && hasLength(httpSample.getCsvFilePath())) {
-			fileStorage.delete(httpSample.getCsvFilePath());
-			httpSample.setCsvFilePath(null);
-		}
 
 		if (hasLength(httpSample.getBody())) {
 			for (HttpHeader header : httpSample.getHeaders()) {
@@ -238,16 +217,6 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 				}
 			}
 		}
-
-		// upload file
-		if (httpSample.getCsvFile() != null) {
-			String filePath = generateFilePath(httpSample.getCsvFileFileName());
-			fileStorage.write(httpSample.getCsvFile(), filePath);
-			httpSample.setCsvFilePath(filePath);
-			logger.info("Upload file '{}'", filePath);
-		}
-
-		httpSample.setVariableNames(StringUtils.trimAllWhitespace(httpSample.getVariableNames()));
 
 		httpSampleManager.save(httpSample);
 		return SUCCESS;
@@ -308,34 +277,10 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		return SUCCESS;
 	}
 
-	private Map<String, String> readVariablesFromFile(String filePath, int lineNumber, String[] variableNames)
-			throws IOException {
-		try (InputStream inputStream = fileStorage.open(filePath)) {
-			if (inputStream == null) {
-				throw new FileNotFoundException("文件不存在");
-			}
-			String line = FileUtils.readSpecificLine(inputStream, lineNumber);
-			String[] values = line.trim().split(", *");
-			if (values.length != variableNames.length) {
-				throw new IllegalArgumentException("变量数与文件列数不匹配");
-			}
-			Map<String, String> variables = new HashMap<>();
-			for (int i = 0; i < variableNames.length; i++) {
-				variables.put(variableNames[i], values[i]);
-			}
-			return variables;
-		}
-	}
-
-	private Map<String, String> getPayload(HttpSample httpSample, int index) throws IOException {
+	private Map<String, String> getPayload(HttpSample httpSample, int index) {
 		if (httpSample.getFunctionConfigure() != null) {
 			return payloadGenerateService.generate(httpSample.getFunctionConfigure().getId(), index);
 		} else {
-			String filePath = httpSample.getCsvFilePath();
-			String names = httpSample.getVariableNames();
-			if (StringUtils.hasLength(filePath) && StringUtils.hasLength(names)) {
-				return readVariablesFromFile(filePath, index, names.split(", *"));
-			}
 			return Collections.emptyMap();
 		}
 	}
