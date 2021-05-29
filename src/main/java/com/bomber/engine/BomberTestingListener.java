@@ -64,6 +64,8 @@ public class BomberTestingListener implements TestingListener {
 		if (record == null) {
 			return;
 		}
+		record.setCurrentIterations(0);
+		record.setThreadGroupCursor(0);
 		record.setEndTime(new Date());
 		record.setStatus(BombingStatus.COMPLETED);
 		bombingRecordManager.save(record);
