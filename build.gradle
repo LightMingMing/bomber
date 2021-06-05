@@ -72,6 +72,7 @@ dependencies {
     providedCompile("org.eclipse.jetty:jetty-server:${jettyVersion}")
     providedCompile("org.eclipse.jetty:jetty-webapp:${jettyVersion}")
 
+    implementation project(':bomber-asserter')
     implementation project(':bomber-common')
     implementation project(':bomber-engine')
     implementation project(':bomber-function')
@@ -113,8 +114,6 @@ dependencies {
     implementation("javax.transaction:transaction-api:1.1")
     implementation("javax.validation:validation-api:2.0.1.Final")
     implementation("javax.xml.bind:jaxb-api:2.3.1")
-
-    implementation("com.jayway.jsonpath:json-path:2.4.0")
 
     implementation("mysql:mysql-connector-java:8.0.23") {
         exclude group: "com.google.protobuf"
