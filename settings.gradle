@@ -1,4 +1,5 @@
 rootProject.name = 'bomber'
+include 'bomber-app'
 include 'bomber-asserter'
 include 'bomber-common'
 include 'bomber-engine'
