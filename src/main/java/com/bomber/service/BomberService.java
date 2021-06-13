@@ -4,8 +4,8 @@ public interface BomberService {
 
 	void execute(BomberRequest request);
 
-	void pauseExecute(String id);
+	void pauseExecute(Long id);
 
-	void continueExecute(String id);
+	void continueExecute(Long id);
 
 }

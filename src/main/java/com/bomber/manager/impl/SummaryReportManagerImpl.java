@@ -14,7 +14,7 @@ public class SummaryReportManagerImpl extends BaseManagerImpl<SummaryReport> imp
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<SummaryReport> list(String recordId) {
+	public List<SummaryReport> list(Long recordId) {
 		return find("from SummaryReport s where s.bombingRecord.id=?1", recordId);
 	}
 

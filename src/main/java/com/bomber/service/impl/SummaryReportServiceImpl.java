@@ -20,7 +20,7 @@ public class SummaryReportServiceImpl implements SummaryReportService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<SummaryReport> list(String recordId) {
+	public List<SummaryReport> list(Long recordId) {
 		return summaryReportManager.list(recordId);
 	}
 }

@@ -7,10 +7,10 @@ import com.bomber.engine.model.BomberContext;
 
 public class BomberContextRegistryImpl implements BomberContextRegistry {
 
-	private final Map<String, BomberContext> cache = new ConcurrentHashMap<>();
+	private final Map<Long, BomberContext> cache = new ConcurrentHashMap<>();
 
 	@Override
-	public BomberContext get(String id) {
+	public BomberContext get(Long id) {
 		return cache.get(id);
 	}
 

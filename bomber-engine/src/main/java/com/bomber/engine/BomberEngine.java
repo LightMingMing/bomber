@@ -13,6 +13,6 @@ public interface BomberEngine {
 
 	Future<?> execute(BomberRequest request);
 
-	void pause(String id);
+	void pause(Long id);
 
 }

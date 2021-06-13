@@ -54,7 +54,7 @@ class SingleThreadBomberEngineTest {
 	@Test
 	public void testRequestScope() {
 		BomberRequest request = new BomberRequest();
-		request.setId("1");
+		request.setId(1L);
 		request.setName("test");
 		request.setHttpRequest(httpRequest());
 
@@ -73,7 +73,7 @@ class SingleThreadBomberEngineTest {
 	@Test
 	public void testThreadScope() {
 		BomberRequest request = new BomberRequest();
-		request.setId("1");
+		request.setId(1L);
 		request.setName("test");
 		request.setHttpRequest(httpRequest());
 
@@ -92,7 +92,7 @@ class SingleThreadBomberEngineTest {
 	@Test
 	public void testGroupScope() {
 		BomberRequest request = new BomberRequest();
-		request.setId("1");
+		request.setId(1L);
 		request.setName("test");
 		request.setHttpRequest(httpRequest());
 
@@ -111,7 +111,7 @@ class SingleThreadBomberEngineTest {
 	@Test
 	public void testBenchmarkScope() {
 		BomberRequest request = new BomberRequest();
-		request.setId("1");
+		request.setId(1L);
 		request.setName("test");
 		request.setHttpRequest(httpRequest());
 
@@ -138,7 +138,7 @@ class SingleThreadBomberEngineTest {
 
 		// when
 		BomberRequest request = new BomberRequest();
-		request.setId("1");
+		request.setId(1L);
 		request.setName("test");
 		request.setHttpRequest(httpRequest());
 
@@ -147,7 +147,7 @@ class SingleThreadBomberEngineTest {
 		request.setRequestsPerThread(10);
 
 		Future<?> result = engine.execute(request);
-		engine.pause("1");
+		engine.pause(1L);
 
 		// then
 		assertThat(result).succeedsWithin(1, TimeUnit.SECONDS);

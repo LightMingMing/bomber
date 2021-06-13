@@ -17,7 +17,7 @@ public class BombingRecordController {
 	}
 
 	@RequestMapping("/{id}/name")
-	public String getRecordName(@PathVariable("id") String id) {
+	public String getRecordName(@PathVariable("id") Long id) {
 		return bombingRecordService.getRecordName(id);
 	}
 }

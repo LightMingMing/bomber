@@ -17,7 +17,6 @@ import org.ironrhino.core.metadata.AutoConfig;
 import org.ironrhino.core.metadata.Hidden;
 import org.ironrhino.core.metadata.Richtable;
 import org.ironrhino.core.metadata.UiConfig;
-import org.ironrhino.core.model.BaseEntity;
 
 import lombok.Getter;
 import lombok.Setter;

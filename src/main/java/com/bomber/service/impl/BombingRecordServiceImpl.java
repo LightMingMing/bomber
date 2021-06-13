@@ -18,7 +18,7 @@ public class BombingRecordServiceImpl implements BombingRecordService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public String getRecordName(String id) {
+	public String getRecordName(Long id) {
 		BombingRecord record = bombingRecordManager.get(id);
 		if (record == null)
 			return null;

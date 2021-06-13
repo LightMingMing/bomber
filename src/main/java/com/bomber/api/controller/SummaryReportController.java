@@ -27,7 +27,7 @@ public class SummaryReportController {
 	}
 
 	@GetMapping
-	public List<SummaryReportVo> list(@RequestParam("recordId") String recordId) {
+	public List<SummaryReportVo> list(@RequestParam("recordId") Long recordId) {
 		return bombingRecordService.list(recordId).stream().sorted(comparator).map(this::map)
 				.collect(Collectors.toList());
 	}

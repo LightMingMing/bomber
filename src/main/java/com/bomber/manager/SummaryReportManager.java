@@ -8,6 +8,6 @@ import com.bomber.model.SummaryReport;
 
 public interface SummaryReportManager extends BaseManager<SummaryReport> {
 
-	List<SummaryReport> list(String recordId);
+	List<SummaryReport> list(Long recordId);
 
 }

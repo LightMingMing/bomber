@@ -19,7 +19,6 @@ import org.ironrhino.core.metadata.Hidden;
 import org.ironrhino.core.metadata.Readonly;
 import org.ironrhino.core.metadata.Richtable;
 import org.ironrhino.core.metadata.UiConfig;
-import org.ironrhino.core.model.BaseEntity;
 
 import com.bomber.engine.model.Scope;
 import lombok.Getter;

@@ -13,7 +13,7 @@ import lombok.Getter;
 @Getter
 public class TestingEvent {
 
-	private final String id;
+	private final Long id;
 
 	private final String name;
 

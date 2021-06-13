@@ -6,6 +6,6 @@ import com.bomber.model.SummaryReport;
 
 public interface SummaryReportService {
 
-	List<SummaryReport> list(String recordId);
+	List<SummaryReport> list(Long recordId);
 
 }

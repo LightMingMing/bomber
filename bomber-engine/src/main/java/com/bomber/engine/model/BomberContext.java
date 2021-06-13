@@ -20,7 +20,7 @@ import lombok.Getter;
 public class BomberContext {
 
 	@Getter
-	private final String id;
+	private final Long id;
 
 	@Getter
 	private final String name;

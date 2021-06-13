@@ -106,7 +106,7 @@ public class BomberServiceImpl implements BomberService {
 	}
 
 	@Override
-	public void continueExecute(@NonNull String id) {
+	public void continueExecute(@NonNull Long id) {
 		BombingRecord record = bombingRecordManager.get(id);
 		if (record == null || (record.getStatus() != PAUSE && record.getStatus() != FAILURE)) {
 			return;
@@ -118,7 +118,7 @@ public class BomberServiceImpl implements BomberService {
 	}
 
 	@Override
-	public void pauseExecute(@NonNull String id) {
+	public void pauseExecute(@NonNull Long id) {
 		bomberEngine.pause(id);
 	}
 }

@@ -28,7 +28,7 @@ public abstract class AbstractBomberEngine implements BomberEngine, TestingNotif
 	}
 
 	@Override
-	public void pause(String id) {
+	public void pause(Long id) {
 		Optional.ofNullable(registry.get(id)).ifPresent(BomberContext::pause);
 	}
 

@@ -35,12 +35,12 @@ public class BombingRecordAction extends EntityAction<BombingRecord> {
 	}
 
 	public String pauseExecute() {
-		bomberService.pauseExecute(this.getUid());
+		bomberService.pauseExecute(Long.parseLong(this.getUid()));
 		return SUCCESS;
 	}
 
 	public String continueExecute() {
-		bomberService.continueExecute(this.getUid());
+		bomberService.continueExecute(Long.parseLong(this.getUid()));
 		return SUCCESS;
 	}
 }

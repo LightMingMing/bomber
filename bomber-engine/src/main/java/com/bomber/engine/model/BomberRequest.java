@@ -21,7 +21,7 @@ public class BomberRequest {
 	 * 任务 ID
 	 */
 	@NonNull
-	private String id;
+	private Long id;
 
 	/**
 	 * 名称

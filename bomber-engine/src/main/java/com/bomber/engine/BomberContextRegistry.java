@@ -5,7 +5,7 @@ import com.bomber.engine.model.BomberContext;
 
 public interface BomberContextRegistry {
 
-	BomberContext get(String id);
+	BomberContext get(Long id);
 
 	void register(BomberContext ctx);
 
