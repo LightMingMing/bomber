@@ -8,6 +8,9 @@ group 'com.bomber'
 version '2.0.0'
 
 dependencies {
+    implementation 'mysql:mysql-connector-java:8.0.23'
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.1.4'
+
     implementation 'org.springframework.boot:spring-boot-starter'
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
