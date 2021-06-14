@@ -4,3 +4,7 @@ plugins {
 
 group 'com.bomber'
 version '1.0.1'
+
+dependencies {
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.11.4'
+}

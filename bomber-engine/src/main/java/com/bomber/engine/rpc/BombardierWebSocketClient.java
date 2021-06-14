@@ -7,7 +7,7 @@ import org.springframework.web.reactive.socket.WebSocketMessage;
 import org.springframework.web.reactive.socket.WebSocketSession;
 import org.springframework.web.reactive.socket.client.WebSocketClient;
 
-import com.bomber.engine.util.JsonUtils;
+import com.bomber.common.util.JsonUtils;
 import reactor.core.publisher.Mono;
 
 /**

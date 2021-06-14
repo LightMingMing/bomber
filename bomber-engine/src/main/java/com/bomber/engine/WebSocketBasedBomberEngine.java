@@ -14,7 +14,7 @@ import com.bomber.engine.monitor.TestingListener;
 import com.bomber.engine.rpc.BombardierRequest;
 import com.bomber.engine.rpc.BombardierResponse;
 import com.bomber.engine.rpc.BombardierWebSocketClient;
-import com.bomber.engine.util.JsonUtils;
+import com.bomber.common.util.JsonUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
 
