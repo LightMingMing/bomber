@@ -1,6 +1,7 @@
 package com.bomber.common.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -22,8 +23,13 @@ public class JsonUtils {
 	}
 
 	public static <T> T fromJson(String json, Class<T> cls)
-			throws JsonProcessingException {
+		throws JsonProcessingException {
 		return objectMapper.readValue(json, cls);
+	}
+
+	public static <T> T fromJson(String json, TypeReference<T> typeReference)
+		throws JsonProcessingException {
+		return objectMapper.readValue(json, typeReference);
 	}
 
 	public static String toJson(Object object) {
