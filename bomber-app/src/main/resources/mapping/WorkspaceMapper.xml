@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bomber.mapper.WorkspaceMapper">
+    <insert id="create" parameterType="com.bomber.entity.Workspace" useGeneratedKeys="true" keyProperty="id">
+        insert into workspace (name, author, description, createDate, modifyDate)
+        values (#{name}, #{author}, #{description}, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())
+    </insert>
+
+    <delete id="delete">
+        delete
+        from workspace
+        where id = #{id}
+    </delete>
+
+    <update id="update" parameterType="com.bomber.entity.Workspace">
+        update workspace
+        set name        = #{name},
+            description = #{description},
+            modifyDate  = CURRENT_TIMESTAMP()
+        where id = #{id}
+    </update>
+
+    <select id="select" resultType="com.bomber.entity.Workspace">
+        select *
+        from workspace
+        where id = #{id}
+    </select>
+
+    <select id="count" resultType="long">
+        select count(*) from workspace
+    </select>
+
+    <select id="findAll" resultType="com.bomber.entity.Workspace"
+            parameterType="org.springframework.data.domain.Pageable">
+        select *
+        from workspace
+        order by id desc
+        limit #{pageSize} offset #{offset}
+    </select>
+
+</mapper>
