@@ -10,6 +10,8 @@ version '1.0.3'
 dependencies {
     implementation project(':bomber-common')
 
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
+
     implementation 'io.projectreactor.netty:reactor-netty-http:1.0.15'
 
     implementation 'org.slf4j:slf4j-api'
