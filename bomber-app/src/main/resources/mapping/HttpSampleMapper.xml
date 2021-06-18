@@ -50,6 +50,7 @@
         select *
         from http_sample
         where workspaceId = #{wordspaceId}
+        order by orderNumber
     </select>
 
     <update id="reorder" parameterType="java.util.List">
