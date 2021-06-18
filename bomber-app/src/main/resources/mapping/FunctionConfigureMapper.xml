@@ -41,6 +41,7 @@
         select *
         from function_configure
         where workspaceId = #{wordspaceId}
+        order by orderNumber
     </select>
 
     <update id="reorder" parameterType="java.util.List">
