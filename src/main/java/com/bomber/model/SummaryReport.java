@@ -120,11 +120,11 @@ public class SummaryReport extends BaseEntity {
 	@UiConfig(excludedFromQuery = true, hiddenInView = @Hidden(true), template = PROGRESS_TEMPLATE)
 	private double successRate;
 
-	public double getSuccessCount() {
+	public int getSuccessCount() {
 		return errorCount > 0 ? numberOfRequests - errorCount : getReq2xx() + getReq3xx();
 	}
 
-	public double getFailureCount() {
+	public int getFailureCount() {
 		return errorCount > 0 ? errorCount : getReq1xx() + getReq4xx() + getReq5xx() + getOther();
 	}
 
