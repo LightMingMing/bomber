@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bomber.mapper.HttpSampleMapper">
+
+    <resultMap type="com.bomber.entity.HttpSample" id="httpSample">
+        <result column="headers" property="headers"
+                typeHandler="com.bomber.handler.HttpHeaderListHandler"/>
+        <result column="assertions" property="assertions"
+                typeHandler="com.bomber.handler.AssertionListHandler"/>
+    </resultMap>
+
+    <insert id="create" parameterType="com.bomber.entity.HttpSample" useGeneratedKeys="true" keyProperty="id">
+        insert into http_sample (workspaceId, orderNumber, name, method, url, headers, body, assertions, enabled,
+                                 createDate, modifyDate)
+        values (#{workspaceId}, #{orderNumber}, #{name}, #{method}, #{url},
+                #{headers,typeHandler=com.bomber.handler.HttpHeaderListHandler},
+                #{body},
+                #{assertions, typeHandler=com.bomber.handler.AssertionListHandler},
+                ${enabled}, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())
+    </insert>
+
+    <delete id="delete">
+        delete
+        from http_sample
+        where id = #{id}
+    </delete>
+
+    <update id="update" parameterType="com.bomber.entity.HttpSample">
+        update http_sample
+        set name       = #{name},
+            method     = #{method},
+            url        = #{url},
+            headers    = #{headers,typeHandler=com.bomber.handler.HttpHeaderListHandler},
+            body       = #{body},
+            assertions = #{assertions, typeHandler=com.bomber.handler.AssertionListHandler},
+            enabled    = #{enabled},
+            modifyDate = CURRENT_TIMESTAMP()
+        where id = #{id}
+    </update>
+
+    <select id="select" resultType="com.bomber.entity.HttpSample" resultMap="httpSample">
+        select *
+        from http_sample
+        where id = #{id}
+    </select>
+
+    <select id="findAllByWorkspace" resultType="com.bomber.entity.HttpSample" resultMap="httpSample">
+        select *
+        from http_sample
+        where workspaceId = #{wordspaceId}
+    </select>
+
+    <update id="reorder" parameterType="java.util.List">
+        update http_sample
+        set orderNumber = CASE
+        <foreach collection="list" item="id" index="index">
+            when id=${id} then ${index}
+        </foreach>
+        END
+        where id in
+        <foreach collection="list" index="index" item="id"
+                 separator="," open="(" close=")">
+            ${id}
+        </foreach>
+    </update>
+</mapper>
