@@ -10,7 +10,6 @@ import org.apache.ibatis.type.JdbcType;
 
 import com.bomber.common.util.JsonUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 
 /**
  * Java 对象与 Json 转化
@@ -39,12 +38,13 @@ public abstract class JsonTypeHandler<T> extends BaseTypeHandler<T> {
 		return fromJson(cs.getString(columnIndex));
 	}
 
-	protected T fromJson(String text) {
+	protected T fromJson(String json) {
 		try {
-			return JsonUtils.fromJson(text, new TypeReference<>() {
-			});
+			return readValue(json);
 		} catch (JsonProcessingException e) {
 			throw new RuntimeException(e);
 		}
 	}
+
+	protected abstract T readValue(String json) throws JsonProcessingException;
 }
