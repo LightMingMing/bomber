@@ -1,10 +1,13 @@
 package com.bomber.entity;
 
+import static com.bomber.common.util.StringReplacer.supports;
+
 import java.util.Date;
 import java.util.List;
 
 import org.springframework.http.HttpMethod;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,6 +19,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class HttpSample extends BaseEntity<Integer> {
+
 	private static final long serialVersionUID = -1009039514627961069L;
 
 	/**
@@ -72,4 +76,10 @@ public class HttpSample extends BaseEntity<Integer> {
 	 * 修改日期
 	 */
 	private Date modifyDate;
+
+	@JsonIgnore
+	public boolean containsVariables() {
+		return supports(url) || supports(body)
+			|| headers.stream().anyMatch(header -> supports(header.getValue()));
+	}
 }
