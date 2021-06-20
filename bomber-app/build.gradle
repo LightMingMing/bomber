@@ -10,6 +10,7 @@ version '2.0.0'
 dependencies {
     implementation project(':bomber-common')
     implementation project(':bomber-asserter')
+    implementation project(':bomber-function')
     implementation project(':bomber-engine')
 
     implementation 'mysql:mysql-connector-java:8.0.23'
