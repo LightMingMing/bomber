@@ -11,12 +11,10 @@
 
     <insert id="create" parameterType="com.bomber.entity.TestingRecord" useGeneratedKeys="true" keyProperty="id">
         insert into testing_record (httpSampleId, name, threadGroups, threadGroupCursor, activeThreads, scope,
-                                    beginUserIndex, iterations, currentIteration, requestsPerThread, status,
-                                    createTime)
+                                    beginUserIndex, iterations, currentIteration, requestsPerThread, status)
         values (#{httpSampleId}, #{name}, #{threadGroups,typeHandler=com.bomber.handler.IntegerListHandler},
                 #{threadGroupCursor}, #{activeThreads}, #{scope}, #{beginUserIndex}, #{iterations}, #{currentIteration},
-                #{requestsPerThread}, #{status},
-                CURRENT_TIMESTAMP())
+                #{requestsPerThread}, #{status})
     </insert>
 
     <delete id="delete">

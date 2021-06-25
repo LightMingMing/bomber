@@ -4,8 +4,8 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.bomber.mapper.WorkspaceMapper">
     <insert id="create" parameterType="com.bomber.entity.Workspace" useGeneratedKeys="true" keyProperty="id">
-        insert into workspace (name, author, description, createDate, modifyDate)
-        values (#{name}, #{author}, #{description}, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())
+        insert into workspace (name, author, description)
+        values (#{name}, #{author}, #{description})
     </insert>
 
     <delete id="delete">
@@ -17,8 +17,7 @@
     <update id="update" parameterType="com.bomber.entity.Workspace">
         update workspace
         set name        = #{name},
-            description = #{description},
-            modifyDate  = CURRENT_TIMESTAMP()
+            description = #{description}
         where id = #{id}
     </update>
 
@@ -29,7 +28,8 @@
     </select>
 
     <select id="count" resultType="long">
-        select count(*) from workspace
+        select count(*)
+        from workspace
     </select>
 
     <select id="findAll" resultType="com.bomber.entity.Workspace"
