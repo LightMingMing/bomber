@@ -12,13 +12,12 @@
     </resultMap>
 
     <insert id="create" parameterType="com.bomber.entity.HttpSample" useGeneratedKeys="true" keyProperty="id">
-        insert into http_sample (workspaceId, orderNumber, name, method, url, headers, body, assertions, enabled,
-                                 createDate, modifyDate)
+        insert into http_sample (workspaceId, orderNumber, name, method, url, headers, body, assertions, enabled)
         values (#{workspaceId}, #{orderNumber}, #{name}, #{method}, #{url},
                 #{headers,typeHandler=com.bomber.handler.HttpHeaderListHandler},
                 #{body},
                 #{assertions, typeHandler=com.bomber.handler.AssertionListHandler},
-                ${enabled}, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())
+                ${enabled})
     </insert>
 
     <delete id="delete">
@@ -35,8 +34,7 @@
             headers    = #{headers,typeHandler=com.bomber.handler.HttpHeaderListHandler},
             body       = #{body},
             assertions = #{assertions, typeHandler=com.bomber.handler.AssertionListHandler},
-            enabled    = #{enabled},
-            modifyDate = CURRENT_TIMESTAMP()
+            enabled    = #{enabled}
         where id = #{id}
     </update>
 
