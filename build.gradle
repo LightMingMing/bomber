@@ -255,10 +255,10 @@ task jettyStartup(type: JavaExec) {
     systemProperty("log4j2.skipJansi", "false")
 
     classpath = sourceSets.main.runtimeClasspath
-    main = "com.bomber.JettyBootstrap"
+    mainClass = "com.bomber.JettyBootstrap"
 }
 
 task jettyShutdown(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    main = "com.bomber.JettyShutdown"
+    mainClass = "com.bomber.JettyShutdown"
 }
