@@ -16,8 +16,10 @@ import com.bomber.function.FunctionGenerator;
  * @author MingMing Zhao
  */
 @RestController
-@RequestMapping("/api/payload")
+@RequestMapping(PayloadController.API_PAYLOAD)
 public class PayloadController {
+
+	public static final String API_PAYLOAD = "/api/payload";
 
 	private final FunctionGenerator functionGenerator;
 

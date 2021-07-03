@@ -4,14 +4,21 @@ import static com.bomber.entity.Status.FAILURE;
 import static com.bomber.entity.Status.PAUSE;
 import static com.bomber.entity.Status.READY;
 
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
+import com.bomber.controller.PayloadController;
 import com.bomber.engine.model.BomberRequest;
 import com.bomber.engine.model.HttpRequest;
 import com.bomber.engine.model.Payload;
@@ -24,11 +31,16 @@ import com.bomber.mapper.TestingRecordMapper;
 @Service
 public class BombingServiceImpl implements BombingService {
 
+	private static String HOST_ADDRESS;
+
 	private final HttpSampleMapper httpSampleMapper;
 
 	private final TestingRecordMapper testingRecordMapper;
 
 	private final BomberEngine bomberEngine;
+
+	@Value("${server.port:8080}")
+	private String port;
 
 	public BombingServiceImpl(HttpSampleMapper httpSampleMapper, TestingRecordMapper testingRecordMapper,
 							  BomberEngine bomberEngine) {
@@ -68,7 +80,30 @@ public class BombingServiceImpl implements BombingService {
 		return request;
 	}
 
-	private static BomberRequest createBomberRequest(TestingRecord record, HttpSample httpSample) {
+	public static String getHostAddress() {
+		try {
+			Enumeration<NetworkInterface> e = NetworkInterface.getNetworkInterfaces();
+			while (e.hasMoreElements()) {
+				NetworkInterface n = e.nextElement();
+				Enumeration<InetAddress> ee = n.getInetAddresses();
+				while (ee.hasMoreElements()) {
+					InetAddress inetAddress = ee.nextElement();
+					if (inetAddress instanceof Inet4Address) {
+						String address = inetAddress.getHostAddress();
+						if (address.equals("127.0.0.1") || address.startsWith("169.254.")) {
+							continue;
+						}
+						return address;
+					}
+				}
+			}
+			return "127.0.0.1";
+		} catch (SocketException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private BomberRequest createBomberRequest(TestingRecord record, HttpSample httpSample) {
 		BomberRequest request = new BomberRequest();
 		request.setId(record.getId());
 		request.setHttpRequest(createHttpRequest(httpSample));
@@ -89,9 +124,11 @@ public class BombingServiceImpl implements BombingService {
 		return request;
 	}
 
-	private static String getPayloadApiUrl(Integer workspaceId) {
-		// TODO 解析 IP 地址
-		return "http://localhost:8080/api/payload/" + workspaceId;
+	private String getPayloadApiUrl(Integer workspaceId) {
+		if (HOST_ADDRESS == null) {
+			HOST_ADDRESS = getHostAddress();
+		}
+		return "http://" + HOST_ADDRESS + ":" + port + PayloadController.API_PAYLOAD + "/" + workspaceId;
 	}
 
 	@Override
