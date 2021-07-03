@@ -9,7 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @author MingMing Zhao
  * @version 2.0.0
  */
-@SpringBootApplication
+@SpringBootApplication(proxyBeanMethods = false)
 public class BomberApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(BomberApplication.class, args);
