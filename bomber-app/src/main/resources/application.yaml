@@ -1,13 +1,16 @@
 server:
   port: 8080
 spring:
-  jackson:
-    date-format: yyyy-MM-dd HH:mm:ss
-    time-zone: Asia/Shanghai
   datasource:
     username: root
     password: password
     url: jdbc:mysql://localhost/bomber2?createDatabaseIfNotExist=true&serverTimezone=Asia/Shanghai
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: Asia/Shanghai
+  web:
+    resources:
+      add-mappings: false
 mybatis:
   mapper-locations: classpath:mapping/*Mapper.xml
   type-aliases-package: com.bomber.entity
