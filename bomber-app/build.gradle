@@ -23,3 +23,7 @@ dependencies {
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
+
+bootJar {
+    mainClass = 'com.bomber.BomberApplication'
+}
