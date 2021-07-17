@@ -13,12 +13,12 @@ import com.bomber.entity.HttpSample;
 public interface HttpSampleMapper extends BaseMapper<Integer, HttpSample> {
 
 	/**
-	 * 查询工作空间的 Http 请求脚本
+	 * 根据组 ID 查询所有的 Http 请求脚本
 	 *
-	 * @param workspaceId 工作空间 ID
+	 * @param groupId 组 ID
 	 * @return Http 请求脚本
 	 */
-	List<HttpSample> findAllByWorkspace(Integer workspaceId);
+	List<HttpSample> findAllByGroup(Integer groupId);
 
 	/**
 	 * Http 请求脚本排序
