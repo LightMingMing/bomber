@@ -116,7 +116,7 @@ public class BombingServiceImpl implements BombingService {
 
 		if (httpSample.containsVariables()) {
 			Payload payload = new Payload();
-			payload.setUrl(getPayloadApiUrl(httpSample.getWorkspaceId()));
+			payload.setUrl(getPayloadApiUrl(httpSample.getGroupId()));
 			payload.setScope(record.getScope());
 			payload.setStart(record.getBeginUserIndex());
 			request.setPayload(payload);

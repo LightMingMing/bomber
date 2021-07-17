@@ -54,8 +54,8 @@ public class FunctionConfigureController implements CrudController<Integer, Func
 	}
 
 	@GetMapping
-	public List<FunctionConfigure> findAllByWorkspace(@RequestParam Integer workspaceId) {
-		return functionConfigureMapper.findAllByWorkspace(workspaceId);
+	public List<FunctionConfigure> findAllByGroup(@RequestParam Integer groupId) {
+		return functionConfigureMapper.findAllByGroup(groupId);
 	}
 
 	@PutMapping("/reorder")

@@ -10,8 +10,8 @@
     </resultMap>
 
     <insert id="create" parameterType="com.bomber.entity.FunctionConfigure" useGeneratedKeys="true" keyProperty="id">
-        insert into function_configure (workspaceId, orderNumber, name, functionName, argumentValues, enabled)
-        values (#{workspaceId}, #{orderNumber}, #{name}, #{functionName},
+        insert into function_configure (groupId, orderNumber, name, functionName, argumentValues, enabled)
+        values (#{groupId}, #{orderNumber}, #{name}, #{functionName},
                 #{argumentValues, typeHandler=com.bomber.handler.ArgumentValueListHandler},
                 ${enabled})
     </insert>
@@ -37,10 +37,10 @@
         where id = #{id}
     </select>
 
-    <select id="findAllByWorkspace" resultType="com.bomber.entity.FunctionConfigure" resultMap="functionConfigure">
+    <select id="findAllByGroup" resultType="com.bomber.entity.FunctionConfigure" resultMap="functionConfigure">
         select *
         from function_configure
-        where workspaceId = #{workspaceId}
+        where groupId = #{groupId}
         order by orderNumber
     </select>
 
@@ -57,4 +57,5 @@
             ${id}
         </foreach>
     </update>
+
 </mapper>

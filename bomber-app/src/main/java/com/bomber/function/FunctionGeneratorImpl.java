@@ -27,7 +27,7 @@ public class FunctionGeneratorImpl implements FunctionGenerator {
 	}
 
 	private List<FunctionContext> createContextList(Integer id) {
-		return functionConfigureMapper.findAllByWorkspace(id)
+		return functionConfigureMapper.findAllByGroup(id)
 			.stream().map(this::createContext).collect(Collectors.toList());
 	}
 
