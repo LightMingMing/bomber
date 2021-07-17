@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bomber.mapper.SummaryReportMapper">
+
+    <insert id="create" parameterType="com.bomber.entity.SummaryReport" useGeneratedKeys="true" keyProperty="id">
+        insert into summary_report (testingRecordId, numberOfThreads, numberOfRequests, tps, avg, min, max, top25,
+                                    top50, top75, top90, top95, top99, stdDev, req1xx, req2xx, req3xx, req4xx, req5xx,
+                                    other, errorCount, startTime, endTime)
+        values (#{testingRecordId}, #{numberOfThreads}, #{numberOfRequests}, #{tps}, #{avg}, #{min}, #{max}, #{top25},
+                #{top50}, #{top75}, #{top90}, #{top95}, #{top99}, #{stdDev}, #{req1xx}, #{req2xx}, #{req3xx}, #{req4xx},
+                #{req5xx}, #{other}, #{errorCount}, #{startTime}, #{endTime})
+    </insert>
+
+    <delete id="delete">
+        delete
+        from summary_report
+        where id = #{id}
+    </delete>
+
+    <select id="select" resultType="com.bomber.entity.SummaryReport">
+        select *
+        from summary_report
+        where id = #{id}
+    </select>
+
+    <select id="count" resultType="long">
+        select count(*)
+        from summary_report
+    </select>
+
+    <select id="findAll" parameterType="org.springframework.data.domain.Pageable"
+            resultType="com.bomber.entity.SummaryReport">
+        select *
+        from summary_report
+        order by id desc
+        limit #{pageSize} offset #{offset}
+    </select>
+
+    <select id="findAllByTestingRecord" resultType="com.bomber.entity.SummaryReport">
+        select *
+        from summary_report
+        where testingRecordId = #{testingRecordId}
+        order by id desc
+    </select>
+
+</mapper>

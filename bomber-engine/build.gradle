@@ -1,6 +1,6 @@
 plugins {
     id 'com.bomber.java-common-conventions'
-    id 'org.springframework.boot' version '2.4.3'
+    id 'org.springframework.boot' version '2.5.2'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 }
 
@@ -11,8 +11,8 @@ dependencies {
     implementation project(':bomber-common')
 
     implementation 'com.fasterxml.jackson.core:jackson-databind'
-
-    implementation 'io.projectreactor.netty:reactor-netty-http:1.0.4'
+    
+    implementation 'io.projectreactor.netty:reactor-netty-http'
 
     implementation 'org.slf4j:slf4j-api'
 

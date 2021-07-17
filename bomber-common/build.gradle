@@ -1,10 +1,20 @@
 plugins {
     id 'com.bomber.java-common-conventions'
+    id 'org.springframework.boot' version '2.5.2'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 }
 
 group 'com.bomber'
 version '1.0.2'
 
 dependencies {
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.11.4'
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
+}
+
+jar {
+    enabled = true
+}
+
+bootJar {
+    enabled = false
 }

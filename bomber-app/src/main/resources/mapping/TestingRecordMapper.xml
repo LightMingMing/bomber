@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bomber.mapper.TestingRecordMapper">
+
+    <resultMap type="com.bomber.entity.TestingRecord" id="testingRecord">
+        <result column="threadGroups" property="threadGroups"
+                typeHandler="com.bomber.handler.IntegerListHandler"/>
+    </resultMap>
+
+    <insert id="create" parameterType="com.bomber.entity.TestingRecord" useGeneratedKeys="true" keyProperty="id">
+        insert into testing_record (httpSampleId, name, threadGroups, threadGroupCursor, activeThreads, scope,
+                                    beginUserIndex, iterations, currentIteration, requestsPerThread, status)
+        values (#{httpSampleId}, #{name}, #{threadGroups,typeHandler=com.bomber.handler.IntegerListHandler},
+                #{threadGroupCursor}, #{activeThreads}, #{scope}, #{beginUserIndex}, #{iterations}, #{currentIteration},
+                #{requestsPerThread}, #{status})
+    </insert>
+
+    <delete id="delete">
+        delete
+        from testing_record
+        where id = #{id}
+    </delete>
+
+    <update id="update" parameterType="com.bomber.entity.TestingRecord">
+        update testing_record
+        set threadGroupCursor = #{threadGroupCursor},
+            activeThreads     = #{activeThreads},
+            currentIteration  = #{currentIteration},
+            status            = #{status},
+            startTime         = #{startTime},
+            endTime           = #{endTime},
+            remark            = #{remark}
+        where id = #{id}
+    </update>
+
+    <select id="select" resultType="com.bomber.entity.TestingRecord" resultMap="testingRecord">
+        select *
+        from testing_record
+        where id = #{id}
+    </select>
+
+    <select id="count" resultType="long">
+        select count(*)
+        from testing_record
+    </select>
+
+    <select id="findAll" parameterType="org.springframework.data.domain.Pageable"
+            resultType="com.bomber.entity.TestingRecord" resultMap="testingRecord">
+        select *
+        from testing_record
+        order by id desc
+        limit #{pageSize} offset #{offset}
+    </select>
+
+    <select id="findAllByHttpSample" resultType="com.bomber.entity.TestingRecord"
+            resultMap="testingRecord">
+        select *
+        from testing_record
+        where httpSampleId = ${httpSampleId}
+        order by id desc
+    </select>
+
+</mapper>

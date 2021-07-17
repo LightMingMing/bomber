@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bomber.mapper.FunctionConfigureMapper">
+
+    <resultMap type="com.bomber.entity.FunctionConfigure" id="functionConfigure">
+        <result column="argumentValues" property="argumentValues"
+                typeHandler="com.bomber.handler.ArgumentValueListHandler"/>
+    </resultMap>
+
+    <insert id="create" parameterType="com.bomber.entity.FunctionConfigure" useGeneratedKeys="true" keyProperty="id">
+        insert into function_configure (workspaceId, orderNumber, name, functionName, argumentValues, enabled)
+        values (#{workspaceId}, #{orderNumber}, #{name}, #{functionName},
+                #{argumentValues, typeHandler=com.bomber.handler.ArgumentValueListHandler},
+                ${enabled})
+    </insert>
+
+    <delete id="delete">
+        delete
+        from function_configure
+        where id = #{id}
+    </delete>
+
+    <update id="update" parameterType="com.bomber.entity.FunctionConfigure">
+        update function_configure
+        set name           = #{name},
+            functionName   = #{functionName},
+            argumentValues = #{argumentValues, typeHandler=com.bomber.handler.ArgumentValueListHandler},
+            enabled        = #{enabled}
+        where id = #{id}
+    </update>
+
+    <select id="select" resultType="com.bomber.entity.FunctionConfigure" resultMap="functionConfigure">
+        select *
+        from function_configure
+        where id = #{id}
+    </select>
+
+    <select id="findAllByWorkspace" resultType="com.bomber.entity.FunctionConfigure" resultMap="functionConfigure">
+        select *
+        from function_configure
+        where workspaceId = #{wordspaceId}
+        order by orderNumber
+    </select>
+
+    <update id="reorder" parameterType="java.util.List">
+        update function_configure
+        set orderNumber = CASE
+        <foreach collection="list" item="id" index="index">
+            when id=${id} then ${index}
+        </foreach>
+        END
+        where id in
+        <foreach collection="list" index="index" item="id"
+                 separator="," open="(" close=")">
+            ${id}
+        </foreach>
+    </update>
+</mapper>

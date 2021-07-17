@@ -1,0 +1,29 @@
+plugins {
+    id 'com.bomber.java-common-conventions'
+    id 'org.springframework.boot' version '2.5.2'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+}
+
+group 'com.bomber'
+version '2.0.0'
+
+dependencies {
+    implementation project(':bomber-common')
+    implementation project(':bomber-asserter')
+    implementation project(':bomber-function')
+    implementation project(':bomber-engine')
+
+    implementation 'mysql:mysql-connector-java:8.0.23'
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.1.4'
+
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'org.springframework.data:spring-data-commons'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+bootJar {
+    mainClass = 'com.bomber.BomberApplication'
+}
