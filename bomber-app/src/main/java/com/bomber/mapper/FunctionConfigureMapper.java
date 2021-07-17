@@ -13,12 +13,12 @@ import com.bomber.entity.FunctionConfigure;
 public interface FunctionConfigureMapper extends BaseMapper<Integer, FunctionConfigure> {
 
 	/**
-	 * 查询工作空间的所有函数配置
+	 * 根据组 ID 查询的所有函数配置
 	 *
-	 * @param workspaceId 工作空间 ID
+	 * @param groupId 组 ID
 	 * @return 函数配置
 	 */
-	List<FunctionConfigure> findAllByWorkspace(Integer workspaceId);
+	List<FunctionConfigure> findAllByGroup(Integer groupId);
 
 	/**
 	 * 函数配置排序

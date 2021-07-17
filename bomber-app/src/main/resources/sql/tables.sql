@@ -21,7 +21,7 @@ DROP TABLE IF EXISTS function_configure;
 CREATE TABLE function_configure
 (
     id             INT         NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    workspaceId    INT         NOT NULL COMMENT '工作空间ID',
+    groupId        INT         NOT NULL COMMENT '组ID',
     orderNumber    INT         NOT NULL COMMENT '序号',
     name           VARCHAR(32) NOT NULL COMMENT '名称',
     functionName   VARCHAR(32) NOT NULL COMMENT '函数名',

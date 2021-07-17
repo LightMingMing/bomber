@@ -17,12 +17,12 @@ public class FunctionConfigure extends BaseEntity<Integer> {
 	private static final long serialVersionUID = -421505359173493404L;
 
 	/**
-	 * 所属工作空间 ID
+	 * 组 ID
 	 */
-	private Integer workspaceId;
+	private Integer groupId;
 
 	/**
-	 * 序号, 同一个工作空间的函数配置顺序
+	 * 组内序号
 	 */
 	private Integer orderNumber;
 
