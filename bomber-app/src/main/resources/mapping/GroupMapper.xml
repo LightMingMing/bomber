@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bomber.mapper.GroupMapper">
+
+    <insert id="create" parameterType="com.bomber.entity.Group" useGeneratedKeys="true" keyProperty="id">
+        insert into http_group (workspaceId, name)
+        values (#{workspaceId}, #{name})
+    </insert>
+
+    <delete id="delete">
+        delete
+        from http_group
+        where id = #{id}
+    </delete>
+
+    <update id="update" parameterType="com.bomber.entity.Group">
+        update http_group
+        set name = #{name}
+        where id = #{id}
+    </update>
+
+    <select id="select" resultType="com.bomber.entity.Group">
+        select *
+        from http_group
+        where id = #{id}
+    </select>
+
+    <select id="findAllByWorkspace" resultType="com.bomber.entity.Group">
+        select *
+        from http_group
+        where workspaceId = #{workspaceId}
+    </select>
+
+</mapper>

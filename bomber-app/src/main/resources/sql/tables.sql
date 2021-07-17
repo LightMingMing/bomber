@@ -9,6 +9,14 @@ CREATE TABLE workspace
     modifyDate  DATETIME     NOT NULL DEFAULT NOW() ON UPDATE NOW() COMMENT '修改时间'
 ) COMMENT '工作空间';
 
+DROP TABLE IF EXISTS http_group;
+CREATE TABLE http_group
+(
+    id          INT         NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    workspaceId INT         NOT NULL COMMENT '工作空间ID',
+    name        VARCHAR(32) NOT NULL COMMENT '名称'
+) COMMENT '组';
+
 DROP TABLE IF EXISTS function_configure;
 CREATE TABLE function_configure
 (
