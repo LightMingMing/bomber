@@ -40,7 +40,7 @@
     <select id="findAllByWorkspace" resultType="com.bomber.entity.FunctionConfigure" resultMap="functionConfigure">
         select *
         from function_configure
-        where workspaceId = #{wordspaceId}
+        where workspaceId = #{workspaceId}
         order by orderNumber
     </select>
 

@@ -47,7 +47,7 @@
     <select id="findAllByWorkspace" resultType="com.bomber.entity.HttpSample" resultMap="httpSample">
         select *
         from http_sample
-        where workspaceId = #{wordspaceId}
+        where workspaceId = #{workspaceId}
         order by orderNumber
     </select>
 
