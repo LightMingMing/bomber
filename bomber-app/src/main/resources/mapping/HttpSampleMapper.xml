@@ -12,8 +12,8 @@
     </resultMap>
 
     <insert id="create" parameterType="com.bomber.entity.HttpSample" useGeneratedKeys="true" keyProperty="id">
-        insert into http_sample (workspaceId, orderNumber, name, method, url, headers, body, assertions, enabled)
-        values (#{workspaceId}, #{orderNumber}, #{name}, #{method}, #{url},
+        insert into http_sample (groupId, orderNumber, name, method, url, headers, body, assertions, enabled)
+        values (#{groupId}, #{orderNumber}, #{name}, #{method}, #{url},
                 #{headers,typeHandler=com.bomber.handler.HttpHeaderListHandler},
                 #{body},
                 #{assertions, typeHandler=com.bomber.handler.AssertionListHandler},
@@ -47,7 +47,7 @@
     <select id="findAllByWorkspace" resultType="com.bomber.entity.HttpSample" resultMap="httpSample">
         select *
         from http_sample
-        where workspaceId = #{workspaceId}
+        where groupId = #{groupId}
         order by orderNumber
     </select>
 
@@ -64,4 +64,5 @@
             ${id}
         </foreach>
     </update>
+
 </mapper>

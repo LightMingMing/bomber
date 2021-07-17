@@ -23,12 +23,12 @@ public class HttpSample extends BaseEntity<Integer> {
 	private static final long serialVersionUID = -1009039514627961069L;
 
 	/**
-	 * 所属工作空间 ID
+	 * 组 ID
 	 */
-	private Integer workspaceId;
+	private Integer groupId;
 
 	/**
-	 * 序号, 同一个工作空间的 Http 请求脚本顺序
+	 * 组内序号
 	 */
 	private Integer orderNumber;
 

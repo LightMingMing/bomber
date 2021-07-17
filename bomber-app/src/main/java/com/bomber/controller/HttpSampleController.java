@@ -54,8 +54,8 @@ public class HttpSampleController implements CrudController<Integer, HttpSample>
 	}
 
 	@GetMapping
-	public List<HttpSample> findAllByWorkspace(@RequestParam Integer workspaceId) {
-		return httpSampleMapper.findAllByWorkspace(workspaceId);
+	public List<HttpSample> findAllByGroup(@RequestParam Integer groupId) {
+		return httpSampleMapper.findAllByGroup(groupId);
 	}
 
 	@PutMapping("/reorder")
