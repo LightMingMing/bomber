@@ -12,6 +12,41 @@
         />
 
         <q-toolbar-title> Bomber </q-toolbar-title>
+
+        <q-btn-dropdown
+          stretch
+          no-caps
+          flat
+          icon="dashboard"
+          color="black"
+          label="Workspaces"
+          padding="xs"
+        >
+        </q-btn-dropdown>
+
+        <q-space />
+        <q-space />
+        <q-space />
+
+        <div class="q-gutter-sm q-mr-sm row items-center no-wrap">
+          <q-btn
+            dense
+            flat
+            round
+            :icon="$q.fullscreen.isActive ? 'fullscreen_exit' : 'fullscreen'"
+            @click="$q.fullscreen.toggle()"
+          />
+
+          <q-btn
+            dense
+            flat
+            round
+            type="a"
+            href="https://github.com/LightMingMing/bomber"
+            target="_blank"
+            :icon="fabGithub"
+          />
+        </div>
       </q-toolbar>
     </q-header>
 
@@ -26,6 +61,7 @@
 
 <script>
 import { defineComponent, ref } from "vue";
+import { fabGithub } from "@quasar/extras/fontawesome-v5";
 
 export default defineComponent({
   name: "MainLayout",
@@ -38,6 +74,7 @@ export default defineComponent({
       toggleLeftDrawer() {
         leftDrawerOpen.value = !leftDrawerOpen.value;
       },
+      fabGithub,
     };
   },
 });
