@@ -1,6 +1,6 @@
 <template>
   <q-layout view="hHh Lpr lFf">
-    <q-header class="bg-grey-1 text-dark">
+    <q-header class="bg-grey-1 text-dark" bordered>
       <q-toolbar class="q-px-none">
         <q-btn
           flat
@@ -51,7 +51,6 @@
     </q-header>
 
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered class="">
-      <q-separator />
       <q-card flat>
         <q-card-section class="no-padding">
           <q-item>
@@ -162,7 +161,71 @@
     </q-drawer>
 
     <q-page-container>
-      <router-view />
+      <q-tabs
+        switch-indicator
+        inline-label
+        mobile-arrows
+        v-model="reqTab"
+        align="left"
+        indicator-color="orange"
+      >
+        <q-tab no-caps name="id0" label="Post" content-class="q-gutter-x-lg">
+          <q-btn flat icon="close" size="sm" dense />
+        </q-tab>
+        <q-tab no-caps name="id1" label="Delete" content-class="q-gutter-x-lg">
+          <q-btn flat icon="close" size="sm" dense />
+        </q-tab>
+        <q-btn flat unelevated stretch icon="add" />
+      </q-tabs>
+      <q-separator />
+      <q-tab-panels v-model="reqTab" animated>
+        <q-tab-panel name="id0">
+          <div class="q-gutter-x-sm row">
+            <q-select
+              dense
+              outlined
+              options-dense
+              v-model="method"
+              :options="methods"
+            />
+            <q-input class="col-6" outlined dense v-model="url" />
+            <q-btn
+              no-caps
+              unelevated
+              color="blue"
+              text-color="white"
+              label="Submit"
+              size="sm"
+            />
+          </div>
+          <div class="q-pt-md">
+            <q-tabs
+              dense
+              v-model="subTab"
+              indicator-color="orange"
+              align="left"
+            >
+              <q-tab no-caps name="headers" label="Headers" class="q-px-lg" />
+              <q-tab no-caps name="body" label="Body" class="q-px-lg" />
+              <q-tab
+                no-caps
+                name="assertions"
+                label="Assertions"
+                class="q-px-lg"
+              />
+            </q-tabs>
+            <q-tab-panels v-model="subTab">
+              <q-tab-panel name="headers"> Headers </q-tab-panel>
+              <q-tab-panel name="body"> Body </q-tab-panel>
+              <q-tab-panel name="assertions"> Assertions </q-tab-panel>
+            </q-tab-panels>
+          </div>
+        </q-tab-panel>
+
+        <q-tab-panel name="id1">
+          <div class="text-h6">Request</div>
+        </q-tab-panel>
+      </q-tab-panels>
     </q-page-container>
   </q-layout>
 </template>
@@ -176,6 +239,7 @@ export default defineComponent({
 
   setup() {
     const leftDrawerOpen = ref(false);
+    const methods = ref(["GET", "POST", "PUT", "PATCH", "DELETE"]);
 
     return {
       leftDrawerOpen,
@@ -183,6 +247,11 @@ export default defineComponent({
         leftDrawerOpen.value = !leftDrawerOpen.value;
       },
       fabGithub,
+      reqTab: ref("id0"),
+      subTab: ref("headers"),
+      methods,
+      method: ref("GET"),
+      url: ref(null),
     };
   },
 });
