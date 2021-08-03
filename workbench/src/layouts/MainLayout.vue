@@ -215,8 +215,42 @@
               />
             </q-tabs>
             <q-tab-panels v-model="subTab">
-              <q-tab-panel name="headers"> Headers </q-tab-panel>
-              <q-tab-panel name="body"> Body </q-tab-panel>
+              <q-tab-panel name="headers">
+                <q-table
+                  flat
+                  dense
+                  bordered
+                  hide-pagination
+                  separator="none"
+                  :rows="headers"
+                  :columns="title"
+                  row-key="key"
+                >
+                  <template v-slot:body="props">
+                    <q-tr :props="props" no-hover>
+                      <q-td key="key" :props="props">
+                        <q-input
+                          dense
+                          autofocus
+                          outlined
+                          v-model="props.row.key"
+                        />
+                      </q-td>
+                      <q-td key="value" :props="props">
+                        <q-input
+                          dense
+                          autofocus
+                          outlined
+                          v-model="props.row.value"
+                        />
+                      </q-td>
+                    </q-tr>
+                  </template>
+                </q-table>
+              </q-tab-panel>
+              <q-tab-panel name="body">
+                <q-input v-model="body" filled type="textarea" />
+              </q-tab-panel>
               <q-tab-panel name="assertions"> Assertions </q-tab-panel>
             </q-tab-panels>
           </div>
@@ -240,7 +274,32 @@ export default defineComponent({
   setup() {
     const leftDrawerOpen = ref(false);
     const methods = ref(["GET", "POST", "PUT", "PATCH", "DELETE"]);
-
+    const headers = ref([
+      {
+        key: "Content-Type",
+        value: "appliction/json",
+      },
+      {
+        key: "Cookie",
+        value: "uuid=12345678;jsession=zzzddlllll",
+      },
+    ]);
+    const title = ref([
+      {
+        name: "key",
+        align: "left",
+        label: "key",
+        field: (row) => row.key,
+        sortable: false,
+      },
+      {
+        name: "value",
+        align: "left",
+        label: "value",
+        field: (row) => row.value,
+        sortable: false,
+      },
+    ]);
     return {
       leftDrawerOpen,
       toggleLeftDrawer() {
@@ -252,6 +311,9 @@ export default defineComponent({
       methods,
       method: ref("GET"),
       url: ref(null),
+      headers,
+      title,
+      body: ref(null),
     };
   },
 });
