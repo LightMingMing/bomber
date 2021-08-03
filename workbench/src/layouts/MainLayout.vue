@@ -170,10 +170,10 @@
         indicator-color="orange"
       >
         <q-tab no-caps name="id0" label="Post" content-class="q-gutter-x-lg">
-          <q-btn flat icon="close" size="sm" dense />
+          <q-btn flat icon="close" size="sm" dense @click.stop="" />
         </q-tab>
         <q-tab no-caps name="id1" label="Delete" content-class="q-gutter-x-lg">
-          <q-btn flat icon="close" size="sm" dense />
+          <q-btn flat icon="close" size="sm" dense @click.stop="" />
         </q-tab>
         <q-btn flat unelevated stretch icon="add" />
       </q-tabs>
@@ -249,7 +249,7 @@
                 </q-table>
               </q-tab-panel>
               <q-tab-panel name="body">
-                <q-input v-model="body" filled type="textarea" />
+                <q-input outlined v-model="body" type="textarea" />
               </q-tab-panel>
               <q-tab-panel name="assertions"> Assertions </q-tab-panel>
             </q-tab-panels>
