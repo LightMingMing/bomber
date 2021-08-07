@@ -84,73 +84,33 @@
           dense
           default-opened
           switch-toggle-side
-          label="Restful API"
           icon="more_vert"
           header-class="q-py-sm"
           content-inset-level="0.3"
+          v-for="group in groups"
+          :key="group.name"
         >
-          <q-card>
+          <template v-slot:header>
+            <q-item-section>
+              {{ group.name }}
+            </q-item-section>
+            <q-item-section side>
+              <q-btn flat dense round icon="more_vert" @click.stop="" />
+            </q-item-section>
+          </template>
+          <q-card v-for="request in group.requests" :key="request.name">
             <q-card-section class="no-padding">
               <q-item clickable dense class="q-py-sm">
                 <q-item-section side style="width: 75px">
-                  <q-badge outline color="blue" label="GET" />
+                  <q-badge
+                    outline
+                    :label="request.method"
+                    :color="displayColor(request.method)"
+                  />
                 </q-item-section>
-                <q-item-section>Query</q-item-section>
+                <q-item-section>{{ request.name }}</q-item-section>
                 <q-item-section side>
-                  <q-icon name="more_vert" />
-                </q-item-section>
-              </q-item>
-            </q-card-section>
-          </q-card>
-          <q-card>
-            <q-card-section class="no-padding">
-              <q-item clickable dense class="q-py-sm">
-                <q-item-section side style="width: 75px">
-                  <q-badge outline color="teal" label="POST" />
-                </q-item-section>
-                <q-item-section>Update</q-item-section>
-                <q-item-section side>
-                  <q-icon name="more_vert" />
-                </q-item-section>
-              </q-item>
-            </q-card-section>
-          </q-card>
-
-          <q-card>
-            <q-card-section class="no-padding">
-              <q-item clickable dense class="q-py-sm">
-                <q-item-section side style="width: 75px">
-                  <q-badge outline color="red" label="DELETE" />
-                </q-item-section>
-                <q-item-section>Delete</q-item-section>
-                <q-item-section side>
-                  <q-icon name="more_vert" />
-                </q-item-section>
-              </q-item>
-            </q-card-section>
-          </q-card>
-          <q-card>
-            <q-card-section class="no-padding">
-              <q-item clickable dense class="q-py-sm">
-                <q-item-section side style="width: 75px">
-                  <q-badge outline color="cyan" label="PUT" />
-                </q-item-section>
-                <q-item-section>Put</q-item-section>
-                <q-item-section side>
-                  <q-icon name="more_vert" />
-                </q-item-section>
-              </q-item>
-            </q-card-section>
-          </q-card>
-          <q-card>
-            <q-card-section class="no-padding">
-              <q-item clickable dense class="q-py-sm">
-                <q-item-section side style="width: 75px">
-                  <q-badge outline color="orange" label="PATCH" />
-                </q-item-section>
-                <q-item-section>Patch</q-item-section>
-                <q-item-section side>
-                  <q-icon name="more_vert" />
+                  <q-btn flat dense round icon="more_vert" @click.stop="" />
                 </q-item-section>
               </q-item>
             </q-card-section>
@@ -300,21 +260,78 @@ export default defineComponent({
         sortable: false,
       },
     ]);
+    const groups = ref([
+      {
+        id: 0,
+        name: "Restful API0",
+        requests: [
+          {
+            id: 0,
+            name: "Get HttpRequest",
+            method: "GET",
+          },
+          {
+            id: 1,
+            name: "Post HttpRequest",
+            method: "POST",
+          },
+          {
+            id: 2,
+            name: "Delete HttpRequest",
+            method: "DELETE",
+          },
+        ],
+      },
+      {
+        id: 1,
+        name: "Restful API1",
+        requests: [
+          {
+            id: 3,
+            name: "Put HttpRequest",
+            method: "PUT",
+          },
+          {
+            id: 4,
+            name: "Patch HttpRequest",
+            method: "PATCH",
+          },
+        ],
+      },
+    ]);
     return {
       leftDrawerOpen,
       toggleLeftDrawer() {
         leftDrawerOpen.value = !leftDrawerOpen.value;
       },
       fabGithub,
+      methods,
+      title,
       reqTab: ref("id0"),
       subTab: ref("headers"),
-      methods,
+      groups,
       method: ref("GET"),
       url: ref(null),
       headers,
-      title,
       body: ref(null),
     };
+  },
+  methods: {
+    displayColor(method) {
+      if (method == "GET") {
+        return "blue";
+      } else if (method == "POST") {
+        return "teal";
+      } else if (method == "DELETE") {
+        return "red";
+      } else if (method == "PUT") {
+        return "cyan";
+      } else if (method == "PATCH") {
+        return "orange";
+      } else {
+        return "primary";
+      }
+    },
   },
 });
 </script>
