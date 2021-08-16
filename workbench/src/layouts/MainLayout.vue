@@ -51,7 +51,11 @@
     </q-header>
 
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered class="">
-      <workspace :name="name" :groups="groups"></workspace>
+      <workspace
+        :name="name"
+        :groups="groups"
+        @openRequest="openRequest"
+      ></workspace>
     </q-drawer>
 
     <q-page-container>
@@ -59,30 +63,46 @@
         switch-indicator
         inline-label
         mobile-arrows
-        v-model="reqTab"
         align="left"
         indicator-color="orange"
+        v-model="activeRequest"
       >
-        <q-tab no-caps name="id0" label="Post" content-class="q-gutter-x-lg">
-          <q-btn flat icon="close" size="sm" dense @click.stop="" />
-        </q-tab>
-        <q-tab no-caps name="id1" label="Delete" content-class="q-gutter-x-lg">
-          <q-btn flat icon="close" size="sm" dense @click.stop="" />
+        <q-tab
+          no-caps
+          :key="request.id"
+          :label="request.name"
+          :name="'req' + request.id"
+          :requests="requests"
+          v-for="request in requests"
+          content-class="q-gutter-x-lg"
+        >
+          <q-btn
+            flat
+            icon="close"
+            size="sm"
+            dense
+            @click.stop="closeRequest(request.id)"
+          />
         </q-tab>
         <q-btn flat unelevated stretch icon="add" />
       </q-tabs>
       <q-separator />
-      <q-tab-panels v-model="reqTab" animated>
-        <q-tab-panel name="id0">
+      <q-tab-panels v-model="activeRequest">
+        <q-tab-panel
+          :key="request.id"
+          :name="'req' + request.id"
+          :requests="requests"
+          v-for="request in requests"
+        >
           <div class="q-gutter-x-sm row">
             <q-select
               dense
               outlined
               options-dense
-              v-model="method"
               :options="methods"
+              :model-value="request.method"
             />
-            <q-input class="col-6" outlined dense v-model="url" />
+            <q-input class="col-6" outlined dense :model-value="request.url" />
             <q-btn
               no-caps
               unelevated
@@ -116,7 +136,7 @@
                   bordered
                   hide-pagination
                   separator="none"
-                  :rows="headers"
+                  :rows="request.headers"
                   :columns="title"
                   row-key="key"
                 >
@@ -127,7 +147,7 @@
                           dense
                           autofocus
                           outlined
-                          v-model="props.row.key"
+                          :model-value="props.row.key"
                         />
                       </q-td>
                       <q-td key="value" :props="props">
@@ -135,7 +155,7 @@
                           dense
                           autofocus
                           outlined
-                          v-model="props.row.value"
+                          :model-value="props.row.value"
                         />
                       </q-td>
                     </q-tr>
@@ -143,15 +163,11 @@
                 </q-table>
               </q-tab-panel>
               <q-tab-panel name="body">
-                <q-input outlined v-model="body" type="textarea" />
+                <q-input outlined type="textarea" :model-value="request.body" />
               </q-tab-panel>
               <q-tab-panel name="assertions"> Assertions </q-tab-panel>
             </q-tab-panels>
           </div>
-        </q-tab-panel>
-
-        <q-tab-panel name="id1">
-          <div class="text-h6">Request</div>
         </q-tab-panel>
       </q-tab-panels>
     </q-page-container>
@@ -170,16 +186,6 @@ export default defineComponent({
   setup() {
     const leftDrawerOpen = ref(false);
     const methods = ref(["GET", "POST", "PUT", "PATCH", "DELETE"]);
-    const headers = ref([
-      {
-        key: "Content-Type",
-        value: "appliction/json",
-      },
-      {
-        key: "Cookie",
-        value: "uuid=12345678;jsession=zzzddlllll",
-      },
-    ]);
     const title = ref([
       {
         name: "key",
@@ -205,16 +211,43 @@ export default defineComponent({
             id: 0,
             name: "Get HttpRequest",
             method: "GET",
+            url: "https://github.com",
+            headers: [
+              {
+                key: "Content-Type",
+                value: "application/json",
+              },
+            ],
+            body: "",
+            assertions: [],
           },
           {
             id: 1,
             name: "Post HttpRequest",
             method: "POST",
+            url: "https://google.com",
+            headers: [
+              {
+                key: "Content-Type",
+                value: "application/json",
+              },
+            ],
+            body: '{"id": 1}',
+            assertions: [],
           },
           {
             id: 2,
             name: "Delete HttpRequest",
             method: "DELETE",
+            url: "https://baidu.com",
+            headers: [
+              {
+                key: "Content-Type",
+                value: "application/json",
+              },
+            ],
+            body: '{"id": 2}',
+            assertions: [],
           },
         ],
       },
@@ -235,6 +268,7 @@ export default defineComponent({
         ],
       },
     ]);
+    const requests = ref([]);
     return {
       leftDrawerOpen,
       toggleLeftDrawer() {
@@ -243,16 +277,47 @@ export default defineComponent({
       fabGithub,
       methods,
       title,
-      reqTab: ref("id0"),
       subTab: ref("headers"),
-      groups,
-      method: ref("GET"),
-      url: ref(null),
-      headers,
-      body: ref(null),
       name: "MyWorkspace",
+      groups,
+      requests,
+      activeRequest: ref(null),
     };
   },
-  methods: {},
+  methods: {
+    openRequest(id) {
+      for (let request of this.requests) {
+        if (request.id === id) {
+          this.activeRequest = "req" + id;
+          return;
+        }
+      }
+      for (let group of this.groups) {
+        for (let request of group.requests) {
+          if (request.id === id) {
+            this.requests.push(request);
+            this.activeRequest = "req" + id;
+            return;
+          }
+        }
+      }
+    },
+    closeRequest(id) {
+      for (let i = 0; i < this.requests.length; i++) {
+        if (this.requests[i].id === id) {
+          if ("req" + id === this.activeRequest) {
+            if (this.requests.length === 1) {
+              this.activeRequest = null;
+            } else {
+              this.activeRequest =
+                "req" + this.requests[i === 0 ? 1 : i - 1].id;
+            }
+          }
+          this.requests.splice(i, 1);
+          return;
+        }
+      }
+    },
+  },
 });
 </script>

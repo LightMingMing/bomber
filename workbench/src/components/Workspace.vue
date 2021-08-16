@@ -48,7 +48,12 @@
       </template>
       <q-card v-for="request in group.requests" :key="request.name">
         <q-card-section class="no-padding">
-          <q-item clickable dense class="q-py-sm">
+          <q-item
+            clickable
+            dense
+            class="q-py-sm"
+            @click="selectRequest(request.id)"
+          >
             <q-item-section side style="width: 75px">
               <q-badge
                 outline
@@ -83,20 +88,16 @@ export default defineComponent({
     },
   },
   methods: {
+    selectRequest(id) {
+      this.$emit("openRequest", id);
+    },
     badgeColor(method) {
-      if (method == "GET") {
-        return "blue";
-      } else if (method == "POST") {
-        return "teal";
-      } else if (method == "DELETE") {
-        return "red";
-      } else if (method == "PUT") {
-        return "cyan";
-      } else if (method == "PATCH") {
-        return "orange";
-      } else {
-        return "primary";
-      }
+      if (method === "GET") return "blue";
+      else if (method === "POST") return "teal";
+      else if (method === "DELETE") return "red";
+      else if (method === "PUT") return "cyan";
+      else if (method === "PATCH") return "orange";
+      else return "primary";
     },
   },
 });
