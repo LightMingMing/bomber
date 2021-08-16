@@ -84,7 +84,12 @@
             @click.stop="closeRequest(request.id)"
           />
         </q-tab>
-        <q-btn flat unelevated stretch icon="add" />
+        <q-btn
+          flat
+          stretch
+          style="padding-top: 12px; padding-bottom: 12px"
+          icon="add"
+        />
       </q-tabs>
       <q-separator />
       <q-tab-panels v-model="activeRequest">
