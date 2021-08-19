@@ -33,7 +33,7 @@ DROP TABLE IF EXISTS http_sample;
 CREATE TABLE http_sample
 (
     id          INT         NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    workspaceId INT         NOT NULL COMMENT '工作空间ID',
+    groupId     INT         NOT NULL COMMENT '组ID',
     orderNumber INT         NOT NULL COMMENT '序号',
     name        VARCHAR(32) NOT NULL COMMENT '名称',
     method      VARCHAR(16) NOT NULL COMMENT '方法',
