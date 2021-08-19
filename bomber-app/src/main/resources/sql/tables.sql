@@ -1,3 +1,5 @@
+CREATE DATABASE IF NOT EXISTS bomber2;
+
 DROP TABLE IF EXISTS workspace;
 CREATE TABLE workspace
 (
