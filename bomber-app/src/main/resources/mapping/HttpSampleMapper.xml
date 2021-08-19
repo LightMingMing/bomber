@@ -17,7 +17,7 @@
                 #{headers,typeHandler=com.bomber.handler.HttpHeaderListHandler},
                 #{body},
                 #{assertions, typeHandler=com.bomber.handler.AssertionListHandler},
-                ${enabled})
+                #{enabled})
     </insert>
 
     <delete id="delete">
@@ -55,13 +55,13 @@
         update http_sample
         set orderNumber = CASE
         <foreach collection="list" item="id" index="index">
-            when id=${id} then ${index}
+            when id=#{id} then #{index}
         </foreach>
         END
         where id in
         <foreach collection="list" index="index" item="id"
                  separator="," open="(" close=")">
-            ${id}
+            #{id}
         </foreach>
     </update>
 

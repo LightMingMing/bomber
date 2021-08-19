@@ -58,7 +58,7 @@
             resultMap="testingRecord">
         select *
         from testing_record
-        where httpSampleId = ${httpSampleId}
+        where httpSampleId = #{httpSampleId}
         order by id desc
     </select>
 
