@@ -35,7 +35,7 @@
       switch-toggle-side
       icon="more_vert"
       header-class="q-py-sm"
-      content-inset-level="0.3"
+      :content-inset-level="0.3"
       v-for="group in groups"
       :key="group.name"
     >
@@ -135,6 +135,14 @@ export default defineComponent({
       required: true,
     },
   },
+  emits: [
+    "createGroup",
+    "deleteGroup",
+    "openRequest",
+    "closeRequest",
+    "createRequest",
+    "deleteRequest",
+  ],
   methods: {
     emitCreateGroup() {
       this.$emit("createGroup");
