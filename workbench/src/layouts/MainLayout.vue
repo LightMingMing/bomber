@@ -54,7 +54,11 @@
       <workspace
         :name="name"
         :groups="groups"
+        @createGroup="createGroup"
+        @deleteGroup="deleteGroup"
         @openRequest="openRequest"
+        @createRequest="createRequest"
+        @deleteRequest="deleteRequest"
       ></workspace>
     </q-drawer>
 
@@ -274,6 +278,7 @@ export default defineComponent({
       },
     ]);
     const requests = ref([]);
+    const nextId = ref(1 << 31);
     return {
       leftDrawerOpen,
       toggleLeftDrawer() {
@@ -281,6 +286,7 @@ export default defineComponent({
       },
       fabGithub,
       methods,
+      nextId,
       title,
       subTab: ref("headers"),
       name: "MyWorkspace",
@@ -290,6 +296,40 @@ export default defineComponent({
     };
   },
   methods: {
+    createGroup() {
+      let group = {
+        id: this.getNextId(),
+        name: "New Group",
+        requests: [],
+      };
+      this.groups.push(group);
+    },
+    deleteGroup(id) {
+      for (let i = 0; i < this.groups.length; i++) {
+        if (this.groups[i].id === id) {
+          for (let request of this.groups[i].requests) {
+            let flag = false;
+            for (let idx = 0; idx < this.requests.length; idx++) {
+              if (this.requests[idx].id === request.id) {
+                if (this.activeRequest === "req" + request.id) {
+                  flag = true;
+                }
+                this.requests.splice(idx, 1);
+              }
+            }
+            if (flag) {
+              if (this.requests.length > 0) {
+                this.activeRequest = "req" + this.requsets[0].length;
+              } else {
+                this.activeRequest = ref(null);
+              }
+            }
+          }
+          this.groups.splice(i, 1);
+          break;
+        }
+      }
+    },
     openRequest(id) {
       for (let request of this.requests) {
         if (request.id === id) {
@@ -322,6 +362,40 @@ export default defineComponent({
           return;
         }
       }
+    },
+    createRequest(gid) {
+      let request = {
+        id: this.getNextId(),
+        name: "New Request",
+        method: "GET",
+        url: "",
+        headers: [],
+        body: "",
+        assertions: [],
+      };
+
+      for (let group of this.groups) {
+        if (group.id === gid) {
+          group.requests.push(request);
+          this.openRequest(request.id);
+          break;
+        }
+      }
+    },
+    deleteRequest(id) {
+      this.closeRequest(id);
+      for (let group of this.groups) {
+        for (let i = 0; i < group.requests.length; i++) {
+          if (group.requests[i].id === id) {
+            group.requests.splice(i, 1);
+            break;
+          }
+        }
+      }
+    },
+    getNextId() {
+      // TODO 考虑并发
+      return this.nextId++;
     },
   },
 });

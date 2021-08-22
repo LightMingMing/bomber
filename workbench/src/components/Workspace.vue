@@ -11,6 +11,7 @@
             text-color="black"
             label="New"
             size="sm"
+            @click="emitCreateGroup"
           />
         </q-item-section>
         <q-item-section side class="q-pl-xs">
@@ -43,7 +44,33 @@
           {{ group.name }}
         </q-item-section>
         <q-item-section side>
-          <q-btn flat dense round icon="more_vert" @click.stop="" />
+          <q-btn-dropdown
+            flat
+            dense
+            rounded
+            no-icon-animation
+            dropdown-icon="more_vert"
+            @click.stop
+          >
+            <q-list>
+              <q-item
+                clickable
+                dense
+                v-close-popup
+                @click="emitCreateRequest(group.id)"
+              >
+                <q-item-section>New Request</q-item-section>
+              </q-item>
+              <q-item
+                clickable
+                dense
+                v-close-popup
+                @click="emitDeleteGroup(group.id)"
+              >
+                <q-item-section>Delete</q-item-section>
+              </q-item>
+            </q-list>
+          </q-btn-dropdown>
         </q-item-section>
       </template>
       <q-card v-for="request in group.requests" :key="request.name">
@@ -63,7 +90,28 @@
             </q-item-section>
             <q-item-section>{{ request.name }}</q-item-section>
             <q-item-section side>
-              <q-btn flat dense round icon="more_vert" @click.stop="" />
+              <q-btn-dropdown
+                flat
+                dense
+                rounded
+                no-icon-animation
+                dropdown-icon="more_vert"
+                @click.stop
+              >
+                <q-list>
+                  <q-item clickable dense v-close-popup>
+                    <q-item-section>Duplicate</q-item-section>
+                  </q-item>
+                  <q-item
+                    clickable
+                    dense
+                    v-close-popup
+                    @click="emitDeleteRequest(request.id)"
+                  >
+                    <q-item-section>Delete</q-item-section>
+                  </q-item>
+                </q-list>
+              </q-btn-dropdown>
             </q-item-section>
           </q-item>
         </q-card-section>
@@ -88,8 +136,20 @@ export default defineComponent({
     },
   },
   methods: {
+    emitCreateGroup() {
+      this.$emit("createGroup");
+    },
+    emitDeleteGroup(id) {
+      this.$emit("deleteGroup", id);
+    },
     selectRequest(id) {
       this.$emit("openRequest", id);
+    },
+    emitCreateRequest(gid) {
+      this.$emit("createRequest", gid);
+    },
+    emitDeleteRequest(id) {
+      this.$emit("deleteRequest", id);
     },
     badgeColor(method) {
       if (method === "GET") return "blue";
