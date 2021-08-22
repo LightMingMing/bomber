@@ -214,24 +214,10 @@ export default defineComponent({
     const groups = ref([
       {
         id: 0,
-        name: "Restful API0",
+        name: "Restful API",
         requests: [
           {
             id: 0,
-            name: "Get HttpRequest",
-            method: "GET",
-            url: "https://github.com",
-            headers: [
-              {
-                key: "Content-Type",
-                value: "application/json",
-              },
-            ],
-            body: "",
-            assertions: [],
-          },
-          {
-            id: 1,
             name: "Post HttpRequest",
             method: "POST",
             url: "https://google.com",
@@ -243,36 +229,6 @@ export default defineComponent({
             ],
             body: '{"id": 1}',
             assertions: [],
-          },
-          {
-            id: 2,
-            name: "Delete HttpRequest",
-            method: "DELETE",
-            url: "https://baidu.com",
-            headers: [
-              {
-                key: "Content-Type",
-                value: "application/json",
-              },
-            ],
-            body: '{"id": 2}',
-            assertions: [],
-          },
-        ],
-      },
-      {
-        id: 1,
-        name: "Restful API1",
-        requests: [
-          {
-            id: 3,
-            name: "Put HttpRequest",
-            method: "PUT",
-          },
-          {
-            id: 4,
-            name: "Patch HttpRequest",
-            method: "PATCH",
           },
         ],
       },
