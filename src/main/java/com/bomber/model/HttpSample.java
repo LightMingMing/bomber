@@ -63,10 +63,6 @@ public class HttpSample extends BaseEntity {
 	@UiConfig(alias = "requestName", width = "200px", cellDynamicAttributes = "{\"style\":\"text-align: center\"}", group = "basic")
 	private String name;
 
-	@Column
-	@UiConfig(templateName = "httpSample_tag", type = "dictionary", cssClass = "chosen", hiddenInList = @Hidden(true), excludedFromQuery = true, group = "basic")
-	private Set<String> tags;
-
 	@Column(nullable = false)
 	@UiConfig(alias = "requestMethod", width = "100px", cellDynamicAttributes = "{\"style\":\"text-align: center\"}", group = "basic")
 	private HttpMethod method;
