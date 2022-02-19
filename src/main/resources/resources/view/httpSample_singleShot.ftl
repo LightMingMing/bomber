@@ -19,12 +19,16 @@
     <#if httpSample.mutable>
         <div class="form-horizontal">
             <div id="control-group-user-index" class="control-group">
-                <label class="control-label" for="user-index"><span data-content="通过设置用户索引, 使用不同的用户进行测试"
-                                                                    class="poped glyphicon glyphicon-question-sign"></span>用户索引</label>
+                <label class="control-label" for="from"><span data-content="通过设置用户索引, 使用不同的用户进行测试"
+                                                              class="poped glyphicon glyphicon-question-sign"></span>用户索引</label>
                 <div class="controls">
-                    <input type="number" id="user-index" name="user-index"
-                           class="input-small required user-index" min="0"
+                    <input type="number" id="from" name="from"
+                           class="input-mini required from" min="0"
                            value="0">
+                    <span>-</span>
+                    <input type="number" id="to" name="to"
+                           class="input-mini required to" min="1"
+                           value="1">
                     <button type="button" class="btn btn-primary execute">${getText('execute')}</button>
                 </div>
             </div>
@@ -55,6 +59,19 @@
         <div class="controls">
             <code class="block json error"
                   style="max-height: 350px;overflow-y: auto"><#if errorMessage?has_content>${errorMessage?no_esc}</#if></code>
+        </div>
+    </div>
+</div>
+<div id="responses" class="hidden">
+    <div id="control-group" class="control-group">
+        <label class="control-label" style="font-weight: bold;font-style: italic">结果</label>
+        <div class="controls">
+            <div class="errors">
+                <code class="block json errors" style="max-height: 350px;overflow-y: auto"></code>
+            </div>
+            <div class="ok">
+                <code class="block json ok" style="max-height: 350px;overflow-y: auto;color:green"></code>
+            </div>
         </div>
     </div>
 </div>

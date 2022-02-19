@@ -97,20 +97,20 @@ $(function () {
 });
 
 $(function () {
-    $(document).on('focus', 'input.user-index, #requestsPerThread', function () {
+    $(document).on('focus', 'input.from, #requestsPerThread', function () {
         $(this).select()
     })
 
-    $(document).on('change', 'input.user-index', function () {
+    $(document).on('change', 'input.from', function () {
         const $this = $(this)
-        const userIndex = $this.val()
-        if (userIndex === '' || userIndex < 0)
+        const from = $this.val()
+        if (from === '' || from < 0)
             return;
         const uid = $("input.uid").val()
         $.ajax({
             type: "GET",
             contentType: "application/json",
-            url: CONTEXT_PATH + "/httpSample/previewRequest?id=" + uid + "&userIndex=" + userIndex,
+            url: CONTEXT_PATH + "/httpSample/previewRequest?id=" + uid + "&from=" + from,
             success: function (data) {
                 $("code.request").html(data.content)
             }
@@ -118,29 +118,64 @@ $(function () {
     })
 
     $(document).on('click', 'button.execute', function () {
-        const userIndex = $('input.user-index').val()
+        const from = $('input.from').val()
+        const to = $('input.to').val()
         const uid = $('input.uid').val()
-        $.ajax({
-            type: "GET",
-            contentType: "application/json",
-            url: CONTEXT_PATH + "/httpSample/executeRequest?id=" + uid + "&userIndex=" + userIndex,
-            success: function (data) {
-                if (data.content !== undefined) {
-                    $("#response").removeClass("hidden")
-                    $("code.response").html(data.content)
-                    $("span.elapsedTimeInMillis").html(data.elapsedTimeInMillis)
-                } else {
+        if (to - from > 1) {
+            $.ajax({
+                type: "GET",
+                contentType: "application/json",
+                url: CONTEXT_PATH + "/httpSample/executeRequests?id=" + uid + "&from=" + from + "&to=" + to,
+                success: function (list) {
+                    let errors = []
+                    let elapsedTimeInMillis = 0;
+                    for (let i = 0; i < list.length; i++) {
+                        let data = list[i];
+                        if (data.error !== undefined) {
+                            errors.push(parseInt(from) + i)
+                        } else {
+                            elapsedTimeInMillis += parseInt(data.elapsedTimeInMillis);
+                        }
+                    }
+                    if (errors.length > 0) {
+                        $("div.errors").removeClass("hidden")
+                        $("div.ok").addClass("hidden")
+                        $("code.errors").html("Errors: " + errors.join(","))
+                    } else {
+                        $("div.errors").addClass("hidden")
+                        $("div.ok").removeClass("hidden")
+                        $("code.ok").html("ALL PASSED, 总耗时: " + elapsedTimeInMillis + "ms, 平均: " + (elapsedTimeInMillis/list.length).toFixed(2) + " ms/req")
+                    }
+                    $("#responses").removeClass("hidden")
                     $("#response").addClass("hidden")
-                }
-
-                if (data.error !== undefined) {
-                    $("#error").removeClass("hidden")
-                    $("code.error").html(data.error)
-                } else {
                     $("#error").addClass("hidden")
                 }
-            }
-        })
+            })
+        } else {
+            $.ajax({
+                type: "GET",
+                contentType: "application/json",
+                url: CONTEXT_PATH + "/httpSample/executeRequest?id=" + uid + "&from=" + from,
+                success: function (data) {
+                    if (data.content !== undefined) {
+                        $("#response").removeClass("hidden")
+                        $("code.response").html(data.content)
+                        $("span.elapsedTimeInMillis").html(data.elapsedTimeInMillis)
+                    } else {
+                        $("#response").addClass("hidden")
+                    }
+
+                    if (data.error !== undefined) {
+                        $("#error").removeClass("hidden")
+                        $("code.error").html(data.error)
+                    } else {
+                        $("#error").addClass("hidden")
+                    }
+
+                    $("#responses").addClass("hidden")
+                }
+            })
+        }
     })
 
     $(document).on('change', '#threadGroups, #requestsPerThread, #scope', function () {

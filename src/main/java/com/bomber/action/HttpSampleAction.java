@@ -5,11 +5,7 @@ import static com.bomber.http.StringEntityRender.renderPlainText;
 import static org.springframework.util.StringUtils.hasLength;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -102,11 +98,15 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 	private int totalPayloads;
 
 	@Setter
-	private int userIndex = 0;
+	private int from = 0;
+	@Setter
+	private int to;
 	@Getter
 	private Request request;
 	@Getter
 	private Response response;
+	@Getter
+	private List<Response> responses;
 
 	@Getter
 	private String requestMessage;
@@ -246,7 +246,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 
 	private RequestEntity<String> createRequestEntity() {
 		httpSample = Objects.requireNonNull(httpSampleManager.get(this.getUid()), "httpSample");
-		return StringEntityFactory.create(httpSample, getPayload(httpSample, this.userIndex));
+		return StringEntityFactory.create(httpSample, getPayload(httpSample, this.from));
 	}
 
 	public String singleShot() {
@@ -267,9 +267,13 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 
 	@JsonConfig(root = "response")
 	public String executeRequest() {
-		response = new Response();
+		response = exchange(createRequestEntity());
+		return "json";
+	}
+
+	private Response exchange(RequestEntity<String> requestEntity) {
+		Response response = new Response();
 		try {
-			RequestEntity<String> requestEntity = createRequestEntity();
 			String requestMessage = renderPlainText(requestEntity);
 			logger.info("Request entity:\n{}", requestMessage);
 
@@ -297,6 +301,19 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		} catch (Exception e) {
 			response.setError(e.toString());
 			logger.error("execute request failed", e);
+		}
+		return response;
+	}
+
+	@JsonConfig(root = "responses")
+	public String executeRequests() {
+		httpSample = Objects.requireNonNull(httpSampleManager.get(this.getUid()), "httpSample");
+		int count = this.to - this.from + 1;
+		List<Map<String, String>> contextList = payloadGenerateService.generate(httpSample.getFunctionConfigure().getId(), this.from, count);
+
+		responses = new ArrayList<>();
+		for (Map<String, String> context : contextList) {
+			responses.add(exchange(StringEntityFactory.create(httpSample, context)));
 		}
 		return "json";
 	}
