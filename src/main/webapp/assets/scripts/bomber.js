@@ -140,7 +140,11 @@ $(function () {
                     if (errors.length > 0) {
                         $("div.errors").removeClass("hidden")
                         $("div.ok").addClass("hidden")
-                        $("code.errors").html("Errors: " + errors.join(","))
+                        let failureReasons = []
+                        for (let i = 0; i < Math.min(6, errors.length); i++) {
+                            failureReasons.push("[" + errors[i] + "] " + list[errors[0] - parseInt(from)].error)
+                        }
+                        $("code.errors").html("Errors: " + errors.join(",") + "\n" + failureReasons.join("\n"))
                     } else {
                         $("div.errors").addClass("hidden")
                         $("div.ok").removeClass("hidden")
