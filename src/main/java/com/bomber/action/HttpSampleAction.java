@@ -1,15 +1,22 @@
 package com.bomber.action;
 
-import static com.bomber.common.util.StringReplacer.replace;
-import static com.bomber.http.StringEntityRender.renderPlainText;
-import static org.springframework.util.StringUtils.hasLength;
-
-import java.io.IOException;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
-
+import com.bomber.asserter.AssertResult;
+import com.bomber.asserter.Asserter;
+import com.bomber.asserter.util.Asserters;
+import com.bomber.engine.model.Scope;
 import com.bomber.http.StringEntityFactory;
+import com.bomber.manager.HttpSampleManager;
+import com.bomber.model.Assertion;
+import com.bomber.model.HttpHeader;
+import com.bomber.model.HttpSample;
+import com.bomber.service.BomberRequest;
+import com.bomber.service.BomberService;
+import com.bomber.service.PayloadGenerateService;
+import com.fasterxml.jackson.core.JsonLocation;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.opensymphony.xwork2.interceptor.annotations.InputConfig;
+import lombok.Getter;
+import lombok.Setter;
 import org.ironrhino.core.metadata.AutoConfig;
 import org.ironrhino.core.metadata.JsonConfig;
 import org.ironrhino.core.struts.EntityAction;
@@ -23,22 +30,13 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.HtmlUtils;
 
-import com.bomber.asserter.AssertResult;
-import com.bomber.asserter.Asserter;
-import com.bomber.asserter.util.Asserters;
-import com.bomber.engine.model.Scope;
-import com.bomber.manager.HttpSampleManager;
-import com.bomber.model.Assertion;
-import com.bomber.model.HttpHeader;
-import com.bomber.model.HttpSample;
-import com.bomber.service.BomberRequest;
-import com.bomber.service.BomberService;
-import com.bomber.service.PayloadGenerateService;
-import com.fasterxml.jackson.core.JsonLocation;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.opensymphony.xwork2.interceptor.annotations.InputConfig;
-import lombok.Getter;
-import lombok.Setter;
+import java.io.IOException;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+
+import static com.bomber.http.StringEntityRender.renderPlainText;
+import static org.springframework.util.StringUtils.hasLength;
 
 @AutoConfig(fileupload = "text/plain, text/csv")
 public class HttpSampleAction extends EntityAction<HttpSample> {
