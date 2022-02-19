@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 import org.ironrhino.core.metadata.AutoConfig;
 import org.ironrhino.core.metadata.JsonConfig;
 import org.ironrhino.core.struts.EntityAction;
-import org.ironrhino.core.util.CodecUtils;
 import org.ironrhino.core.util.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -130,19 +129,6 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 			headers.add(httpHeader.getName(), mapper.apply(httpHeader.getValue()));
 		}
 		return headers;
-	}
-
-	private static String generateFilePath(String fileName) {
-		int extIndex = fileName.lastIndexOf('.');
-		String prefix, suffix;
-		if (extIndex > 0) {
-			prefix = fileName.substring(0, extIndex);
-			suffix = fileName.substring(extIndex);
-		} else {
-			prefix = fileName;
-			suffix = ".txt";
-		}
-		return prefix + CodecUtils.nextId(4) + suffix;
 	}
 
 	private static RequestEntity<String> createRequestEntity(HttpSample sample, Function<String, String> mapper) {
