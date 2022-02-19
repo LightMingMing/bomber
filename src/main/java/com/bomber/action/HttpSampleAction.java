@@ -5,16 +5,15 @@ import static com.bomber.http.StringEntityRender.renderPlainText;
 import static org.springframework.util.StringUtils.hasLength;
 
 import java.io.IOException;
-import java.net.URI;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.bomber.http.StringEntityFactory;
 import org.ironrhino.core.metadata.AutoConfig;
 import org.ironrhino.core.metadata.JsonConfig;
 import org.ironrhino.core.struts.EntityAction;
@@ -22,11 +21,8 @@ import org.ironrhino.core.util.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.HtmlUtils;
@@ -118,26 +114,6 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 	private String requestMessage;
 	@Getter
 	private String errorMessage;
-
-	private static MultiValueMap<String, String> convertToHttpHeaders(List<HttpHeader> httpHeaderList,
-																	  Function<String, String> mapper) {
-		if (httpHeaderList == null) {
-			return null;
-		}
-		MultiValueMap<String, String> headers = new HttpHeaders();
-		for (HttpHeader httpHeader : httpHeaderList) {
-			headers.add(httpHeader.getName(), mapper.apply(httpHeader.getValue()));
-		}
-		return headers;
-	}
-
-	private static RequestEntity<String> createRequestEntity(HttpSample sample, Function<String, String> mapper) {
-		URI uri = URI.create(mapper.apply(sample.getUrl()));
-		HttpMethod method = sample.getMethod();
-		MultiValueMap<String, String> headers = convertToHttpHeaders(sample.getHeaders(), mapper);
-		String body = mapper.apply(sample.getBody());
-		return new RequestEntity<>(body, headers, method, uri);
-	}
 
 	private static AssertResult assertThat(String text, Assertion model) {
 		Asserter asserter = Asserters.create(model.getAsserter());
@@ -271,14 +247,14 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		}
 	}
 
-	private RequestEntity<String> createRequestEntity() throws IOException {
+	private RequestEntity<String> createRequestEntity() {
 		httpSample = Objects.requireNonNull(httpSampleManager.get(this.getUid()), "httpSample");
 		if (mutable = httpSample.isMutable()) {
 			Map<String, String> context = getPayload(httpSample, this.userIndex);
-			return createRequestEntity(httpSample, value -> replace(value, context));
+			return StringEntityFactory.create(httpSample, context);
 		} else {
 			// String::toString will cause NPE if value is null
-			return createRequestEntity(httpSample, value -> value);
+			return StringEntityFactory.create(httpSample);
 		}
 	}
 
