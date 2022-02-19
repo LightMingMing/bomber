@@ -43,7 +43,7 @@
                 <span> </span><span id="total-requests">${totalRequests!0}</span>
             </div>
         </div>
-        <#if mutable>
+        <#if httpSample.mutable>
             <div id="control-group-begin-user-index" class="control-group">
                 <label class="control-label" for="begin-user-index"
                        style="width: 120px;">${getText('beginUserIndex')}</label>

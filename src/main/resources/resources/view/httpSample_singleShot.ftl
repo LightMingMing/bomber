@@ -16,7 +16,7 @@
             </div>
         </div>
     </div>
-    <#if mutable>
+    <#if httpSample.mutable>
         <div class="form-horizontal">
             <div id="control-group-user-index" class="control-group">
                 <label class="control-label" for="user-index"><span data-content="通过设置用户索引, 使用不同的用户进行测试"

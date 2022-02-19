@@ -101,8 +101,6 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 	@Getter
 	private int totalPayloads;
 
-	@Getter
-	private boolean mutable = true;
 	@Setter
 	private int userIndex = 0;
 	@Getter
@@ -193,7 +191,6 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 
 	public String inputBombingPlan() {
 		httpSample = httpSampleManager.get(this.getUid());
-		mutable = httpSample.isMutable();
 		threadGroups = threadGroupsCache.getOrDefault(this.getUid(), DEFAULT_THREAD_GROUPS);
 		requestsPerThread = requestsPerThreadCache.getOrDefault(this.getUid(), DEFAULT_REQUESTS_PRE_THREAD);
 
@@ -240,7 +237,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 	}
 
 	private Map<String, String> getPayload(HttpSample httpSample, int index) {
-		if (httpSample.getFunctionConfigure() != null) {
+		if (httpSample.isMutable() && httpSample.getFunctionConfigure() != null) {
 			return payloadGenerateService.generate(httpSample.getFunctionConfigure().getId(), index);
 		} else {
 			return Collections.emptyMap();
@@ -249,13 +246,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 
 	private RequestEntity<String> createRequestEntity() {
 		httpSample = Objects.requireNonNull(httpSampleManager.get(this.getUid()), "httpSample");
-		if (mutable = httpSample.isMutable()) {
-			Map<String, String> context = getPayload(httpSample, this.userIndex);
-			return StringEntityFactory.create(httpSample, context);
-		} else {
-			// String::toString will cause NPE if value is null
-			return StringEntityFactory.create(httpSample);
-		}
+		return StringEntityFactory.create(httpSample, getPayload(httpSample, this.userIndex));
 	}
 
 	public String singleShot() {
