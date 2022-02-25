@@ -9,9 +9,7 @@ import com.bomber.manager.HttpSampleManager;
 import com.bomber.model.Assertion;
 import com.bomber.model.HttpHeader;
 import com.bomber.model.HttpSample;
-import com.bomber.service.BomberRequest;
-import com.bomber.service.BomberService;
-import com.bomber.service.PayloadGenerateService;
+import com.bomber.service.*;
 import com.fasterxml.jackson.core.JsonLocation;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.opensymphony.xwork2.interceptor.annotations.InputConfig;
@@ -25,9 +23,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.RequestEntity;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.HtmlUtils;
 
 import java.io.IOException;
@@ -68,7 +63,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 	private PayloadGenerateService payloadGenerateService;
 
 	@Autowired
-	private RestTemplate stringMessageRestTemplate;
+	private HttpSampleExecutorService httpSampleExecutorService;
 
 	@Getter
 	@Setter
@@ -102,29 +97,14 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 	@Getter
 	private Request request;
 	@Getter
-	private Response response;
+	private HttpSampleResult response;
 	@Getter
-	private List<Response> responses;
+	private List<HttpSampleResult> responses;
 
 	@Getter
 	private String requestMessage;
 	@Getter
 	private String errorMessage;
-
-	private static AssertResult assertThat(String text, Assertion model) {
-		Asserter asserter = Asserters.create(model.getAsserter());
-		com.bomber.asserter.Assertion assertion = new com.bomber.asserter.Assertion();
-		assertion.setCondition(model.getCondition());
-		assertion.setExpression(model.getExpression());
-		assertion.setExpected(model.getExpected());
-		assertion.setText(text);
-		return asserter.run(assertion);
-	}
-
-	public static AssertResult assertThat(String text, List<Assertion> models) {
-		return models.stream().map(model -> assertThat(text, model)).filter(r -> !r.isSuccessful()).findFirst()
-				.orElse(AssertResult.success());
-	}
 
 	private boolean headersValid() {
 		List<HttpHeader> headers = httpSample.getHeaders();
@@ -265,42 +245,9 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 
 	@JsonConfig(root = "response")
 	public String executeRequest() {
-		response = exchange(createRequestEntity());
+		httpSample = Objects.requireNonNull(httpSampleManager.get(this.getUid()), "httpSample");
+		response = httpSampleExecutorService.execute(httpSample, getPayload(httpSample, this.from));
 		return "json";
-	}
-
-	private Response exchange(RequestEntity<String> requestEntity) {
-		Response response = new Response();
-		try {
-			String requestMessage = renderPlainText(requestEntity);
-			logger.info("Request entity:\n{}", requestMessage);
-
-			long startTime = System.nanoTime();
-			ResponseEntity<String> responseEntity = stringMessageRestTemplate.exchange(requestEntity, String.class);
-			long elapsedTimeInMillis = (System.nanoTime() - startTime) / 1_000_000;
-
-			List<Assertion> assertions = httpSample.getAssertions();
-			if (assertions != null) {
-				AssertResult result = assertThat(responseEntity.getBody(), assertions);
-				if (!result.isSuccessful()) {
-					logger.error("Assert failure: {}", result.getError());
-					response.setError("Assert failure:\n\t" + result.getError());
-				}
-			}
-
-			String responseMessage = renderPlainText(responseEntity);
-			logger.info("Response entity:\n{}", responseMessage);
-			response.setContent(responseMessage);
-			response.setElapsedTimeInMillis(elapsedTimeInMillis);
-		} catch (HttpClientErrorException e) {
-			// eg. 404 Not Found
-			response.setError(e.getStatusCode() + "\n" + HtmlUtils.htmlEscape(e.getResponseBodyAsString()));
-			logger.error(e.getMessage());
-		} catch (Exception e) {
-			response.setError(e.toString());
-			logger.error("execute request failed", e);
-		}
-		return response;
 	}
 
 	@JsonConfig(root = "responses")
@@ -311,7 +258,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 
 		responses = new ArrayList<>();
 		for (Map<String, String> context : contextList) {
-			responses.add(exchange(StringEntityFactory.create(httpSample, context)));
+			responses.add(httpSampleExecutorService.execute(httpSample, context));
 		}
 		return "json";
 	}
@@ -327,15 +274,4 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		}
 	}
 
-	@Getter
-	@Setter
-	static class Response {
-
-		private String content;
-
-		private String error;
-
-		private long elapsedTimeInMillis;
-
-	}
 }
