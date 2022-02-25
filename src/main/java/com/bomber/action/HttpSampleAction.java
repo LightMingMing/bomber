@@ -294,7 +294,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 			response.setElapsedTimeInMillis(elapsedTimeInMillis);
 		} catch (HttpClientErrorException e) {
 			// eg. 404 Not Found
-			response.setError(e.getStatusCode().toString() + "\n" + HtmlUtils.htmlEscape(e.getResponseBodyAsString()));
+			response.setError(e.getStatusCode() + "\n" + HtmlUtils.htmlEscape(e.getResponseBodyAsString()));
 			logger.error(e.getMessage());
 		} catch (Exception e) {
 			response.setError(e.toString());

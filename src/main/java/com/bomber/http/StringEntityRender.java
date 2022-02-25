@@ -59,7 +59,7 @@ public class StringEntityRender {
 	public static String renderPlainText(ResponseEntity<String> entity) {
 		StringBuilder sb = new StringBuilder();
 
-		sb.append(entity.getStatusCode().toString());
+		sb.append(entity.getStatusCode());
 
 		HttpHeaders httpHeaders = entity.getHeaders();
 		if (httpHeaders.size() > 0) {
