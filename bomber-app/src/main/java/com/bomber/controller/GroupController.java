@@ -20,7 +20,7 @@ import com.bomber.mapper.GroupMapper;
  * @author MingMing Zhao
  */
 @RestController
-@RequestMapping("/groups")
+@RequestMapping("/api/groups")
 public class GroupController implements CrudController<Integer, Group> {
 
 	private final GroupMapper groupMapper;

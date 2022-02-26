@@ -18,7 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
-import com.bomber.controller.PayloadController;
+import com.bomber.controller.FunctionController;
 import com.bomber.engine.model.BomberRequest;
 import com.bomber.engine.model.HttpRequest;
 import com.bomber.engine.model.Payload;
@@ -128,7 +128,7 @@ public class BombingServiceImpl implements BombingService {
 		if (HOST_ADDRESS == null) {
 			HOST_ADDRESS = getHostAddress();
 		}
-		return "http://" + HOST_ADDRESS + ":" + port + PayloadController.API_PAYLOAD + "/" + workspaceId;
+		return "http://" + HOST_ADDRESS + ":" + port + FunctionController.API + "/" + workspaceId;
 	}
 
 	@Override

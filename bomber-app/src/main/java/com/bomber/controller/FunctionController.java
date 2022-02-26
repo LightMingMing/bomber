@@ -10,32 +10,32 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.bomber.function.FunctionGenerator;
+import com.bomber.service.FunctionExecutorService;
 
 /**
  * @author MingMing Zhao
  */
 @RestController
-@RequestMapping(PayloadController.API_PAYLOAD)
-public class PayloadController {
+@RequestMapping(FunctionController.API)
+public class FunctionController {
 
-	public static final String API_PAYLOAD = "/api/payload";
+	public static final String API = "/api/function";
 
-	private final FunctionGenerator functionGenerator;
+	private final FunctionExecutorService functionExecutor;
 
-	public PayloadController(FunctionGenerator functionGenerator) {
-		this.functionGenerator = functionGenerator;
+	public FunctionController(FunctionExecutorService functionExecutor) {
+		this.functionExecutor = functionExecutor;
 	}
 
 	@GetMapping("/{id}")
 	public List<Map<String, String>> generateBatch(@PathVariable Integer id, @RequestParam int offset,
 												   @RequestParam int limit,
 												   @RequestParam Set<String> columns) {
-		return functionGenerator.generateBatch(id, offset, limit, columns);
+		return functionExecutor.execute(id, offset, limit, columns);
 	}
 
 	@GetMapping(value = "/{id}", params = "!limit")
 	public Map<String, String> generateOne(@PathVariable Integer id, @RequestParam int offset) {
-		return functionGenerator.generateOne(id, offset);
+		return functionExecutor.execute(id, offset);
 	}
 }

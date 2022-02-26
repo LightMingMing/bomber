@@ -3,6 +3,8 @@ package com.bomber.controller;
 import java.util.List;
 import java.util.Optional;
 
+import com.bomber.service.HttpSampleResult;
+import com.bomber.service.HttpSampleService;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,8 +27,11 @@ public class HttpSampleController implements CrudController<Integer, HttpSample>
 
 	private final HttpSampleMapper httpSampleMapper;
 
-	public HttpSampleController(HttpSampleMapper httpSampleMapper) {
+	private final HttpSampleService httpSampleService;
+
+	public HttpSampleController(HttpSampleMapper httpSampleMapper, HttpSampleService httpSampleService) {
 		this.httpSampleMapper = httpSampleMapper;
+		this.httpSampleService = httpSampleService;
 	}
 
 	@Override
@@ -61,5 +66,25 @@ public class HttpSampleController implements CrudController<Integer, HttpSample>
 	@PutMapping("/reorder")
 	public int reorder(@RequestBody List<Integer> ids) {
 		return httpSampleMapper.reorder(ids);
+	}
+
+	@GetMapping("/preview")
+	public String preview(int id, int index) {
+		return httpSampleService.renderRequest(id, index);
+	}
+
+	@GetMapping(value = "/execute")
+	public HttpSampleResult execute(int id) {
+		return httpSampleService.execute(id);
+	}
+
+	@GetMapping(value = "/execute", params = "index")
+	public HttpSampleResult execute(int id, int index) {
+		return httpSampleService.execute(id, index);
+	}
+
+	@GetMapping(value = "/execute", params = {"index", "size"})
+	public List<HttpSampleResult> execute(int id, int index, int size) {
+		return httpSampleService.executeBatch(id, index, size);
 	}
 }

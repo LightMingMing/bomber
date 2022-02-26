@@ -2,8 +2,11 @@ package com.bomber.common.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 
 /**
  * Json Utils
@@ -37,6 +40,24 @@ public class JsonUtils {
 			return objectMapper.writeValueAsString(object);
 		} catch (JsonProcessingException e) {
 			throw new RuntimeException(e);
+		}
+	}
+	public static String unprettify(String json) {
+		try {
+			JsonNode node = objectMapper.readTree(json);
+			return objectMapper.writeValueAsString(node);
+		} catch (Exception var2) {
+			return json;
+		}
+	}
+
+	public static String prettify(String json) {
+		try {
+			JsonNode node = objectMapper.readTree(json);
+			ObjectWriter writer = objectMapper.writer(new DefaultPrettyPrinter());
+			return writer.writeValueAsString(node);
+		} catch (Exception var3) {
+			return json;
 		}
 	}
 }

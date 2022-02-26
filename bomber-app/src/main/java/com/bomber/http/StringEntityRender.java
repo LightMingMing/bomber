@@ -8,7 +8,7 @@ import java.nio.charset.Charset;
 import java.util.List;
 import java.util.StringJoiner;
 
-import org.ironrhino.core.util.JsonUtils;
+import com.bomber.common.util.JsonUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;

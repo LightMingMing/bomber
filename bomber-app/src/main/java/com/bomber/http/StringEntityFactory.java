@@ -1,7 +1,7 @@
 package com.bomber.http;
 
-import com.bomber.model.HttpHeader;
-import com.bomber.model.HttpSample;
+import com.bomber.entity.HttpHeader;
+import com.bomber.entity.HttpSample;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
