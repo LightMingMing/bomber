@@ -1,15 +1,13 @@
 package com.bomber.action;
 
-import com.bomber.asserter.AssertResult;
-import com.bomber.asserter.Asserter;
-import com.bomber.asserter.util.Asserters;
 import com.bomber.engine.model.Scope;
 import com.bomber.http.StringEntityFactory;
-import com.bomber.manager.HttpSampleManager;
-import com.bomber.model.Assertion;
 import com.bomber.model.HttpHeader;
 import com.bomber.model.HttpSample;
-import com.bomber.service.*;
+import com.bomber.service.BomberRequest;
+import com.bomber.service.BomberService;
+import com.bomber.service.HttpSampleResult;
+import com.bomber.service.HttpSampleService;
 import com.fasterxml.jackson.core.JsonLocation;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.opensymphony.xwork2.interceptor.annotations.InputConfig;
@@ -26,7 +24,9 @@ import org.springframework.http.RequestEntity;
 import org.springframework.web.util.HtmlUtils;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -54,16 +54,10 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 	private final int maxRequestsPerThread = MAX_REQUESTS_PRE_THREAD;
 
 	@Autowired
-	private HttpSampleManager httpSampleManager;
-
-	@Autowired
 	private BomberService bomberService;
 
 	@Autowired
-	private PayloadGenerateService payloadGenerateService;
-
-	@Autowired
-	private HttpSampleExecutorService httpSampleExecutorService;
+	private HttpSampleService httpSampleService;
 
 	@Getter
 	@Setter
@@ -156,19 +150,19 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 			}
 		}
 
-		httpSampleManager.save(httpSample);
+		httpSampleService.save(httpSample);
 		return SUCCESS;
 	}
 
 	// shortcut to create
 	public String quickCreate() {
-		httpSample = httpSampleManager.get(this.getUid());
+		httpSample = httpSampleService.select(this.getUid());
 		httpSample.setId(null);
 		return INPUT;
 	}
 
 	public String inputBombingPlan() {
-		httpSample = httpSampleManager.get(this.getUid());
+		httpSample = httpSampleService.select(this.getUid());
 		threadGroups = threadGroupsCache.getOrDefault(this.getUid(), DEFAULT_THREAD_GROUPS);
 		requestsPerThread = requestsPerThreadCache.getOrDefault(this.getUid(), DEFAULT_REQUESTS_PRE_THREAD);
 
@@ -186,7 +180,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 			return ERROR;
 		}
 
-		httpSample = httpSampleManager.get(httpSample.getId());
+		httpSample = httpSampleService.select(httpSample.getId());
 
 		if (requestsPerThread > maxRequestsPerThread) {
 			addFieldError("requestsPerThread", "requestsPerThread > " + maxRequestsPerThread);
@@ -214,17 +208,9 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		return SUCCESS;
 	}
 
-	private Map<String, String> getPayload(HttpSample httpSample, int index) {
-		if (httpSample.isMutable() && httpSample.getFunctionConfigure() != null) {
-			return payloadGenerateService.generate(httpSample.getFunctionConfigure().getId(), index);
-		} else {
-			return Collections.emptyMap();
-		}
-	}
-
 	private RequestEntity<String> createRequestEntity() {
-		httpSample = Objects.requireNonNull(httpSampleManager.get(this.getUid()), "httpSample");
-		return StringEntityFactory.create(httpSample, getPayload(httpSample, this.from));
+		httpSample = httpSampleService.select(this.getUid());
+		return StringEntityFactory.create(httpSample, HttpSampleService.buildContext(httpSample, this.from));
 	}
 
 	public String singleShot() {
@@ -239,27 +225,19 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 
 	@JsonConfig(root = "request")
 	public String previewRequest() throws IOException {
-		request = new Request(renderPlainText(createRequestEntity()));
+		request = new Request(renderPlainText(httpSampleService.createRequestEntity(this.getUid(), this.from)));
 		return "json";
 	}
 
 	@JsonConfig(root = "response")
 	public String executeRequest() {
-		httpSample = Objects.requireNonNull(httpSampleManager.get(this.getUid()), "httpSample");
-		response = httpSampleExecutorService.execute(httpSample, getPayload(httpSample, this.from));
+		response = httpSampleService.execute(this.getUid(), from);
 		return "json";
 	}
 
 	@JsonConfig(root = "responses")
 	public String executeRequests() {
-		httpSample = Objects.requireNonNull(httpSampleManager.get(this.getUid()), "httpSample");
-		int count = this.to - this.from + 1;
-		List<Map<String, String>> contextList = payloadGenerateService.generate(httpSample.getFunctionConfigure().getId(), this.from, count);
-
-		responses = new ArrayList<>();
-		for (Map<String, String> context : contextList) {
-			responses.add(httpSampleExecutorService.execute(httpSample, context));
-		}
+		responses = httpSampleService.executeBatch(this.getUid(), from, to - from + 1);
 		return "json";
 	}
 
