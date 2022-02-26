@@ -8,7 +8,7 @@ group 'com.bomber'
 version '1.0.2'
 
 dependencies {
-    implementation 'com.jayway.jsonpath:json-path:2.4.0'
+    implementation 'com.jayway.jsonpath:json-path:2.7.0'
     testImplementation 'org.assertj:assertj-core'
 }
 

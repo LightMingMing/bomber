@@ -11,7 +11,7 @@ dependencies {
     implementation project(':bomber-common')
 
     implementation 'com.zaxxer:HikariCP'
-    implementation 'org.mvel:mvel2:2.4.8.Final'
+    implementation 'org.mvel:mvel2:2.4.12.Final'
     implementation 'org.springframework:spring-core'
 
     testImplementation 'com.h2database:h2'
