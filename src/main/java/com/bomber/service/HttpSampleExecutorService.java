@@ -47,7 +47,7 @@ public class HttpSampleExecutorService {
 			result.setElapsedTimeInMillis(elapsedTimeInMillis);
 
 			if (httpSample.getAssertions() != null) {
-				AssertResult assertResult = assertThat(responseMessage, httpSample.getAssertions());
+				AssertResult assertResult = assertThat(responseEntity.getBody(), httpSample.getAssertions());
 				if (!assertResult.isSuccessful()) {
 					logger.error("Assert failure: {}", assertResult.getError());
 					result.setError("Assert failure:\n\t" + assertResult.getError());
