@@ -191,7 +191,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		return SUCCESS;
 	}
 
-	public String singleShot() {
+	public String shot() {
 		try {
 			httpSample = httpSampleService.select(this.getUid());
 			requestMessage = httpSampleService.renderRequest(httpSample, 0);
@@ -199,7 +199,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 			errorMessage = HtmlUtils.htmlEscape(e.toString());
 			logger.warn(e.getMessage());
 		}
-		return "singleShot";
+		return "shot";
 	}
 
 }
