@@ -27,8 +27,8 @@
                            value="0">
                     <span>-</span>
                     <input type="number" id="to" name="to"
-                           class="input-mini required to" min="1"
-                           value="1">
+                           class="input-mini required to" min="0"
+                           value="0">
                     <button type="button" class="btn btn-primary execute">${getText('execute')}</button>
                 </div>
             </div>

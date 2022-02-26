@@ -3,6 +3,7 @@ package com.bomber.service;
 import com.bomber.function.model.FunctionContext;
 import com.bomber.function.runner.DefaultFunctionExecutor;
 import com.bomber.http.StringEntityFactory;
+import com.bomber.http.StringEntityRender;
 import com.bomber.manager.HttpSampleManager;
 import com.bomber.model.FunctionDefinition;
 import com.bomber.model.HttpSample;
@@ -46,7 +47,19 @@ public class HttpSampleService {
 
 	public RequestEntity<String> createRequestEntity(String id, int index) {
 		HttpSample httpSample = select(id);
+		return createRequestEntity(httpSample, index);
+	}
+
+	public RequestEntity<String> createRequestEntity(HttpSample httpSample, int index) {
 		return StringEntityFactory.create(httpSample, buildContext(httpSample, index));
+	}
+
+	public String renderRequest(String id, int index) {
+		return StringEntityRender.renderPlainText(createRequestEntity(id, index));
+	}
+
+	public String renderRequest(HttpSample httpSample, int index) {
+		return StringEntityRender.renderPlainText(createRequestEntity(httpSample, index));
 	}
 
 	public HttpSample select(String id) {

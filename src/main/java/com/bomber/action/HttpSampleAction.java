@@ -1,12 +1,10 @@
 package com.bomber.action;
 
 import com.bomber.engine.model.Scope;
-import com.bomber.http.StringEntityFactory;
 import com.bomber.model.HttpHeader;
 import com.bomber.model.HttpSample;
 import com.bomber.service.BomberRequest;
 import com.bomber.service.BomberService;
-import com.bomber.service.HttpSampleResult;
 import com.bomber.service.HttpSampleService;
 import com.fasterxml.jackson.core.JsonLocation;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -14,23 +12,19 @@ import com.opensymphony.xwork2.interceptor.annotations.InputConfig;
 import lombok.Getter;
 import lombok.Setter;
 import org.ironrhino.core.metadata.AutoConfig;
-import org.ironrhino.core.metadata.JsonConfig;
 import org.ironrhino.core.struts.EntityAction;
 import org.ironrhino.core.util.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.RequestEntity;
 import org.springframework.web.util.HtmlUtils;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-import static com.bomber.http.StringEntityRender.renderPlainText;
 import static org.springframework.util.StringUtils.hasLength;
 
 @AutoConfig
@@ -83,17 +77,6 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 	private int totalRequests;
 	@Getter
 	private int totalPayloads;
-
-	@Setter
-	private int from = 0;
-	@Setter
-	private int to;
-	@Getter
-	private Request request;
-	@Getter
-	private HttpSampleResult response;
-	@Getter
-	private List<HttpSampleResult> responses;
 
 	@Getter
 	private String requestMessage;
@@ -208,48 +191,15 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		return SUCCESS;
 	}
 
-	private RequestEntity<String> createRequestEntity() {
-		httpSample = httpSampleService.select(this.getUid());
-		return StringEntityFactory.create(httpSample, HttpSampleService.buildContext(httpSample, this.from));
-	}
-
 	public String singleShot() {
 		try {
-			requestMessage = renderPlainText(createRequestEntity());
+			httpSample = httpSampleService.select(this.getUid());
+			requestMessage = httpSampleService.renderRequest(httpSample, 0);
 		} catch (Exception e) {
 			errorMessage = HtmlUtils.htmlEscape(e.toString());
 			logger.warn(e.getMessage());
 		}
 		return "singleShot";
-	}
-
-	@JsonConfig(root = "request")
-	public String previewRequest() throws IOException {
-		request = new Request(renderPlainText(httpSampleService.createRequestEntity(this.getUid(), this.from)));
-		return "json";
-	}
-
-	@JsonConfig(root = "response")
-	public String executeRequest() {
-		response = httpSampleService.execute(this.getUid(), from);
-		return "json";
-	}
-
-	@JsonConfig(root = "responses")
-	public String executeRequests() {
-		responses = httpSampleService.executeBatch(this.getUid(), from, to - from + 1);
-		return "json";
-	}
-
-	@Getter
-	@Setter
-	static class Request {
-
-		private String content;
-
-		public Request(String content) {
-			this.content = content;
-		}
 	}
 
 }

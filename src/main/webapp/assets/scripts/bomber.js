@@ -110,9 +110,9 @@ $(function () {
         $.ajax({
             type: "GET",
             contentType: "application/json",
-            url: CONTEXT_PATH + "/httpSample/previewRequest?id=" + uid + "&from=" + from,
-            success: function (data) {
-                $("code.request").html(data.content)
+            url: CONTEXT_PATH + "/api/httpSample/preview?id=" + uid + "&index=" + from,
+            success: function (result) {
+                $("code.request").html(result.data)
             }
         })
     })
@@ -121,11 +121,11 @@ $(function () {
         const from = $('input.from').val()
         const to = $('input.to').val()
         const uid = $('input.uid').val()
-        if (to - from > 1) {
+        if (from !== undefined && to !== undefined && to - from > 0) {
             $.ajax({
                 type: "GET",
                 contentType: "application/json",
-                url: CONTEXT_PATH + "/httpSample/executeRequests?id=" + uid + "&from=" + from + "&to=" + to,
+                url: CONTEXT_PATH + "/api/httpSample/execute?id=" + uid + "&index=" + from + "&size=" + (to - from + 1),
                 success: function (list) {
                     let errors = []
                     let elapsedTimeInMillis = 0;
@@ -159,7 +159,7 @@ $(function () {
             $.ajax({
                 type: "GET",
                 contentType: "application/json",
-                url: CONTEXT_PATH + "/httpSample/executeRequest?id=" + uid + "&from=" + from,
+                url: CONTEXT_PATH + "/api/httpSample/execute?id=" + uid + (from === undefined ? "" : "&index=" + from),
                 success: function (data) {
                     if (data.content !== undefined) {
                         $("#response").removeClass("hidden")
