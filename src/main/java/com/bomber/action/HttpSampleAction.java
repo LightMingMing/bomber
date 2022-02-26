@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 import static com.bomber.http.StringEntityRender.renderPlainText;
 import static org.springframework.util.StringUtils.hasLength;
 
-@AutoConfig(fileupload = "text/plain, text/csv")
+@AutoConfig
 public class HttpSampleAction extends EntityAction<HttpSample> {
 
 	private static final long serialVersionUID = 6007215319135153063L;
@@ -124,7 +124,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		} catch (JsonProcessingException e) {
 			JsonLocation location = e.getLocation();
 			String sb = e.getOriginalMessage() + "at [line: " + location.getLineNr() + "[column: "
-					+ location.getColumnNr();
+				+ location.getColumnNr();
 			this.addFieldError("body", sb);
 			return false;
 		}
@@ -167,7 +167,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		requestsPerThread = requestsPerThreadCache.getOrDefault(this.getUid(), DEFAULT_REQUESTS_PRE_THREAD);
 
 		totalRequests = Arrays.stream(threadGroups.trim().split(", *")).map(Integer::parseInt).reduce(Integer::sum)
-				.orElse(0) * requestsPerThread;
+			.orElse(0) * requestsPerThread;
 		totalPayloads = this.totalRequests; // default payload scope is request
 		return "bombingPlan";
 	}
@@ -188,7 +188,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		}
 
 		List<Integer> numberOfThreadsList = Arrays.stream(threadGroups.trim().split(", *")).map(Integer::parseInt)
-				.sorted().collect(Collectors.toList());
+			.sorted().collect(Collectors.toList());
 
 		BomberRequest request = new BomberRequest();
 		request.setHttpSampleId(httpSample.getId());
@@ -203,7 +203,7 @@ public class HttpSampleAction extends EntityAction<HttpSample> {
 		addActionMessage("Bombing is ongoing!");
 
 		threadGroupsCache.put(httpSample.getId(),
-				numberOfThreadsList.stream().map(i -> i + "").collect(Collectors.joining(", ")));
+			numberOfThreadsList.stream().map(i -> i + "").collect(Collectors.joining(", ")));
 		requestsPerThreadCache.put(httpSample.getId(), requestsPerThread);
 		return SUCCESS;
 	}
