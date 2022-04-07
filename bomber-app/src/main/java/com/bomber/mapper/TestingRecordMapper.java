@@ -19,4 +19,7 @@ public interface TestingRecordMapper extends PagingMapper<Long, TestingRecord> {
 	 * @return 测试记录
 	 */
 	List<TestingRecord> findAllByHttpSample(Integer httpSampleId);
+
+
+	int createOrUpdate(TestingRecord testingRecord);
 }

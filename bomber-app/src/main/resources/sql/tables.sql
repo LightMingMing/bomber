@@ -36,18 +36,18 @@ CREATE TABLE function_configure
 DROP TABLE IF EXISTS http_sample;
 CREATE TABLE http_sample
 (
-    id          INT         NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    groupId     INT         NOT NULL COMMENT '组ID',
-    orderNumber INT         NOT NULL COMMENT '序号',
-    name        VARCHAR(32) NOT NULL COMMENT '名称',
-    method      VARCHAR(16) NOT NULL COMMENT '方法',
-    url         VARCHAR(64) NOT NULL COMMENT 'URL',
-    headers     JSON        NOT NULL COMMENT '请求头',
-    body        TEXT        NOT NULL COMMENT '请求体',
-    assertions  JSON        NOT NULL COMMENT '断言',
-    enabled     BIT         NOT NULL COMMENT '是否启用',
-    createDate  DATETIME    NOT NULL DEFAULT NOW() COMMENT '创建时间',
-    modifyDate  DATETIME    NOT NULL DEFAULT NOW() ON UPDATE NOW() COMMENT '修改时间'
+    id          INT          NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    groupId     INT          NOT NULL COMMENT '组ID',
+    orderNumber INT          NOT NULL COMMENT '序号',
+    name        VARCHAR(32)  NOT NULL COMMENT '名称',
+    method      VARCHAR(16)  NOT NULL COMMENT '方法',
+    url         VARCHAR(255) NOT NULL COMMENT 'URL',
+    headers     JSON         NOT NULL COMMENT '请求头',
+    body        TEXT         NOT NULL COMMENT '请求体',
+    assertions  JSON         NOT NULL COMMENT '断言',
+    enabled     BIT          NOT NULL COMMENT '是否启用',
+    createDate  DATETIME     NOT NULL DEFAULT NOW() COMMENT '创建时间',
+    modifyDate  DATETIME     NOT NULL DEFAULT NOW() ON UPDATE NOW() COMMENT '修改时间'
 ) COMMENT 'HTTP请求脚本';
 
 DROP TABLE IF EXISTS testing_record;
