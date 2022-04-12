@@ -27,14 +27,14 @@ public class FunctionController {
 		this.functionExecutor = functionExecutor;
 	}
 
-	@GetMapping("/{id}")
+	@GetMapping(value = "/{id}", params = "limit")
 	public List<Map<String, String>> generateBatch(@PathVariable Integer id, @RequestParam int offset,
 												   @RequestParam int limit,
-												   @RequestParam Set<String> columns) {
+												   @RequestParam(required = false) Set<String> columns) {
 		return functionExecutor.execute(id, offset, limit, columns);
 	}
 
-	@GetMapping(value = "/{id}", params = "!limit")
+	@GetMapping(value = "/{id}")
 	public Map<String, String> generateOne(@PathVariable Integer id, @RequestParam int offset) {
 		return functionExecutor.execute(id, offset);
 	}
