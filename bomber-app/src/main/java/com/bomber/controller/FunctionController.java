@@ -1,16 +1,13 @@
 package com.bomber.controller;
 
+import com.bomber.service.FunctionExecutorService;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.bomber.service.FunctionExecutorService;
+import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 /**
  * @author MingMing Zhao
@@ -28,14 +25,26 @@ public class FunctionController {
 	}
 
 	@GetMapping(value = "/{id}", params = "limit")
-	public List<Map<String, String>> generateBatch(@PathVariable Integer id, @RequestParam int offset,
-												   @RequestParam int limit,
-												   @RequestParam(required = false) Set<String> columns) {
+	public List<Map<String, String>> execute(@PathVariable Integer id, @RequestParam int offset,
+											 @RequestParam int limit,
+											 @RequestParam(required = false) Set<String> columns) {
 		return functionExecutor.execute(id, offset, limit, columns);
 	}
 
-	@GetMapping(value = "/{id}")
-	public Map<String, String> generateOne(@PathVariable Integer id, @RequestParam int offset) {
+	@GetMapping(value = "/{id}", params = "!limit")
+	public Map<String, String> execute(@PathVariable Integer id, @RequestParam int offset) {
 		return functionExecutor.execute(id, offset);
+	}
+
+	@GetMapping(value = "/{id}", params = "limit", headers = "Content-Type=text/plain")
+	public String getCommaSeparatedResult(@PathVariable Integer id, @RequestParam int offset,
+										  @RequestParam int limit,
+										  @RequestParam List<String> columns) {
+		List<Map<String, String>> result = functionExecutor.execute(id, offset, limit, columns);
+		StringJoiner joiner = new StringJoiner("\n");
+		for (Map<String, String> map : result) {
+			joiner.add(columns.stream().map(map::get).collect(Collectors.joining(",")));
+		}
+		return joiner.toString();
 	}
 }
