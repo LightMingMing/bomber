@@ -1,22 +1,13 @@
 package com.bomber.controller;
 
-import java.util.List;
-import java.util.Optional;
-
-import com.bomber.service.HttpSampleResult;
-import com.bomber.service.HttpSampleService;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.bomber.entity.HttpSample;
 import com.bomber.mapper.HttpSampleMapper;
+import com.bomber.service.HttpSampleResult;
+import com.bomber.service.HttpSampleService;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
 
 /**
  * @author MingMing Zhao
@@ -69,22 +60,22 @@ public class HttpSampleController implements CrudController<Integer, HttpSample>
 	}
 
 	@GetMapping("/preview")
-	public String preview(int id, int index) {
+	public String preview(@RequestParam int id, @RequestParam int index) {
 		return httpSampleService.renderRequest(id, index);
 	}
 
 	@GetMapping(value = "/execute")
-	public HttpSampleResult execute(int id) {
+	public HttpSampleResult execute(@RequestParam int id) {
 		return httpSampleService.execute(id);
 	}
 
 	@GetMapping(value = "/execute", params = "index")
-	public HttpSampleResult execute(int id, int index) {
+	public HttpSampleResult execute(@RequestParam int id, @RequestParam int index) {
 		return httpSampleService.execute(id, index);
 	}
 
 	@GetMapping(value = "/execute", params = {"index", "size"})
-	public List<HttpSampleResult> execute(int id, int index, int size) {
+	public List<HttpSampleResult> execute(@RequestParam int id, @RequestParam int index, @RequestParam int size) {
 		return httpSampleService.executeBatch(id, index, size);
 	}
 }
