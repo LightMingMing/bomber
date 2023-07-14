@@ -50,11 +50,6 @@ public class WebSocketClientFactory implements FactoryBean<WebSocketClient>, Dis
 	}
 
 	@Override
-	public boolean isSingleton() {
-		return true;
-	}
-
-	@Override
 	public void destroy() throws Exception {
 		Mono.when(loopResources.disposeLater(), connectionProvider.disposeLater())
 				.block(Duration.ofSeconds(5));
