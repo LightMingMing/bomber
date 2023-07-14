@@ -20,21 +20,20 @@ public class JettyBootstrap {
 	}
 
 	public void startup(int port, String shutdownToken) throws Exception {
-		Server server = new Server(port);
-
-		Configuration.ClassList classList = Configuration.ClassList.setServerDefault(server);
-		classList.add(AnnotationConfiguration.class.getName());
-
 		WebAppContext webAppContext = new WebAppContext();
+		webAppContext.setThrowUnavailableOnStartupException(true);
 		webAppContext.setContextPath("/");
 		webAppContext.setResourceBase("./src/main/webapp");
 		webAppContext
-				.setAttribute(WebInfConfiguration.CONTAINER_JAR_PATTERN, ".*/ironrhino-[^/]*\\.jar$|.*/classes/.*");
+			.setAttribute(WebInfConfiguration.CONTAINER_JAR_PATTERN, ".*/ironrhino-[^/]*\\.jar$|.*/classes/.*");
 		webAppContext.setInitParameter(DefaultServlet.CONTEXT_INIT + "dirAllowed", "false");
 
 		HandlerList handlers = new HandlerList();
 		handlers.addHandler(new ShutdownHandler(shutdownToken));
 		handlers.addHandler(webAppContext);
+
+		Server server = new Server(port);
+		Configuration.ClassList.setServerDefault(server).add(AnnotationConfiguration.class.getName());
 
 		server.setHandler(handlers);
 		server.setStopAtShutdown(true);
